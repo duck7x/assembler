@@ -1,6 +1,5 @@
 #include "assembler_phase.h"
 
-int main(void) {
-    printf("This is assembler phase!\n");
-    return 0;
+void assembler_phase(void) {
+    printf("This is the assembler phase function\n");
 }

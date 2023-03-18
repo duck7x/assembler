@@ -1,6 +1,6 @@
 #include "pre_assembler.h"
 
-int main(void) {
-    printf("This is pre-assembler!\n");
+int pre_assembler(void){
+    printf("This is the pre-assembler phase\n");
     return 0;
 }
