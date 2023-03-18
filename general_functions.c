@@ -1,6 +1,6 @@
 #include "general_functions.h"
 
-int main(void) {
-    printf("This is general functions!\n");
-    return 0;
+void print_new_line(void){
+    printf("\n");
+    printf("(New line printed by general functions)\n");
 }
