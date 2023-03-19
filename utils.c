@@ -29,13 +29,18 @@ Table_t* create_table(Allocator_t* allocator) {
     return table;
 }
 
-/* Add create pair function */
+Pair_t* create_pair(Allocator_t* allocator, char* key, char* value) {
+    Pair_t* pair = allocate(allocator, sizeof(Pair_t));
+    (*pair)->key = copy_string(allocator, key);
+    (*pair)->value = copy_string(allocator, value);
+    return pair;
+}
 
 void* allocate(Allocator_t* allocator_ptr, int size_of) {
     void* new_ptr = malloc(size_of);
     int current_free_allocation_index = (*allocator_ptr)->number_of_allocated_elements++;
     if (current_free_allocation_index >= LAST_ALLOCATION_INDEX) {
-        exit(1);  /* Handle more gracefully */
+        exit(1);  /* TODO: Handle more gracefully */
     }
     (*allocator_ptr)->ptr_list[current_free_allocation_index] = new_ptr;
     return new_ptr;
@@ -45,14 +50,14 @@ void free_all(Allocator_t* allocator_ptr) {
     int i;
     for (i=0; i <= (*allocator_ptr)->number_of_allocated_elements; i++) {
         free((*allocator_ptr)->ptr_list[i]);
-        (*allocator_ptr)->ptr_list[i] = 0;  /* change to null */
+        (*allocator_ptr)->ptr_list[i] = 0;  /* TODO: change to null */
     }
 }
 
 void free_all_and_allocator(Allocator_t* allocator_ptr) {
     free_all(allocator_ptr);
-    free((*allocator_ptr)->ptr_list[LAST_ALLOCATION_INDEX]);  /* Need to add null */
-    /* Maybe add free functions to reduce code repetition */
+    free((*allocator_ptr)->ptr_list[LAST_ALLOCATION_INDEX]);  /* TODO: Need to add null */
+    /* TODO: Maybe add free functions to reduce code repetition */
 }
 
 int get_index_till_delimiter(char* str, char delimiter) {
@@ -86,13 +91,6 @@ void clean_string(char* str) {
     strcpy(str, cleaned_str);
 }
 
-void add_to_table(Table_t t, char* key, char* value) {
-    Pair_t pair; /*TODO: use create pair here*/
-    (*pair).key = key;
-    (*pair).value = value;
-    (*t).pair_table[(*t).number_of_pairs++] = pair;
-}
-
 char* get_value(Table_t t, char* key) {
     int i;
     for (i=0; i < (*t).number_of_pairs; i++) {
@@ -103,9 +101,15 @@ char* get_value(Table_t t, char* key) {
     return NULL;
 }
 
-void add_to_table_if_not_exists(Table_t t, char* key, char* value) {
+void add_to_table(Allocator_t* allocator, Table_t t, char* key, char* value) {
+    Pair_t *pair; /*TODO: use create pair here*/
+    pair = create_pair(allocator, key, value);
+    (*t).pair_table[(*t).number_of_pairs++] = (*pair);
+}
+
+void add_to_table_if_not_exists(Allocator_t* allocator, Table_t t, char* key, char* value) {
     if (get_value(t, key)) {
-        return;  /* Handle better */
+        return;  /* TODO: Handle better */
     }
-    add_to_table(t, key, value);
+    add_to_table(allocator, t, key, value);
 }
