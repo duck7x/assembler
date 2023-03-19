@@ -102,7 +102,7 @@ char* get_value(Table_t t, char* key) {
 }
 
 void add_to_table(Allocator_t* allocator, Table_t t, char* key, char* value) {
-    Pair_t *pair; /*TODO: use create pair here*/
+    Pair_t *pair;
     pair = create_pair(allocator, key, value);
     (*t).pair_table[(*t).number_of_pairs++] = (*pair);
 }

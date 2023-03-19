@@ -1,9 +1,11 @@
 #include <stdlib.h>
 #include <string.h>
-#include <stdbool.h>
 
 #define LAST_ALLOCATION_INDEX 999
 #define CURRENT_MAX_TABLE_SIZE 1000
+#define TRUE 1
+#define FALSE 0
+#define is(VAR) (VAR == TRUE)
 #define isSpace(CHAR) (CHAR == ' ' || CHAR == '\t')
 
 typedef struct Allocator *Allocator_t;
