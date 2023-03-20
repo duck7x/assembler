@@ -21,13 +21,13 @@ int get_index_till_delimiter(char* str, char delimiter) {
     return -1;
 }
 
-char* clean_string(Allocator_t allocator, char* str) {
+char* clean_string(char* str) {
     int i;
     int str_len = strlen(str);
     char* cleaned_str;
     int cleaned_str_index = 0;
 
-    cleaned_str = copy_string(allocator, str);
+    cleaned_str = copy_string(str);
 
     for (i=0; i <= str_len; i++) {
         if (!isSpace(str[i])) {

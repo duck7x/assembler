@@ -21,23 +21,21 @@ void testing(void) {
     Table_t t;
 
     printf("This is a test\n");
-    /* allocator = create_allocator(); */
-    Allocator_t allocator = global_allocator;
 
     printf("These are our strings!\n");
     printf("First: %s, second: %s, third: %s\n", str, str2, str3);
 
-    str3 = copy_string(allocator, str);
-    str2 = clean_string(allocator, str2);
+    str3 = copy_string(str);
+    str2 = clean_string(str2);
     printf("First: %s, second: %s, third: %s\n", str, str2, str3);
 
     t = create_table();
 
     printf("Searching for %s in t: %s\n", str, get_value(t, str));
 
-    add_to_table_if_not_exists(allocator, t, str, str2);
-    add_to_table_if_not_exists(allocator, t, str2, str);
-    add_to_table_if_not_exists(allocator, t, str2, str);
+    add_to_table_if_not_exists(t, str, str2);
+    add_to_table_if_not_exists(t, str2, str);
+    add_to_table_if_not_exists(t, str2, str);
 
     printf("Searching for %s in t: %s\n", str, get_value(t, str));
     printf("Searching for %s in t: %s\n", str2, get_value(t, str2));
@@ -46,5 +44,5 @@ void testing(void) {
 
     /* printf("Checking is %s starts with %s: %d\n", str4, str, starts_with(str4, str)); */
 
-    free_all_and_allocator(allocator);
+    free_all_and_allocator();
 }

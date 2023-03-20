@@ -25,48 +25,48 @@ Allocator_t create_allocator() {
 }
 
 Table_t create_table() {
-    Table_t table = allocate(global_allocator, sizeof(Table));
+    Table_t table = allocate(sizeof(Table));
     table->current_table_size = CURRENT_MAX_TABLE_SIZE;
     table->number_of_pairs = 0;
     return table;
 }
 
-Pair_t create_pair(Allocator_t allocator, char* key, char* value) {
-    Pair_t pair = allocate(allocator, sizeof(Pair));
-    pair->key = copy_string(allocator, key);
-    pair->value = copy_string(allocator, value);
+Pair_t create_pair(char* key, char* value) {
+    Pair_t pair = allocate(sizeof(Pair));
+    pair->key = copy_string(key);
+    pair->value = copy_string(value);
     return pair;
 }
 
-void* allocate(Allocator_t allocator_ptr, int size_of) {
+void* allocate(int size_of) {
     void* new_ptr = malloc(size_of);
-    int current_free_allocation_index = allocator_ptr->number_of_allocated_elements++;
+    int current_free_allocation_index = global_allocator->number_of_allocated_elements++;
     if (current_free_allocation_index >= LAST_ALLOCATION_INDEX) {
         exit(1);  /* TODO: Handle more gracefully */
     }
-    allocator_ptr->ptr_list[current_free_allocation_index] = new_ptr;
+    global_allocator->ptr_list[current_free_allocation_index] = new_ptr;
     return new_ptr;
 }
 
-void free_all(Allocator_t allocator_ptr) {
+void free_all() {
     int i;
-    for (i=0; i < allocator_ptr->number_of_allocated_elements; i++) {
-        free(allocator_ptr->ptr_list[i]);
-        allocator_ptr->ptr_list[i] = NULL;
+    for (i=0; i < global_allocator->number_of_allocated_elements; i++) {
+        free(global_allocator->ptr_list[i]);
+        global_allocator->ptr_list[i] = NULL;
     }
 }
 
-void free_all_and_allocator(Allocator_t allocator_ptr) {
+void free_all_and_allocator() {
     void* temp;
-    temp = allocator_ptr->ptr_list[LAST_ALLOCATION_INDEX];
-    free_all(allocator_ptr);
-    allocator_ptr->ptr_list[LAST_ALLOCATION_INDEX] = NULL;
+    temp = global_allocator->ptr_list[LAST_ALLOCATION_INDEX];
+    free_all();
+    global_allocator->ptr_list[LAST_ALLOCATION_INDEX] = NULL;
     free(temp);
     /* TODO: Maybe add free functions to reduce code repetition */
 }
 
-char* copy_string(Allocator_t allocator, char* str) {
-    char* copied_str = (char*)allocate(allocator, sizeof(char)*(strlen(str)+1));
+char* copy_string(char* str) {
+    char* copied_str = (char*)allocate(sizeof(char)*(strlen(str)+1));
     strcpy(copied_str, str);
     return copied_str;
 }
@@ -81,15 +81,15 @@ char* get_value(Table_t t, char* key) {
     return NULL;
 }
 
-void add_to_table(Allocator_t allocator, Table_t t, char* key, char* value) {
+void add_to_table(Table_t t, char* key, char* value) {
     Pair_t pair;
-    pair = create_pair(allocator, key, value);
+    pair = create_pair(key, value);
     t->pair_table[t->number_of_pairs++] = pair;
 }
 
-void add_to_table_if_not_exists(Allocator_t allocator, Table_t t, char* key, char* value) {
+void add_to_table_if_not_exists(Table_t t, char* key, char* value) {
     if (get_value(t, key)) {
         return;  /* TODO: Handle better */
     }
-    add_to_table(allocator, t, key, value);
+    add_to_table(t, key, value);
 }
