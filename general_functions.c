@@ -8,11 +8,7 @@ int starts_with(char *str, char *prefix) {
 
     temp = copy_string(str);
     temp[strlen(prefix)] = '\0';
-    printf("prefix len is %d and temp len is %d\n", strlen(prefix), strlen(temp));
 
-    /*memcpy(temp, str, strlen(prefix));*/
-
-    /*temp[strlen(prefix)] = '\0';*/
     if (strcmp(prefix, temp) == 0)
         return TRUE;
     return FALSE;
