@@ -79,21 +79,22 @@ char* copy_string(Allocator_t allocator, char* str) {
     return copied_str;
 }
 
-void clean_string(char* str) {
+char* clean_string(Allocator_t allocator, char* str) {
     int i;
     int str_len = strlen(str);
-    char cleaned_str[str_len];  /* TODO: fix warning */
+    char* cleaned_str;
     int cleaned_str_index = 0;
-    memset(cleaned_str, '\0', sizeof(cleaned_str));
 
-    for (i=0; i < str_len; i++) {
+    cleaned_str = copy_string(allocator, str);
+
+    for (i=0; i <= str_len; i++) {
         if (!isSpace(str[i])) {
             cleaned_str[cleaned_str_index] = str[i];
             cleaned_str_index++;
         }
     }
 
-    strcpy(str, cleaned_str);
+    return cleaned_str;
 }
 
 char* get_value(Table_t t, char* key) {
