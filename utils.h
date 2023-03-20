@@ -14,11 +14,16 @@
 typedef struct Allocator *Allocator_t;
 typedef struct Pair *Pair_t;
 typedef struct Table *Table_t;
+typedef struct Node *Node_t;
+typedef struct LinkedList *LinkedList_t;
 extern Allocator_t global_allocator;
 
 Allocator_t create_allocator();
 Table_t create_table();
 Pair_t create_pair(char* key, char* value);
+LinkedList_t create_linked_list(); /* CHECK */
+Node_t create_node(char* value); /* CHECK */
+void add_to_list(Node_t node, LinkedList_t list); /* CHECK */
 void* allocate(int size_of);
 void free_all();
 void free_all_and_allocator();

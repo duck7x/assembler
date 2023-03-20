@@ -22,7 +22,7 @@ int get_index_till_delimiter(char* str, char delimiter) {
     return -1;
 }
 
-char* clean_string(char* str) {
+char* get_string_without_whitespaces(char* str) {
     int i;
     int str_len = strlen(str);
     char* cleaned_str;

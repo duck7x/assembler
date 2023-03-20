@@ -6,6 +6,6 @@
 
 int starts_with(char *str, char *prefix);
 int get_index_till_delimiter(char* str, char delimiter);
-char* clean_string(char* str);
+char* get_string_without_whitespaces(char* str);
 
 #endif

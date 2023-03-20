@@ -16,6 +16,17 @@ struct Table{
     Pair_t pair_table[CURRENT_MAX_TABLE_SIZE];
 } Table;
 
+struct Node{
+    char* value;
+    Node_t next;
+} Node;
+
+struct LinkedList {
+    Node_t head;
+    Node_t tail;
+    int list_length;
+} LinkedList;
+
 Allocator_t create_allocator() {
     Allocator_t allocator = (Allocator_t)malloc(sizeof(Allocator));
     memset(allocator->ptr_list, 0, sizeof(void*) * (LAST_ALLOCATION_INDEX + 1));
@@ -36,6 +47,32 @@ Pair_t create_pair(char* key, char* value) {
     pair->key = copy_string(key);
     pair->value = copy_string(value);
     return pair;
+}
+
+LinkedList_t create_linked_list() {
+    LinkedList_t list = allocate(sizeof(LinkedList_t));
+    list->head = NULL;
+    list->tail = NULL;
+    list->list_length = 0;
+    return list;
+}
+
+Node_t create_node(char* value) {
+    Node_t node = allocate(sizeof(Node_t));
+    node->value = value;
+    node->next = NULL;
+    return node;
+}
+
+void add_to_list(Node_t node, LinkedList_t list) {
+    if (list->list_length == 0) {
+        list->head = node;
+        list->tail = node;
+    } else {
+        list->tail->next = node;
+        list->tail = node;
+    }
+    list->list_length++;
 }
 
 void* allocate(int size_of) {

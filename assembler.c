@@ -29,7 +29,7 @@ void testing(void) {
     printf("First: %s, second: %s, third: %s\n", str, str2, str3);
 
     str3 = copy_string(str);
-    str2 = clean_string(str2);
+    str2 = get_string_without_whitespaces(str2);
     printf("First: %s, second: %s, third: %s\n", str, str2, str3);
 
     t = create_table();
