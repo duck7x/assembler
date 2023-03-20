@@ -25,10 +25,13 @@ LinkedList_t split_string(char* str, char delimiter) {
     temp = copy_string(str);
 
     while (curr_index > -1) {
-        /*node = create_node()*/
-        curr_index = get_index_till_delimiter(str, delimiter);
+        node = create_node(copy_substring(temp, 0, curr_index));
+        add_to_list(node, list);
+        temp = copy_substring(temp, curr_index + 1, strlen(temp));
+        curr_index = get_index_till_delimiter(temp, delimiter);
     }
-
+    node = create_node(temp);
+    add_to_list(node, list);
     return list;
 }
 

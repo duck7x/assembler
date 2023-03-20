@@ -63,5 +63,9 @@ void testing(void) {
     add_to_list(node, list);
     print_list(list);
 
+    printf("Splitting [%s]!\n", str4);
+    list = split_string(str4, '/');
+    print_list(list);
+
     free_all_and_allocator();
 }
