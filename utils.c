@@ -1,5 +1,5 @@
 #include "utils.h"
-#include "stdio.h" /* TODO: DELETE THIS */
+#include "stdio.h" /* TODO: delete this */
 
 struct Allocator {
     int number_of_allocated_elements;
@@ -118,6 +118,16 @@ void free_all_and_allocator() {
 char* copy_string(char* str) {
     char* copied_str = (char*)allocate(sizeof(char)*(strlen(str)+1));
     strcpy(copied_str, str);
+    return copied_str;
+}
+
+char* copy_substring(char* str, int start, int end) {
+    char* copied_str = (char*)allocate(sizeof(char)*(end - start + 1));
+    int i;
+    for (i = 0; i < end - start; ++i) {
+        copied_str[i] = str[start + i];
+    }
+    copied_str[i] = '\0';
     return copied_str;
 }
 

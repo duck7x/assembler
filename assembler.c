@@ -48,7 +48,11 @@ void testing(void) {
     printf("First / in %s is %d\n", str4, get_index_till_delimiter(str4, '/'));
 
     printf("Checking is %s starts with %s: %d\n", str4, str, starts_with(str4, str));
+    printf("Checking is %s starts with %s: %d\n", str4, str2, starts_with(str4, str2));
     printf("Checking is %s starts with %s: %d\n", str2, str, starts_with(str2, str));
+
+    str3 = copy_substring(str4, 11, 16);
+    printf("Third is %s\n", str3);
 
     list = create_linked_list();
     node = create_node(str);

@@ -1,15 +1,7 @@
 #include "general_functions.h"
 
 int starts_with(char *str, char *prefix) {
-    char *temp;
-
-    if (strlen(prefix) > strlen(str))
-        return FALSE;
-
-    temp = copy_string(str);
-    temp[strlen(prefix)] = '\0';
-
-    if (strcmp(prefix, temp) == 0)
+    if (strncmp(prefix, str, strlen(prefix)) == 0)
         return TRUE;
     return FALSE;
 }
@@ -20,6 +12,24 @@ int get_index_till_delimiter(char* str, char delimiter) {
         return (int)(delimiter_address - str);
     }
     return -1;
+}
+
+LinkedList_t split_string(char* str, char delimiter) {
+    LinkedList_t list;
+    int curr_index;
+    char* temp;
+    Node_t node;
+
+    list = create_linked_list();
+    curr_index = get_index_till_delimiter(str, delimiter);
+    temp = copy_string(str);
+
+    while (curr_index > -1) {
+        /*node = create_node()*/
+        curr_index = get_index_till_delimiter(str, delimiter);
+    }
+
+    return list;
 }
 
 char* get_string_without_whitespaces(char* str) {

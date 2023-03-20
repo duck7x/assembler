@@ -21,14 +21,15 @@ extern Allocator_t global_allocator;
 Allocator_t create_allocator();
 Table_t create_table();
 Pair_t create_pair(char* key, char* value);
-LinkedList_t create_linked_list(); /* CHECK */
-Node_t create_node(char* value); /* CHECK */
-void add_to_list(Node_t node, LinkedList_t list); /* CHECK */
-void print_list(LinkedList_t list); /* TODO: DELETE THIS */
+LinkedList_t create_linked_list();
+Node_t create_node(char* value);
+void add_to_list(Node_t node, LinkedList_t list);
+void print_list(LinkedList_t list); /* TODO: delete this */
 void* allocate(int size_of);
 void free_all();
 void free_all_and_allocator();
 char* copy_string(char* str);
+char* copy_substring(char* str, int start, int end); /* CHECK */
 char* get_value(Table_t t, char* key);
 void add_to_table(Table_t t, char* key, char* value);
 void add_to_table_if_not_exists(Table_t t, char* key, char* value);
