@@ -1,5 +1,7 @@
 #include "assembler.h"
 
+Allocator_t global_allocator;
+
 int main(void) {
     global_allocator = create_allocator();
 
@@ -9,6 +11,7 @@ int main(void) {
 
     printf("-----------Testing-----------\n");  /* TODO: delete this */
     testing();  /* TODO: delete this */
+    printf("---------Done testing--------\n");  /* TODO: delete this */
     return 0;
 }
 
@@ -42,7 +45,8 @@ void testing(void) {
 
     printf("First / in %s is %d\n", str4, get_index_till_delimiter(str4, '/'));
 
-    /* printf("Checking is %s starts with %s: %d\n", str4, str, starts_with(str4, str)); */
+    printf("Checking is %s starts with %s: %d\n", str4, str, starts_with(str4, str));
+    printf("Checking is %s starts with %s: %d\n", str2, str, starts_with(str2, str));
 
     free_all_and_allocator();
 }

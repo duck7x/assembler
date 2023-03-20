@@ -1,16 +1,21 @@
 #include "general_functions.h"
 
-void print_new_line(void){
-    printf("\n");
-    printf("(New line printed by general functions)\n");
-}
-
 int starts_with(char *str, char *prefix) {
     char *temp;
 
-    memcpy(temp, str, strlen(prefix));
+    if (strlen(prefix) > strlen(str))
+        return FALSE;
+
+    temp = copy_string(str);
     temp[strlen(prefix)] = '\0';
-    return strcmp(prefix, temp);
+    printf("prefix len is %d and temp len is %d\n", strlen(prefix), strlen(temp));
+
+    /*memcpy(temp, str, strlen(prefix));*/
+
+    /*temp[strlen(prefix)] = '\0';*/
+    if (strcmp(prefix, temp) == 0)
+        return TRUE;
+    return FALSE;
 }
 
 int get_index_till_delimiter(char* str, char delimiter) {

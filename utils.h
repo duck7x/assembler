@@ -1,3 +1,6 @@
+#ifndef UTILS_H
+#define UTILS_H
+
 #include <stdlib.h>
 #include <string.h>
 
@@ -11,15 +14,17 @@
 typedef struct Allocator *Allocator_t;
 typedef struct Pair *Pair_t;
 typedef struct Table *Table_t;
-Allocator_t global_allocator;
+extern Allocator_t global_allocator;
 
-Allocator_t create_allocator(); /* DONE */
-Table_t create_table();  /* DONE */
-Pair_t create_pair(char* key, char* value);  /* DONE */
-void* allocate(int size_of); /* DONE */
-void free_all(); /* DONE */
-void free_all_and_allocator(); /* DONE */
-char* copy_string(char* str);  /* DONE */
-char* get_value(Table_t t, char* key);  /* DONE */
-void add_to_table(Table_t t, char* key, char* value);  /* DONE */
-void add_to_table_if_not_exists(Table_t t, char* key, char* value);  /* DONE */
+Allocator_t create_allocator();
+Table_t create_table();
+Pair_t create_pair(char* key, char* value);
+void* allocate(int size_of);
+void free_all();
+void free_all_and_allocator();
+char* copy_string(char* str);
+char* get_value(Table_t t, char* key);
+void add_to_table(Table_t t, char* key, char* value);
+void add_to_table_if_not_exists(Table_t t, char* key, char* value);
+
+#endif
