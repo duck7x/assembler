@@ -113,5 +113,3 @@ void add_to_table_if_not_exists(Allocator_t* allocator, Table_t t, char* key, ch
     }
     add_to_table(allocator, t, key, value);
 }
-
-/* This is a test for git */
