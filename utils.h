@@ -24,6 +24,7 @@ Pair_t create_pair(char* key, char* value);
 LinkedList_t create_linked_list(); /* CHECK */
 Node_t create_node(char* value); /* CHECK */
 void add_to_list(Node_t node, LinkedList_t list); /* CHECK */
+void print_list(LinkedList_t list); /* TODO: DELETE THIS */
 void* allocate(int size_of);
 void free_all();
 void free_all_and_allocator();

@@ -1,4 +1,5 @@
 #include "utils.h"
+#include "stdio.h" /* TODO: DELETE THIS */
 
 struct Allocator {
     int number_of_allocated_elements;
@@ -50,7 +51,7 @@ Pair_t create_pair(char* key, char* value) {
 }
 
 LinkedList_t create_linked_list() {
-    LinkedList_t list = allocate(sizeof(LinkedList_t));
+    LinkedList_t list = allocate(sizeof(LinkedList));
     list->head = NULL;
     list->tail = NULL;
     list->list_length = 0;
@@ -58,7 +59,7 @@ LinkedList_t create_linked_list() {
 }
 
 Node_t create_node(char* value) {
-    Node_t node = allocate(sizeof(Node_t));
+    Node_t node = allocate(sizeof(Node));
     node->value = value;
     node->next = NULL;
     return node;
@@ -73,6 +74,18 @@ void add_to_list(Node_t node, LinkedList_t list) {
         list->tail = node;
     }
     list->list_length++;
+}
+
+/* TODO: DELETE THIS */
+void print_list(LinkedList_t list) {
+    Node_t node;
+    node = list->head;
+    printf("List has %d items: ", list->list_length);
+    while(node != NULL) {
+        printf("%s -> ", node->value);
+        node = node->next;
+    }
+    printf("NULL\n");
 }
 
 void* allocate(int size_of) {

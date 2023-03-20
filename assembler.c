@@ -22,6 +22,8 @@ void testing(void) {
     char *str3 = NULL;
     char *str4 = "Timon/Luna/Small/Cute";
     Table_t t;
+    LinkedList_t list;
+    Node_t node;
 
     printf("This is a test\n");
 
@@ -47,6 +49,15 @@ void testing(void) {
 
     printf("Checking is %s starts with %s: %d\n", str4, str, starts_with(str4, str));
     printf("Checking is %s starts with %s: %d\n", str2, str, starts_with(str2, str));
+
+    list = create_linked_list();
+    node = create_node(str);
+    print_list(list);
+    add_to_list(node, list);
+    node = create_node(str2);
+    print_list(list);
+    add_to_list(node, list);
+    print_list(list);
 
     free_all_and_allocator();
 }
