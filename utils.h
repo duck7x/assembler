@@ -11,16 +11,15 @@
 typedef struct Allocator *Allocator_t;
 typedef struct Pair *Pair_t;
 typedef struct Table *Table_t;
+Allocator_t global_allocator;
 
 Allocator_t create_allocator(); /* DONE */
-Table_t create_table(Allocator_t allocator);
-Pair_t create_pair(Allocator_t allocator, char* key, char* value);
+Table_t create_table();  /* DONE */
+Pair_t create_pair(Allocator_t allocator, char* key, char* value);  /* DONE */
 void* allocate(Allocator_t allocator_ptr, int size_of); /* DONE */
 void free_all(Allocator_t allocator_ptr); /* DONE */
 void free_all_and_allocator(Allocator_t allocator_ptr); /* DONE */
-int get_index_till_delimiter(char* str, char delimiter);
 char* copy_string(Allocator_t allocator, char* str);  /* DONE */
-char* clean_string(Allocator_t allocator, char* str);  /* DONE */
-char* get_value(Table_t t, char* key);
-void add_to_table(Allocator_t allocator, Table_t t, char* key, char* value);
-void add_to_table_if_not_exists(Allocator_t allocator, Table_t t, char* key, char* value);
+char* get_value(Table_t t, char* key);  /* DONE */
+void add_to_table(Allocator_t allocator, Table_t t, char* key, char* value);  /* DONE */
+void add_to_table_if_not_exists(Allocator_t allocator, Table_t t, char* key, char* value);  /* DONE */

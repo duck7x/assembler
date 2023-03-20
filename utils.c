@@ -24,8 +24,8 @@ Allocator_t create_allocator() {
     return allocator;
 }
 
-Table_t create_table(Allocator_t allocator) {
-    Table_t table = allocate(allocator, sizeof(Table));
+Table_t create_table() {
+    Table_t table = allocate(global_allocator, sizeof(Table));
     table->current_table_size = CURRENT_MAX_TABLE_SIZE;
     table->number_of_pairs = 0;
     return table;
@@ -65,42 +65,16 @@ void free_all_and_allocator(Allocator_t allocator_ptr) {
     /* TODO: Maybe add free functions to reduce code repetition */
 }
 
-int get_index_till_delimiter(char* str, char delimiter) {
-    char* delimeter_address = strchr(str, delimiter);
-    if (delimeter_address) {
-        return (int)(delimeter_address-str);
-    }
-    return -1;
-}
-
 char* copy_string(Allocator_t allocator, char* str) {
     char* copied_str = (char*)allocate(allocator, sizeof(char)*(strlen(str)+1));
     strcpy(copied_str, str);
     return copied_str;
 }
 
-char* clean_string(Allocator_t allocator, char* str) {
-    int i;
-    int str_len = strlen(str);
-    char* cleaned_str;
-    int cleaned_str_index = 0;
-
-    cleaned_str = copy_string(allocator, str);
-
-    for (i=0; i <= str_len; i++) {
-        if (!isSpace(str[i])) {
-            cleaned_str[cleaned_str_index] = str[i];
-            cleaned_str_index++;
-        }
-    }
-
-    return cleaned_str;
-}
-
 char* get_value(Table_t t, char* key) {
     int i;
     for (i=0; i < t->number_of_pairs; i++) {
-        if (strcmp(t->pair_table[i]->key, key)) {
+        if (!strcmp(t->pair_table[i]->key, key)) {
             return t->pair_table[i]->value;
         }
     }
