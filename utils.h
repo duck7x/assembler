@@ -28,8 +28,8 @@ void print_list(LinkedList_t list); /* TODO: delete this */
 void* allocate(int size_of);
 void free_all();
 void free_all_and_allocator();
-char* copy_string(char* str);
-char* copy_substring(char* str, int start, int end);
+char* copy_string(char* str);  /* TODO: maybe move to gf */
+char* copy_substring(char* str, int start, int end);  /* TODO: maybe move to gf */
 char* get_value(Table_t t, char* key);
 void add_to_table(Table_t t, char* key, char* value);
 void add_to_table_if_not_exists(Table_t t, char* key, char* value);

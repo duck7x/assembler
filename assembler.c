@@ -21,6 +21,7 @@ void testing(void) {
     char *str2 = "L u       n        a     ";
     char *str3 = NULL;
     char *str4 = "Timon/Luna/Small/Cute";
+    char *str5 = "  T i m   o   n           ";
     Table_t t;
     LinkedList_t list;
     Node_t node;
@@ -53,6 +54,12 @@ void testing(void) {
 
     str3 = copy_substring(str4, 11, 16);
     printf("Third is %s\n", str3);
+    str3 = copy_substring(str4, 0, 0);
+    printf("Third is %s\n", str3);
+
+    printf("Five is [%s]\n", str5);
+    str5 = get_stripped_string(str5);
+    printf("Five is [%s]\n", str5);
 
     list = create_linked_list();
     node = create_node(str);

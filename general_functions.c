@@ -52,3 +52,15 @@ char* get_string_without_whitespaces(char* str) {
 
     return cleaned_str;
 }
+
+char* get_stripped_string(char* str) {
+    int first_char = 0, last_char = strlen(str);
+
+    while(isSpace(str[first_char]) && first_char < last_char)
+        first_char ++;
+
+    while(isSpace(str[last_char - 1]) && last_char > 0)
+        last_char --;
+
+    return copy_substring(str, first_char, last_char);
+}
