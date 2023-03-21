@@ -131,6 +131,19 @@ char* copy_substring(char* str, int start, int end) {
     return copied_str;
 }
 
+char* append_char_to_string(char* str, int c) {
+    char *new_str;
+    int i;
+    new_str = allocate(sizeof(char) * (strlen(str) + 2));
+    memset(new_str, '0', sizeof(str) + sizeof(char));
+    for (i = 0; i < strlen(str) ; i++) {
+        new_str[i] = str[i];
+    }
+    new_str[i++] = c + 0;
+    new_str[i] = '\0';
+    return new_str;
+}
+
 char* get_value(Table_t t, char* key) {
     int i;
     for (i=0; i < t->number_of_pairs; i++) {

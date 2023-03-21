@@ -22,9 +22,13 @@ void testing(void) {
     char *str3 = NULL;
     char *str4 = "Timon/Luna/Small/Cute";
     char *str5 = "  T i m   o   n           ";
+    char *str6 = "Timmy";
+    char *line;
     Table_t t;
     LinkedList_t list;
     Node_t node;
+    FILE *file;
+    int i;
 
     printf("This is a test\n");
 
@@ -74,5 +78,15 @@ void testing(void) {
     list = split_string(str4, '/');
     print_list(list);
 
+    printf("Sixth string is %s\n", str6);
+    str6 = append_char_to_string(str6, '?');
+    printf("Now sixth string is %s\n", str6);
+
+/*    file = fopen("timon.txt", "r");
+    for (i = 0; i < 5; i++) {
+        line = get_line(file, line);
+        printf("Line #%d is: %s\n", i, line);
+    }
+    fclose(file);*/
     free_all_and_allocator();
 }

@@ -30,6 +30,7 @@ void free_all();
 void free_all_and_allocator();
 char* copy_string(char* str);  /* TODO: maybe move to gf */
 char* copy_substring(char* str, int start, int end);  /* TODO: maybe move to gf */
+char* append_char_to_string(char* str, int c);  /* TODO: maybe move to gf */
 char* get_value(Table_t t, char* key);
 void add_to_table(Table_t t, char* key, char* value);
 void add_to_table_if_not_exists(Table_t t, char* key, char* value);

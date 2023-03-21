@@ -64,3 +64,12 @@ char* get_stripped_string(char* str) {
 
     return copy_substring(str, first_char, last_char);
 }
+
+char* get_line(FILE* file, char* line) {
+    int c;
+    line = copy_substring(line, 0, 0);
+    while (((c = getc(file)) != NEWLINE) && (c != EOF)) {
+        line = append_char_to_string(line, c);
+    }
+    return line;
+}
