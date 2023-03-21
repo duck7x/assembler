@@ -134,8 +134,8 @@ char* copy_substring(char* str, int start, int end) {
 char* append_char_to_string(char* str, int c) {
     char *new_str;
     int i;
-    new_str = allocate(sizeof(char) * (strlen(str) + 2));
-    memset(new_str, '0', sizeof(str) + sizeof(char));
+    new_str = (char*)allocate(sizeof(char) * (strlen(str) + 2));
+    memset(new_str, '0', sizeof(char) * (strlen(str) + 2));
     for (i = 0; i < strlen(str) ; i++) {
         new_str[i] = str[i];
     }

@@ -82,11 +82,11 @@ void testing(void) {
     str6 = append_char_to_string(str6, '?');
     printf("Now sixth string is %s\n", str6);
 
-/*    file = fopen("timon.txt", "r");
+    file = fopen("timon.txt", "r");
     for (i = 0; i < 5; i++) {
-        line = get_line(file, line);
+        line = get_next_line(file, line);
         printf("Line #%d is: %s\n", i, line);
     }
-    fclose(file);*/
+    fclose(file);
     free_all_and_allocator();
 }
