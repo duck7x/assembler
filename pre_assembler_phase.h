@@ -4,6 +4,6 @@
 #include <stdio.h>
 #include "pre_assembler_functions.h"
 
-int pre_assembler(void);
+int pre_assembler(char* file_name);
 
 #endif

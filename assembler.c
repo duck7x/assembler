@@ -6,11 +6,11 @@ int main(void) {
     global_allocator = create_allocator();
 
     printf("This is the main assembler!\n");
-    pre_assembler();
+    /*pre_assembler();*/
     assembler_phase();
 
     printf("-----------Testing-----------\n");  /* TODO: delete this */
-    testing();  /* TODO: delete this */
+    testing();   TODO: delete this
     printf("---------Done testing--------\n");  /* TODO: delete this */
     return 0;
 }
@@ -82,11 +82,14 @@ void testing(void) {
     str6 = append_char_to_string(str6, '?');
     printf("Now sixth string is %s\n", str6);
 
-    file = fopen("timon.txt", "r");
-    for (i = 0; i < 5; i++) {
+    file = fopen("luna.txt", "r");
+    line = get_next_line(file, line);
+    printf("-----reading file-----\n");
+    while (line[strlen(line) - 1] != EOF) {
         line = get_next_line(file, line);
-        printf("Line #%d is: %s\n", i, line);
+        printf("%s", line);
     }
+    printf("-----end of file------\n");
     fclose(file);
     free_all_and_allocator();
 }

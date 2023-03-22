@@ -65,11 +65,14 @@ char* get_stripped_string(char* str) {
     return copy_substring(str, first_char, last_char);
 }
 
+/* TODO: Make this better without allocating so much */
+/* TODO: Adding EOF to string is bad, don't do it, it causes ? to be printed */
 char* get_next_line(FILE* file, char* line) {
     int c;
     line = copy_substring(line, 0, 0);
     while (((c = getc(file)) != NEWLINE) && (c != EOF)) {
         line = append_char_to_string(line, c);
     }
+    line = append_char_to_string(line, c);
     return line;
 }
