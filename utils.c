@@ -108,6 +108,7 @@ void free_all() {
 
 void free_all_and_allocator() {
     void* temp;
+    printf("Allocated %d stuff\n", global_allocator->number_of_allocated_elements); /* TODO: delete this */
     temp = global_allocator->ptr_list[LAST_ALLOCATION_INDEX];
     free_all();
     global_allocator->ptr_list[LAST_ALLOCATION_INDEX] = NULL;

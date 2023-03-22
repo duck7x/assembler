@@ -6,11 +6,11 @@ int main(void) {
     global_allocator = create_allocator();
 
     printf("This is the main assembler!\n");
-    /*pre_assembler();*/
+    pre_assembler();
     assembler_phase();
 
     printf("-----------Testing-----------\n");  /* TODO: delete this */
-    testing();   TODO: delete this
+    testing();  /* TODO: delete this*/
     printf("---------Done testing--------\n");  /* TODO: delete this */
     return 0;
 }
@@ -91,5 +91,6 @@ void testing(void) {
     }
     printf("-----end of file------\n");
     fclose(file);
+
     free_all_and_allocator();
 }

@@ -76,3 +76,8 @@ char* get_next_line(FILE* file, char* line) {
     line = append_char_to_string(line, c);
     return line;
 }
+
+/* TODO: write this */
+void write_line_to_file(FILE* file, char* line) {
+    printf("Writing [ %s ] to file! (Not really)\n", line);
+}
