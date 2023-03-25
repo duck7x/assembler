@@ -39,6 +39,36 @@ LinkedList_t split_string(char* str, char delimiter) {
 }
 
 /* TODO: Add documentation */
+char* clean_multiple_whitespaces(char* str) {
+    int i;
+    int str_len = strlen(str);
+    char* cleaned_str;
+    int cleaned_str_index = 0;
+    int following_space = FALSE;
+
+    cleaned_str = copy_string(str);
+
+    for (i = 0; i < str_len; i++) {
+        if (isSpace(str[i])) {
+            if (!is(following_space)) {
+                following_space = TRUE;
+                cleaned_str[cleaned_str_index] = str[i];
+                cleaned_str_index++;
+            }
+        } else {
+            following_space = FALSE;
+            cleaned_str[cleaned_str_index] = str[i];
+            cleaned_str_index++;
+        }
+    }
+
+    cleaned_str[cleaned_str_index] = '\0';
+
+    return cleaned_str;
+
+}
+
+/* TODO: Add documentation */
 char* get_string_without_whitespaces(char* str) {
     int i;
     int str_len = strlen(str);

@@ -15,15 +15,18 @@ int pre_assembler(char** files_list) {
 int run_pre_assembler_on_file(char* file_name) {
     char *line = ""; /* TODO: Maybe initialize line better */
     FILE *source_file, *dest_file;
+    Table_t macro_table;
 
-    source_file = fopen(strcat(file_name, INPUT_SUFFIX), READ); /* TODO: add suffix to file_name */
-    dest_file = fopen(strcat(file_name, INPUT_SUFFIX), WRITE); /* TODO: add suffix to file_name */
+    source_file = fopen(concatenate_strings(file_name, INPUT_SUFFIX), READ);
+    dest_file = fopen(concatenate_strings(file_name, INPUT_SUFFIX), WRITE);
+
+    macro_table = create_table();
 
     line = get_next_line(source_file, line);
-    while (line[strlen(line) - 1] != EOF) {
+    while (line[strlen(line) - 1] != EOF) {  /* TODO: rewrite this */
         line = get_next_line(source_file, line);
-        if (is_start_of_macro(line))
-            add_macro(source_file, line);
+        if (is_start_of_macro_definition(line))
+            add_macro(source_file, line, macro_table);
         else
             write_line_to_expanded_file(dest_file, line);
     }

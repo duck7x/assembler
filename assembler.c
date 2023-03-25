@@ -87,8 +87,28 @@ void testing(void) {
     line = get_next_line(file, line);
     printf("-----reading file-----\n");
     while (line[strlen(line) - 1] != EOF) {
-        line = get_next_line(file, line);
         printf("%s", line);
+        line = get_next_line(file, line);
+    }
+    printf("-----end of file------\n");
+    fclose(file);
+
+    file = fopen(concatenate_strings("pumba", SUFFIX), "r");
+    line = get_next_line(file, line);
+    printf("-----before cleaning file-----\n");
+    while (line[strlen(line) - 1] != EOF) {
+        printf("%s", line);
+        line = get_next_line(file, line);
+    }
+    printf("-----end of file------\n");
+    fclose(file);
+
+    file = fopen(concatenate_strings("pumba", SUFFIX), "r");
+    line = get_next_line(file, line);
+    printf("-----after cleaning file-----\n");
+    while (line[strlen(line) - 1] != EOF) {
+        printf("%s", clean_multiple_whitespaces(line));
+        line = get_next_line(file, line);
     }
     printf("-----end of file------\n");
     fclose(file);
