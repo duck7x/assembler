@@ -8,7 +8,7 @@
 #define isEndOfLine(CHAR) (CHAR == EOF || CHAR == '\n') /* TODO: Add documentation */
 #define READ "r" /* TODO: Add documentation */
 #define WRITE "w" /* TODO: Add documentation */
-#define INPUT_SUFFIX ".as" /* TODO: Add documentation */
+#define INPUT_SUFFIX ".as" /* TODO: Add documentation */ /* TODO: Maybe move to pre_assembler_functions */
 
 
 int starts_with(char *str, char *prefix); /* TODO: Add documentation */

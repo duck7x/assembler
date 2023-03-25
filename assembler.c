@@ -24,7 +24,6 @@ void testing(void) {
     char *str5 = "  T i m   o   n           ";
     char *str6 = "Timmy";
     char *luna = "luna";
-    char *file_name;
     char *line;
     Table_t t;
     LinkedList_t list;
@@ -84,11 +83,7 @@ void testing(void) {
     str6 = append_char_to_string(str6, '?');
     printf("Now sixth string is %s\n", str6);
 
-    printf("Starting file testing!\n");
-    file_name = concatenate_strings(luna, SUFFIX);
-    printf("File name is %s\n", file_name);
-    file = fopen(file_name, "r");
-    printf("Opened file\n");
+    file = fopen(concatenate_strings(luna, SUFFIX), "r");
     line = get_next_line(file, line);
     printf("-----reading file-----\n");
     while (line[strlen(line) - 1] != EOF) {
