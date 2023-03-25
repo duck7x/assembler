@@ -5,6 +5,6 @@
 #include <stdio.h>
 #include "general_functions.h"
 
-void print_assembler_phase(void);
+void print_assembler_phase(void); /* TODO: delete this */
 
 #endif

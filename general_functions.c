@@ -1,11 +1,13 @@
 #include "general_functions.h"
 
+/* TODO: Add documentation */
 int starts_with(char *str, char *prefix) {
     if (strncmp(prefix, str, strlen(prefix)) == 0)
         return TRUE;
     return FALSE;
 }
 
+/* TODO: Add documentation */
 int get_index_till_delimiter(char* str, char delimiter) {
     char* delimiter_address = strchr(str, delimiter);
     if (delimiter_address) {
@@ -14,6 +16,7 @@ int get_index_till_delimiter(char* str, char delimiter) {
     return -1;
 }
 
+/* TODO: Add documentation */
 LinkedList_t split_string(char* str, char delimiter) {
     LinkedList_t list;
     int curr_index;
@@ -35,6 +38,7 @@ LinkedList_t split_string(char* str, char delimiter) {
     return list;
 }
 
+/* TODO: Add documentation */
 char* get_string_without_whitespaces(char* str) {
     int i;
     int str_len = strlen(str);
@@ -53,6 +57,7 @@ char* get_string_without_whitespaces(char* str) {
     return cleaned_str;
 }
 
+/* TODO: Add documentation */
 char* get_stripped_string(char* str) {
     int first_char = 0, last_char = strlen(str);
 
@@ -65,6 +70,7 @@ char* get_stripped_string(char* str) {
     return copy_substring(str, first_char, last_char);
 }
 
+/* TODO: Add documentation */
 /* TODO: Make this better without allocating so much */
 /* TODO: Adding EOF to string is bad, don't do it, it causes ? to be printed */
 char* get_next_line(FILE* file, char* line) {
@@ -77,6 +83,7 @@ char* get_next_line(FILE* file, char* line) {
     return line;
 }
 
+/* TODO: Add documentation */
 /* TODO: write this */
 void write_line_to_file(FILE* file, char* line) {
     printf("Writing [ %s ] to file! (Not really)\n", line);

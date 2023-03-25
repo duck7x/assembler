@@ -5,6 +5,8 @@
 #include "pre_assembler_phase.h"
 #include "assembler_phase.h"
 
+#define SUFFIX ".txt" /* TODO: delete this */
+
 void testing(void); /* TODO: delete this */
 
 #endif
