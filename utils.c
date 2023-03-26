@@ -76,6 +76,16 @@ Node_t create_node(char* value) {
 }
 
 /* TODO: Add documentation */
+char* get_node_value(Node_t node) {
+    return node->value;
+}
+
+/* TODO: Add documentation */
+Node_t get_next_node(Node_t node) {
+    return node->next;
+}
+
+/* TODO: Add documentation */
 void add_to_list(Node_t node, LinkedList_t list) {
     if (list->list_length == 0) {
         list->head = node;
@@ -97,6 +107,11 @@ void print_list(LinkedList_t list) {
         node = node->next;
     }
     printf("NULL\n");
+}
+
+/* TODO: Add documentation */
+Node_t get_head(LinkedList_t list) {
+    return list->head;
 }
 
 /* TODO: Add documentation */

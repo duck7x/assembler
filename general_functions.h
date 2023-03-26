@@ -6,9 +6,11 @@
 
 #define NEWLINE '\n' /* TODO: Add documentation */
 #define isEndOfLine(CHAR) (CHAR == EOF || CHAR == '\n') /* TODO: Add documentation */
+#define SPACE ' ' /* TODO: Add documentation */
 #define READ "r" /* TODO: Add documentation */
 #define WRITE "w" /* TODO: Add documentation */
 #define INPUT_SUFFIX ".as" /* TODO: Add documentation */ /* TODO: Maybe move to pre_assembler_functions */
+#define OUTPUT_SUFFIX ".am" /* TODO: Add documentation */ /* TODO: Maybe move to pre_assembler_functions */
 
 
 int starts_with(char *str, char *prefix); /* TODO: Add documentation */
@@ -18,6 +20,7 @@ char* clean_multiple_whitespaces(char* str); /* TODO: Add documentation */
 char* get_string_without_whitespaces(char* str); /* TODO: Add documentation */
 char* get_stripped_string(char* str); /* TODO: Add documentation */
 char* get_next_line(FILE* file, char* line); /* TODO: Add documentation */
+char* get_next_line_stripped(FILE* file, char* line); /* TODO: Add documentation */
 void write_line_to_file(FILE* file, char* line); /* TODO: Maybe change name to "append_chunk_to_file */ /* TODO: Add documentation */
 
 #endif

@@ -9,6 +9,7 @@
 #define TRUE 1 /* TODO: Add documentation */
 #define FALSE 0 /* TODO: Add documentation */
 #define is(VAR) (VAR == TRUE) /* TODO: Add documentation */
+#define is_not(VAR) (VAR == FALSE) /* TODO: Add documentation */
 #define isSpace(CHAR) (CHAR == ' ' || CHAR == '\t') /* TODO: Add documentation */
 
 typedef struct Allocator *Allocator_t; /* TODO: Add documentation */
@@ -23,8 +24,11 @@ Table_t create_table(); /* TODO: Add documentation */
 Pair_t create_pair(char* key, char* value); /* TODO: Add documentation */
 LinkedList_t create_linked_list(); /* TODO: Add documentation */
 Node_t create_node(char* value); /* TODO: Add documentation */
+char* get_node_value(Node_t node);  /* TODO: Add documentation */
+Node_t get_next_node(Node_t node);  /* TODO: Add documentation */
 void add_to_list(Node_t node, LinkedList_t list); /* TODO: Add documentation */
 void print_list(LinkedList_t list); /* TODO: delete this */
+Node_t get_head(LinkedList_t list); /* TODO: Add documentation */
 void* allocate(int size_of); /* TODO: Add documentation */
 void free_all(); /* TODO: Add documentation */
 void free_all_and_allocator(); /* TODO: Add documentation */

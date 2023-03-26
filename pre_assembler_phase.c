@@ -4,7 +4,7 @@
 int pre_assembler(char** files_list) {
     int i;
 
-    for (i = 0; i < strlen((const char *) files_list); i++) { /* TODO: rewrite this */
+    for (i = 0; i < 1; i++) { /* TODO: rewrite this */
         run_pre_assembler_on_file(files_list[i]);
     }
 
@@ -17,19 +17,22 @@ int run_pre_assembler_on_file(char* file_name) {
     FILE *source_file, *dest_file;
     Table_t macro_table;
 
+    printf("Running assembler on %s\n", file_name);
     source_file = fopen(concatenate_strings(file_name, INPUT_SUFFIX), READ);
-    dest_file = fopen(concatenate_strings(file_name, INPUT_SUFFIX), WRITE);
+    dest_file = fopen(concatenate_strings(file_name, OUTPUT_SUFFIX), WRITE);
 
     macro_table = create_table();
 
-    line = get_next_line(source_file, line);
+    line = get_next_line_stripped(source_file, line);
     while (line[strlen(line) - 1] != EOF) {  /* TODO: rewrite this */
-        line = get_next_line(source_file, line);
         if (is_start_of_macro_definition(line))
             add_macro(source_file, line, macro_table);
         else
             write_line_to_expanded_file(dest_file, line);
+        line = get_next_line_stripped(source_file, line);
     }
+
+    printf("No longer in while, last line is %s\n", line);
 
     fclose(source_file);
     fclose(dest_file);

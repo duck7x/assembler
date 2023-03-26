@@ -3,11 +3,17 @@
 Allocator_t global_allocator;
 
 int main(void) {
+    /* TODO: Change file list to linked list */
+    char *file = "test";
+    char *file_list[1];
     global_allocator = create_allocator();
+    file_list[0] = file;
 
     printf("This is the main assembler!\n");
-    /*pre_assembler();*/
+    pre_assembler(file_list);
     assembler_phase();
+
+    return 0;
 
     printf("-----------Testing-----------\n");  /* TODO: delete this */
     testing();  /* TODO: delete this*/
@@ -24,12 +30,11 @@ void testing(void) {
     char *str5 = "  T i m   o   n           ";
     char *str6 = "Timmy";
     char *luna = "luna";
-    char *line;
+    char *line = "";
     Table_t t;
     LinkedList_t list;
     Node_t node;
     FILE *file;
-    int i;
 
     printf("This is a test\n");
 
@@ -104,11 +109,11 @@ void testing(void) {
     fclose(file);
 
     file = fopen(concatenate_strings("pumba", SUFFIX), "r");
-    line = get_next_line(file, line);
+    line = get_next_line_stripped(file, line);
     printf("-----after cleaning file-----\n");
     while (line[strlen(line) - 1] != EOF) {
-        printf("%s", clean_multiple_whitespaces(line));
-        line = get_next_line(file, line);
+        printf("%s", line);
+        line = get_next_line_stripped(file, line);
     }
     printf("-----end of file------\n");
     fclose(file);
