@@ -14,7 +14,7 @@ int is_start_of_macro_definition(char* line) {
 }
 
 /* TODO: Write this */
-/*  The function checks if the given line is a beginning of a macro definition
+/*  The function checks if the given line is an ending of a macro definition
     using starts_with from general_functions */
 int is_end_of_macro_definition(char* line) {
     if (starts_with(line, MACRO_DEFINITION_SUFFIX)) {
@@ -34,41 +34,44 @@ void add_macro(FILE *file, char* line, Table_t mcr_table) {
 
     line_split = split_string(line, SPACE);
     mcr_name = get_node_value(get_next_node(get_head(line_split)));
+    /* TODO: Ensure legal macro name and handle error if not */
     line = get_next_line(file, line);
     mcr_content = create_linked_list();
 
-    printf("Adding macro!\n");
+    /*printf("Adding macro!\n"); *//* TODO: delete this */
 
     /* TODO: might need to support one liners */
     while (is_not(is_end_of_macro_definition(line))) {
-        printf("Adding line [%s] to list\n", line);
         /* Add to current macro */
         add_to_list(create_node(line), mcr_content);
         line = get_next_line(file, line);
     }
 
-    printf("==============\n");
-    printf("Macro [%s] is:\n", mcr_name);
-    print_list(mcr_content);
-    printf("==============\n");
+    /*printf("==============\n"); *//* TODO: delete this *//*
+    printf("Macro [%s] is:\n", mcr_name); *//* TODO: delete this *//*
+    print_list(mcr_content); *//* TODO: delete this *//*
+    printf("==============\n"); *//* TODO: delete this *//*
+    printf("Macro as string: [%s]\n", get_list_as_string(mcr_content));*/
 
     /* Add to macro table */
-    /*add_to_table_if_not_exists(mcr_table, mcr_name, mcr_content);*/ /* TODO: Fix this */
+    add_to_table_if_not_exists(mcr_table, mcr_name, get_list_as_string(mcr_content));
+}
+
+/* TODO: Add documentation */
+int is_an_existing_macro(char* mcr_name, Table_t macro_table) {
+    if (get_value_from_table(macro_table, mcr_name) == NULL)
+        return FALSE;
+    return TRUE;
 }
 
 /* TODO: Write this */
 /* TODO: Add documentation */
-int is_an_existing_macro(char* line) {
-    return 0;
+void write_existing_macro(char* macro, FILE *file, Table_t macro_table) {
+    write_line_to_file(file, get_value_from_table(macro_table, macro)); /* TODO: Not line, more like "chunk" */
 }
 
 /* TODO: Write this */
 /* TODO: Add documentation */
 int is_legal_macro_name(char* name) {
     return 0;
-}
-
-/* TODO: Write this */
-/* TODO: Add documentation */
-void write_existing_macro(char* macro, FILE *file) {
 }

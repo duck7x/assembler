@@ -28,6 +28,7 @@ char* get_node_value(Node_t node);  /* TODO: Add documentation */
 Node_t get_next_node(Node_t node);  /* TODO: Add documentation */
 void add_to_list(Node_t node, LinkedList_t list); /* TODO: Add documentation */
 void print_list(LinkedList_t list); /* TODO: delete this */
+char* get_list_as_string(LinkedList_t list); /* TODO: Add documentation */
 Node_t get_head(LinkedList_t list); /* TODO: Add documentation */
 void* allocate(int size_of); /* TODO: Add documentation */
 void free_all(); /* TODO: Add documentation */
@@ -36,7 +37,7 @@ char* copy_string(char* str);  /* TODO: maybe move to gf */ /* TODO: Add documen
 char* copy_substring(char* str, int start, int end);  /* TODO: maybe move to gf */ /* TODO: Add documentation */
 char* concatenate_strings(char* first, char* second);  /* TODO: maybe move to gf */ /* TODO: Add documentation */
 char* append_char_to_string(char* str, int c);  /* TODO: maybe move to gf */ /* TODO: Add documentation */
-char* get_value(Table_t t, char* key); /* TODO: Add documentation */
+char* get_value_from_table(Table_t t, char* key); /* TODO: Add documentation */
 void add_to_table(Table_t t, char* key, char* value); /* TODO: Add documentation */
 void add_to_table_if_not_exists(Table_t t, char* key, char* value); /* TODO: Add documentation */
 

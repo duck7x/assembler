@@ -17,7 +17,7 @@ int run_pre_assembler_on_file(char* file_name) {
     FILE *source_file, *dest_file;
     Table_t macro_table;
 
-    printf("Running assembler on %s\n", file_name);
+    printf("Running pre-assembler on %s\n", file_name); /* TODO: delete this */
     source_file = fopen(concatenate_strings(file_name, INPUT_SUFFIX), READ);
     dest_file = fopen(concatenate_strings(file_name, OUTPUT_SUFFIX), WRITE);
 
@@ -28,11 +28,11 @@ int run_pre_assembler_on_file(char* file_name) {
         if (is_start_of_macro_definition(line))
             add_macro(source_file, line, macro_table);
         else
-            write_line_to_expanded_file(dest_file, line);
+            write_line_to_expanded_file(dest_file, line, macro_table);
         line = get_next_line_stripped(source_file, line);
     }
 
-    printf("No longer in while, last line is %s\n", line);
+    printf("No longer in while, last line is %s\n", line); /* TODO: delete this */
 
     fclose(source_file);
     fclose(dest_file);
@@ -41,10 +41,22 @@ int run_pre_assembler_on_file(char* file_name) {
 }
 
 /* TODO: Add documentation */
-void write_line_to_expanded_file(FILE *dest_file, char* line) {
+void write_line_to_expanded_file(FILE *dest_file, char* line, Table_t macro_table) {
     /* TODO: should go through all words in the line, use split and loop it */
-    if (is_an_existing_macro(line))
-        write_existing_macro(line, dest_file);
-    else
-        write_line_to_file(dest_file, line); /* TODO: Not line, more like "chunk" */
+    LinkedList_t line_split;
+    Node_t current_word;
+
+    line_split = split_string(line, SPACE);
+    current_word = get_head(line_split);
+
+    while(current_word != NULL) {
+        /* TODO: Maybe combine those two functions to one */
+        if (get_node_value(current_word) != get_node_value(get_head(line_split)))
+            fputc(SPACE, dest_file);
+        if (is_an_existing_macro(get_node_value(current_word), macro_table))
+            write_existing_macro(get_node_value(current_word), dest_file, macro_table);
+        else
+            write_line_to_file(dest_file, get_node_value(current_word)); /* TODO: Not line, more like "chunk" */
+        current_word = get_next_node(current_word);
+    }
 }

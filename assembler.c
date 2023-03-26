@@ -9,10 +9,11 @@ int main(void) {
     global_allocator = create_allocator();
     file_list[0] = file;
 
-    printf("This is the main assembler!\n");
+    printf("This is the main assembler!\n"); /* TODO: delete this */
     pre_assembler(file_list);
     assembler_phase();
 
+    free_all_and_allocator();
     return 0;
 
     printf("-----------Testing-----------\n");  /* TODO: delete this */
@@ -47,14 +48,14 @@ void testing(void) {
 
     t = create_table();
 
-    printf("Searching for %s in t: %s\n", str, get_value(t, str));
+    printf("Searching for %s in t: %s\n", str, get_value_from_table(t, str));
 
     add_to_table_if_not_exists(t, str, str2);
     add_to_table_if_not_exists(t, str2, str);
     add_to_table_if_not_exists(t, str2, str);
 
-    printf("Searching for %s in t: %s\n", str, get_value(t, str));
-    printf("Searching for %s in t: %s\n", str2, get_value(t, str2));
+    printf("Searching for %s in t: %s\n", str, get_value_from_table(t, str));
+    printf("Searching for %s in t: %s\n", str2, get_value_from_table(t, str2));
 
     printf("First / in %s is %d\n", str4, get_index_till_delimiter(str4, '/'));
 

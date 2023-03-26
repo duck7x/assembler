@@ -1,5 +1,7 @@
 #include "general_functions.h"
 
+#define MAX_LINE_LENGTH 80 /* TODO: Add documentation */
+
 /* TODO: Add documentation */
 int starts_with(char *str, char *prefix) {
     if (strncmp(prefix, str, strlen(prefix)) == 0)
@@ -130,5 +132,5 @@ char* get_next_line_stripped(FILE* file, char* line) {
 /* TODO: Add documentation */
 /* TODO: write this */
 void write_line_to_file(FILE* file, char* line) {
-    printf("Writing [ %s ] to file! (Not really)\n", line);
+    fputs(line, file);
 }

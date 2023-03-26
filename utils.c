@@ -110,6 +110,19 @@ void print_list(LinkedList_t list) {
 }
 
 /* TODO: Add documentation */
+char* get_list_as_string(LinkedList_t list) {
+    Node_t node;
+    int i;
+    char* list_as_string = "";
+    node = list->head;
+    for (i = 0; i < list->list_length; i++) {
+        list_as_string = (concatenate_strings(list_as_string, node->value));
+        node = node->next;
+    }
+    return list_as_string;
+}
+
+/* TODO: Add documentation */
 Node_t get_head(LinkedList_t list) {
     return list->head;
 }
@@ -202,7 +215,7 @@ char* append_char_to_string(char* str, int c) {
 }
 
 /* TODO: Add documentation */
-char* get_value(Table_t t, char* key) {
+char* get_value_from_table(Table_t t, char* key) {
     int i;
     for (i=0; i < t->number_of_pairs; i++) {
         if (!strcmp(t->pair_table[i]->key, key)) {
@@ -221,7 +234,7 @@ void add_to_table(Table_t t, char* key, char* value) {
 
 /* TODO: Add documentation */
 void add_to_table_if_not_exists(Table_t t, char* key, char* value) {
-    if (get_value(t, key)) {
+    if (get_value_from_table(t, key)) {
         return;  /* TODO: Handle better */
     }
     add_to_table(t, key, value);
