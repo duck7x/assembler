@@ -1,6 +1,5 @@
 #include "general_functions.h"
 
-#define MAX_LINE_LENGTH 80 /* TODO: Add documentation */
 
 /* TODO: Add documentation */
 int starts_with(char *str, char *prefix) {
@@ -44,30 +43,30 @@ LinkedList_t split_string(char* str, char delimiter) {
 /* Replaces all spaces (including tabs!) with a single space! */
 char* clean_multiple_whitespaces(char* str) {
     int i;
-    int str_len = strlen(str);
-    char* cleaned_str;
+    /*char* cleaned_str;*/
     int cleaned_str_index = 0;
     int following_space = FALSE;
 
-    cleaned_str = copy_string(str);
-
-    for (i = 0; i < str_len; i++) {
+    /*cleaned_str = copy_string(str);*/
+    i = 0;
+    while (str[i] != '\0') {
         if (isSpace(str[i])) {
             if (!is(following_space)) {
                 following_space = TRUE;
-                cleaned_str[cleaned_str_index] = SPACE;
+                str[cleaned_str_index] = SPACE;
                 cleaned_str_index++;
             }
         } else {
             following_space = FALSE;
-            cleaned_str[cleaned_str_index] = str[i];
+            str[cleaned_str_index] = str[i];
             cleaned_str_index++;
         }
+        i++;
     }
 
-    cleaned_str[cleaned_str_index] = '\0';
+    str[cleaned_str_index] = '\0';
 
-    return cleaned_str;
+    return str;
 
 }
 
@@ -103,29 +102,19 @@ char* get_stripped_string(char* str) {
     return copy_substring(str, first_char, last_char);
 }
 
+/* TODO: delete this */
 /* TODO: Add documentation */
-/* TODO: Make this better without allocating so much */
-/* TODO: Adding EOF to string is bad, don't do it, it causes ? to be printed */
 char* get_next_line(FILE* file, char* line) {
-    int c;
-    line = copy_substring(line, 0, 0);
-    while (((c = getc(file)) != NEWLINE) && (c != EOF)) {
-        line = append_char_to_string(line, c);
-    }
-    line = append_char_to_string(line, c);
+    fscanf(file, "%s", line);
     return line;
 }
 
+/* TODO: delete this */
 /* TODO: Add documentation */
 /* TODO: Make this better without allocating so much */
 /* TODO: Adding EOF to string is bad, don't do it, it causes ? to be printed */
 char* get_next_line_stripped(FILE* file, char* line) {
-    int c;
-    line = copy_substring(line, 0, 0);
-    while (((c = getc(file)) != NEWLINE) && (c != EOF)) {
-        line = append_char_to_string(line, c);
-    }
-    line = append_char_to_string(line, c);
+    line = get_next_line(file, line);
     return clean_multiple_whitespaces(line);
 }
 

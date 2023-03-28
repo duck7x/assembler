@@ -9,7 +9,7 @@ int main(void) {
     global_allocator = create_allocator();
     file_list[0] = file;
 
-    printf("This is the main assembler!\n"); /* TODO: delete this */
+    printf("This is the main assembler!\n");  /*TODO: delete this*/
     pre_assembler(file_list);
     assembler_phase();
 
@@ -31,12 +31,13 @@ void testing(void) {
     char *str5 = "  T i m   o   n           ";
     char *str6 = "Timmy";
     char *luna = "luna";
-    char *line = "";
+    char *line;
     Table_t t;
     LinkedList_t list;
     Node_t node;
     FILE *file;
 
+    line = (char *)allocate(sizeof(char) * MAX_LINE_LENGTH);
     printf("This is a test\n");
 
     printf("These are our strings!\n");
@@ -90,31 +91,31 @@ void testing(void) {
     printf("Now sixth string is %s\n", str6);
 
     file = fopen(concatenate_strings(luna, SUFFIX), "r");
-    line = get_next_line(file, line);
+    /*line = get_next_line(file, line);*/
     printf("-----reading file-----\n");
-    while (line[strlen(line) - 1] != EOF) {
-        printf("%s", line);
-        line = get_next_line(file, line);
+    while (ReadLine(file, line) != EOF) {
+        printf("%s\n", line);
+        /*line = get_next_line(file, line);*/
     }
     printf("-----end of file------\n");
     fclose(file);
 
     file = fopen(concatenate_strings("pumba", SUFFIX), "r");
-    line = get_next_line(file, line);
+    /*line = get_next_line(file, line);*/
     printf("-----before cleaning file-----\n");
-    while (line[strlen(line) - 1] != EOF) {
-        printf("%s", line);
-        line = get_next_line(file, line);
+    while (ReadLine(file, line) != EOF) {
+        printf("%s\n", line);
+        /*line = get_next_line(file, line);*/
     }
     printf("-----end of file------\n");
     fclose(file);
 
     file = fopen(concatenate_strings("pumba", SUFFIX), "r");
-    line = get_next_line_stripped(file, line);
+    /*line = get_next_line_stripped(file, line);*/
     printf("-----after cleaning file-----\n");
-    while (line[strlen(line) - 1] != EOF) {
-        printf("%s", line);
-        line = get_next_line_stripped(file, line);
+    while (ReadLine(file, line) != EOF) {
+        printf("%s\n", clean_multiple_whitespaces(line));
+        /*line = get_next_line_stripped(file, line);*/
     }
     printf("-----end of file------\n");
     fclose(file);

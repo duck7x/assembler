@@ -239,3 +239,16 @@ void add_to_table_if_not_exists(Table_t t, char* key, char* value) {
     }
     add_to_table(t, key, value);
 }
+
+/* TODO: delete this */
+void print_table(Table_t t) {
+    int i;
+    for (i=0; i < t->number_of_pairs; i++) {
+        print_pair(t->pair_table[i]);
+    }
+}
+
+/* TODO: delete this */
+void print_pair(Pair_t p) {
+    printf("%s -> %s\n", p->key, p->value);
+}

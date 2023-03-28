@@ -40,5 +40,7 @@ char* append_char_to_string(char* str, int c);  /* TODO: maybe move to gf */ /* 
 char* get_value_from_table(Table_t t, char* key); /* TODO: Add documentation */
 void add_to_table(Table_t t, char* key, char* value); /* TODO: Add documentation */
 void add_to_table_if_not_exists(Table_t t, char* key, char* value); /* TODO: Add documentation */
+void print_table(Table_t t); /* TODO: delete this */
+void print_pair(Pair_t p); /* TODO: delete this */
 
 #endif

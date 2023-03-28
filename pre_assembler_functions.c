@@ -8,6 +8,7 @@ void print_pre_assembler_phase(void) {
 /*  The function checks if the given line is a beginning of a macro definition
     using starts_with from general_functions */
 int is_start_of_macro_definition(char* line) {
+    /*printf("DEBUG: Is start of macro\n"); *//* TODO: delete this */
     if (starts_with(line, MACRO_DEFINITION_PREFIX))
         return TRUE;
     return FALSE;
@@ -32,19 +33,20 @@ void add_macro(FILE *file, char* line, Table_t mcr_table) {
     LinkedList_t line_split;
     LinkedList_t mcr_content;
 
-    line_split = split_string(line, SPACE);
+    /*line = (char *)allocate(sizeof(char) * MAX_LINE_LENGTH);*/
+    line_split = split_string(clean_multiple_whitespaces(line), SPACE);
     mcr_name = get_node_value(get_next_node(get_head(line_split)));
     /* TODO: Ensure legal macro name and handle error if not */
-    line = get_next_line(file, line);
     mcr_content = create_linked_list();
 
     /*printf("Adding macro!\n"); *//* TODO: delete this */
 
+    ReadLine(file, line);
     /* TODO: might need to support one liners */
     while (is_not(is_end_of_macro_definition(line))) {
         /* Add to current macro */
         add_to_list(create_node(line), mcr_content);
-        line = get_next_line(file, line);
+        ReadLine(file, line);
     }
 
     /*printf("==============\n"); *//* TODO: delete this *//*
