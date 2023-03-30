@@ -4,7 +4,7 @@
 int pre_assembler(char** files_list) {
     int i;
 
-    for (i = 0; i < 1; i++) { /* TODO: rewrite this */
+    for (i = 0; i < 2; i++) { /* TODO: rewrite this */
         run_pre_assembler_on_file(files_list[i]);
     }
 
@@ -19,7 +19,6 @@ int run_pre_assembler_on_file(char* file_name) {
 
     line = (char *)allocate(sizeof(char) * MAX_LINE_LENGTH);
 
-    printf("Running pre-assembler on %s\n", file_name); /* TODO: delete this */
     source_file = fopen(concatenate_strings(file_name, INPUT_SUFFIX), READ);
     dest_file = fopen(concatenate_strings(file_name, OUTPUT_SUFFIX), WRITE);
 
@@ -33,9 +32,6 @@ int run_pre_assembler_on_file(char* file_name) {
             write_line_to_expanded_file(dest_file, line, macro_table);
         /*line = get_next_line_stripped(source_file, line);*/
     }
-
-    printf("DEBUG: Macro table is:\n"); /* TODO: delete this */
-    print_table(macro_table);
 
     fclose(source_file);
     fclose(dest_file);

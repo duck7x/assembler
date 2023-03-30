@@ -4,14 +4,14 @@ Allocator_t global_allocator;
 
 int main(void) {
     /* TODO: Change file list to linked list */
-    char *file = "test";
-    char *file_list[1];
+    /*char *file = "test";*/
+    char *file_list[2] = {"test", "test2"};
     global_allocator = create_allocator();
-    file_list[0] = file;
+    /*file_list[0] = file;*/
 
     printf("This is the main assembler!\n");  /*TODO: delete this*/
     pre_assembler(file_list);
-    assembler_phase();
+    assembler_phase(file_list);
 
     free_all_and_allocator();
     return 0;
