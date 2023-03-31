@@ -41,6 +41,7 @@ int run_assembler_phase_1(char* file_name) {
         split_by_label = split_string(line, ':');
 
         if (get_list_length(split_by_label) > 2) {
+            /* TODO: Not necessarily true, .string "::::" is a legit line! */
             handle_error(error_list, "Invalid usage of ':'"); /* TODO: rewrite error */
         }
 
