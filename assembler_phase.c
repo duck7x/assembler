@@ -3,12 +3,12 @@
 /* TODO: Add documentation */
 int assembler_phase(char** files_list) {
     int i;
-    Table_t actions_names_table = create_action_names_table();
+    LinkedCommandList_t actions_names_list = create_action_names_list();
 
     for (i = 0; i < 2; i++) { /* TODO: rewrite this */
-        run_assembler_phase_1(files_list[i], actions_names_table);
+        run_assembler_phase_1(files_list[i], actions_names_list);
         /* TODO: Understand if phase 2 should happen even if phase 1 has errors and handle accordingly */
-        run_assembler_phase_2(files_list[i], actions_names_table); /* TODO: decide if to separate to two loops */
+        run_assembler_phase_2(files_list[i], actions_names_list); /* TODO: decide if to separate to two loops */
     }
 
     return 0;
@@ -17,7 +17,7 @@ int assembler_phase(char** files_list) {
 }
 
 /* TODO: Add documentation */
-int run_assembler_phase_1(char* file_name, Table_t action_names_table) {
+int run_assembler_phase_1(char* file_name, LinkedCommandList_t action_names_list) {
     int ic = 100, dc = 0, l = 0; /* Step 1 */
     int label_definition_flag = FALSE; /* TODO: rename this */
     char *line, *command;
@@ -75,7 +75,7 @@ int run_assembler_phase_1(char* file_name, Table_t action_names_table) {
             }
 
             command = get_node_value(get_head(split_by_space));
-            if(get_value_from_table(action_names_table, command) == NULL) {  /* Step 12 */
+            if(search_command_list(action_names_list, command) == NULL) {  /* Step 12 */
                 /* TODO: ERROR HANDLING - illegal command! */
                 return -1;
             }
@@ -109,7 +109,7 @@ int run_assembler_phase_1(char* file_name, Table_t action_names_table) {
 }
 
 /* TODO: Add documentation */
-int run_assembler_phase_2(char* file_name, Table_t action_names_table) {
+int run_assembler_phase_2(char* file_name, LinkedCommandList_t action_names_list) {
     printf("Running phase 2 of assembler on %s!\n", file_name); /* TODO: delete this */
     return 0;
 }

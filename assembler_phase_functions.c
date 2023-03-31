@@ -222,28 +222,28 @@ void print_assembler_phase(void) {
 }
 
 /* TODO: Add documentation */
-Table_t create_action_names_table() {
-    Table_t actions_names_table;
+LinkedCommandList_t create_action_names_list() {
+    LinkedCommandList_t actions_names_list;
 
-    actions_names_table = create_table();
-    add_to_table(actions_names_table, "mov", "0");
-    add_to_table(actions_names_table, "cmp", "1");
-    add_to_table(actions_names_table, "add", "2");
-    add_to_table(actions_names_table, "sub", "3");
-    add_to_table(actions_names_table, "not", "4");
-    add_to_table(actions_names_table, "clr", "5");
-    add_to_table(actions_names_table, "lea", "6");
-    add_to_table(actions_names_table, "inc", "7");
-    add_to_table(actions_names_table, "dec", "8");
-    add_to_table(actions_names_table, "jmp", "9");
-    add_to_table(actions_names_table, "bne", "10");
-    add_to_table(actions_names_table, "red", "11");
-    add_to_table(actions_names_table, "prn", "12");
-    add_to_table(actions_names_table, "jsr", "13");
-    add_to_table(actions_names_table, "rts", "14");
-    add_to_table(actions_names_table, "stop", "15");
+    actions_names_list = create_linked_command_list();
+    add_to_commands_list(create_command_node("mov", "0", 2, "-1", "-1"), actions_names_list);
+    add_to_commands_list(create_command_node("cmp", "1", 2, "-1", "-1"), actions_names_list);
+    add_to_commands_list(create_command_node("add", "2", 2, "-1", "-1"), actions_names_list);
+    add_to_commands_list(create_command_node("sub", "3", 2, "-1", "-1"), actions_names_list);
+    add_to_commands_list(create_command_node("not", "4", 1, "-1", "-1"), actions_names_list);
+    add_to_commands_list(create_command_node("clr", "5", 1, "-1", "-1"), actions_names_list);
+    add_to_commands_list(create_command_node("lea", "6", 2, "-1", "-1"), actions_names_list);
+    add_to_commands_list(create_command_node("inc", "7", 1, "-1", "-1"), actions_names_list);
+    add_to_commands_list(create_command_node("dec", "8", 1, "-1", "-1"), actions_names_list);
+    add_to_commands_list(create_command_node("jmp", "9", 1, "-1", "-1"), actions_names_list);
+    add_to_commands_list(create_command_node("bne", "10", 1, "-1", "-1"), actions_names_list);
+    add_to_commands_list(create_command_node("red", "11", 1, "-1", "-1"), actions_names_list);
+    add_to_commands_list(create_command_node("prn", "12", 1, "-1", "-1"), actions_names_list);
+    add_to_commands_list(create_command_node("jsr", "13", 1, "-1", "-1"), actions_names_list);
+    add_to_commands_list(create_command_node("rts", "14", 0, "-1", "-1"), actions_names_list);
+    add_to_commands_list(create_command_node("stop", "15", 0, "-1", "-1"), actions_names_list);
 
-    return actions_names_table;
+    return actions_names_list;
 }
 
 /* TODO: Add documentation */

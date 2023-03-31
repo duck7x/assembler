@@ -45,7 +45,7 @@ CommandNode_t search_command_list(LinkedCommandList_t list, char* command); /* T
 void print_commands_list(LinkedCommandList_t list); /* TODO: Add documentation */
 void print_labels_list(LabelsLinkedList_t list); /* TODO: delete this */
 void print_assembler_phase(void); /* TODO: delete this */
-Table_t create_action_names_table(); /* TODO: Add documentation */
+LinkedCommandList_t create_action_names_list(); /* TODO: Add documentation */
 void handle_error(LinkedList_t error_list, char *error_message); /* TODO: Add documentation */
 int starts_with_label(LinkedList_t split_line); /* TODO: Add documentation */
 int is_data_storage(char *line); /* TODO: Add documentation */
