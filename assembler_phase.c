@@ -42,13 +42,12 @@ int run_assembler_phase_1(char* file_name) {
             /* Do step 7 */
         } else if (is_extern_or_entry(line)) { /* Step 8 */
             if (is_extern(line)) { /* Step 9 */
-                /* Do step 9 */
                 /* TODO: Throw warning if label */
-                add_label(labels_list, line, DATA_TYPE, EXTERN_DEFAULT_VALUE);
+                add_label(labels_list, line, EXTERN_TYPE, EXTERN_DEFAULT_VALUE);
             }
         } else {
             if(is(label_definition_flag)) { /* Step 11 */
-                /* Do step 11 */
+                add_label(labels_list, line, CODE_TYPE, ic);
             }
             /* Do step 12 */
             /* Do step 13 */
@@ -63,6 +62,7 @@ int run_assembler_phase_1(char* file_name) {
         return -1;
     }
 
+    /* Do step 17 */
     /* TODO: STEP 17 */
 
     return 0;

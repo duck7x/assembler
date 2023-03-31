@@ -128,7 +128,7 @@ void add_label(LabelsLinkedList_t labels_list, char *line, char *type, int value
     char *label_name = ""; /* TODO: Fix this */
     LinkedList_t split_line = split_string(line, SPACE);
     /* TODO: if there's time - change to switch case */
-    if (StringsEqual(type, DATA_TYPE)) {
+    if (StringsEqual(type, DATA_TYPE) || StringsEqual(type, CODE_TYPE)) {
         label_name = get_node_value(get_head(split_line));
     } else if (StringsEqual(type,EXTERN_TYPE)) {
         /* TODO: ERROR HANDLING - If there's more than one, throw error! */

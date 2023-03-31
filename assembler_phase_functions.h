@@ -11,7 +11,8 @@
 #define ENTRY_PREFIX ".entry" /* TODO: Add documentation */
 #define DATA_TYPE "data" /* TODO: Add documentation */
 #define EXTERN_TYPE "extern" /* TODO: Add documentation */
-#define EXTERN_DEFAULT_VALUE -1 /* TODO: Add documentation */
+#define EXTERN_DEFAULT_VALUE 0 /* TODO: Add documentation */
+#define CODE_TYPE "code" /* TODO: Add documentation */
 
 typedef struct LabelNode *LabelNode_t; /* TODO: Add documentation */
 typedef struct LinkedLabelsList *LabelsLinkedList_t; /* TODO: Add documentation */
