@@ -127,3 +127,9 @@ int is_extern(char *line) {
         return TRUE;
     return FALSE;
 }
+
+/* TODO: Add documentation */
+void add_data_label(char *label_name, int dc, LabelsLinkedList_t labels_table) {
+    /* TODO: ERROR HANDLING - Check if labels exists already, and if so, error! */
+    add_to_labels_list(create_label_node(label_name, "data", dc), labels_table);
+}

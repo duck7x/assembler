@@ -18,7 +18,7 @@ int assembler_phase(char** files_list) {
 int run_assembler_phase_1(char* file_name) {
     int ic = 100, dc = 100; /* Step 1 */
     int err = 0; /* TODO: Handle errors with linked list */
-    int label = FALSE; /* TODO: rename this */
+    int label_definition_flag = FALSE; /* TODO: rename this */
     char *line;
     FILE *source_file, *dest_file;
     Table_t labels_table;
@@ -33,11 +33,11 @@ int run_assembler_phase_1(char* file_name) {
     while (ReadLine(source_file, line) != EOF) {  /* TODO: rewrite this */ /* Step 2 */
         line = clean_multiple_whitespaces(line);
         if (starts_with_label(line)) { /* Step 3 */
-            label = TRUE; /* Step 4 */
+            label_definition_flag = TRUE; /* Step 4 */
         }
         if (is_data_storage(line)) { /* Step 5 */
-            if (is(label)) { /* Step 6 */
-                add_label(dc);
+            if (is(label_definition_flag)) { /* Step 6 */
+                add_data_label(label_name, dc, labels_table);
             }
             /* Do step 7 */
         } else if (is_extern_or_entry(line)) { /* Step 8 */
@@ -45,7 +45,7 @@ int run_assembler_phase_1(char* file_name) {
                 /* Do step 9 */
             }
         } else {
-            if(is(label)) { /* Step 11 */
+            if(is(label_definition_flag)) { /* Step 11 */
                 /* Do step 11 */
             }
             /* Do step 12 */
@@ -57,7 +57,7 @@ int run_assembler_phase_1(char* file_name) {
     err = line[0]; /* TODO: delete this */
 
     if (err != 0) { /* TODO: WRITE THIS AND HANDLE ERRORS PROPERLY */ /* Step 16 */
-        printf("ERROR: Found errors in file, stopping assembler");
+        printf("ERROR: Found errors in file, stopping assembler\n");
         return -1;
     }
 

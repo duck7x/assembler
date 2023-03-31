@@ -29,4 +29,5 @@ int is_data_storage(char *line); /* TODO: Add documentation */
 int add_label(int dc); /* TODO: Add documentation */
 int is_extern_or_entry(char *line); /* TODO: Add documentation */
 int is_extern(char *line); /* TODO: Add documentation */
+void add_data_label(char *label_name, int dc, LabelsLinkedList_t labels_table);  /* TODO: Add documentation */
 #endif
