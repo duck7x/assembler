@@ -162,10 +162,51 @@ void update_symbol_table(LabelsLinkedList_t symbol_table, int ic) {
     }
 }
 
-/* TODO: Write this */
-/* TODO: Add documentation */
+/* TODO: Rewrite this */
+/* TODO: Add documentation (use my_rotate as reference, maman 11 I think) */
+/* 2’s complement, 14 bits */
 char* binary(char *string) {
-    retuen 0;
+    char binary_array[BITS_AMOUNT];
+    int num, i, num_binary_length = 0, temp, negative;
+
+    if (string[0] == MINUS) {
+        negative = TRUE;
+        num = atoi(copy_substring(string, 1, strlen(string)));
+    } else {
+        num = atoi(string);
+    }
+
+    for (i = 0; i < BITS_AMOUNT; i++) {
+        binary_array[i] = '0';
+    }
+
+    i = num;
+    while (i != 0){
+        num_binary_length ++;
+        i /= 2;
+    }
+
+    for (i = num_binary_length; i > 0; i--){
+        temp = num / pow(2, i - 1);
+        binary_array[BITS_AMOUNT - i] = '0' + (temp % 2);
+    }
+
+    if (is(negative)) {
+        for (i = 0; i < BITS_AMOUNT; i ++) {
+            binary_array[i] = binary_array[i] == '0' ? '1' : '0';
+        }
+
+        for (i = BITS_AMOUNT - 1; i >= 0; i--) {
+            if (binary_array[i] == '1')
+                binary_array[i] = '0';
+            else {
+                binary_array[i] = '1';
+                break;
+            }
+        }
+    }
+
+    return copy_string(binary_array);
 }
 
 /* TODO: Write this */
@@ -176,7 +217,7 @@ int handle_data_type(char *line, LinkedList_t memory_list) {
     LinkedList_t split_data;
 
     data = copy_substring(line, 0, 5);
-    
+
     if (!isSpace(data[0])) {
         /* TODO: ERROR HANDLING - this is an error! */
         return 0;

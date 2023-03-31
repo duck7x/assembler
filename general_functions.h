@@ -14,6 +14,7 @@
 #define MAX_LINE_LENGTH 80 /* TODO: Add documentation */
 #define ReadLine(FILE, LINE) fscanf(FILE, "%[^\n] ", LINE) /* TODO: Add documentation */
 #define StringsEqual(FIRST, SECOND) strcmp(FIRST, SECOND) == 0 /* TODO: Add documentation */
+#define BITS_AMOUNT 14 /* TODO: Add documentation */ /* TODO: rename this */
 
 
 int starts_with(char *str, char *prefix); /* TODO: Add documentation */

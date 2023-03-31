@@ -1,8 +1,8 @@
 #ifndef ASSEMBLER_PHASE_FUNCTIONS_H
 #define ASSEMBLER_PHASE_FUNCTIONS_H
 
-
 #include <stdio.h>
+#include <math.h>
 #include "general_functions.h"
 
 #define DATA_PREFIX ".data" /* TODO: Add documentation */
@@ -13,6 +13,7 @@
 #define EXTERN_TYPE "extern" /* TODO: Add documentation */
 #define EXTERN_DEFAULT_VALUE (-1) /* TODO: Add documentation */
 #define CODE_TYPE "code" /* TODO: Add documentation */
+#define MINUS '-' /* TODO: Add documentation */
 
 typedef struct LabelNode *LabelNode_t; /* TODO: Add documentation */
 typedef struct LinkedLabelsList *LabelsLinkedList_t; /* TODO: Add documentation */
