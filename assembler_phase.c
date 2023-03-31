@@ -60,7 +60,7 @@ int run_assembler_phase_1(char* file_name) {
             if (is(starts_with(relevant_line_bit, DATA_PREFIX))) {
                 dc += handle_data_type(relevant_line_bit, memory_list);
             } else {
-                handle_string_type(relevant_line_bit, memory_list);
+                dc += handle_string_type(relevant_line_bit, memory_list);
             }
         } else if (is_extern_or_entry(relevant_line_bit)) { /* Step 8 */
             if (is_extern(relevant_line_bit)) { /* Step 9 */
@@ -78,7 +78,6 @@ int run_assembler_phase_1(char* file_name) {
 
         label_definition_flag = FALSE;
         ic += 1; /* TODO: delete this */
-        dc += 1; /* TODO: delete this */
     }
 
     fclose(source_file);

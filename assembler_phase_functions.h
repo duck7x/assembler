@@ -37,7 +37,8 @@ int is_extern_or_entry(char *line); /* TODO: Add documentation */
 int is_extern(char *line); /* TODO: Add documentation */
 void add_label(LabelsLinkedList_t labels_list, LinkedList_t split_line, char *type, int value); /* TODO: Add documentation */
 void update_symbol_table(LabelsLinkedList_t symbol_table, int ic); /* TODO: Add documentation */
+char* dec_to_binary(int num); /* TODO: Add documentation */
 char* binary(char *string); /* TODO: Add documentation */
 int handle_data_type(char *line, LinkedList_t memory_list); /* TODO: Add documentation */
-void handle_string_type(char *line, LinkedList_t memory_list); /* TODO: Add documentation */
+int handle_string_type(char *line, LinkedList_t memory_list); /* TODO: Add documentation */
 #endif

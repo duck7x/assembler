@@ -164,23 +164,16 @@ void update_symbol_table(LabelsLinkedList_t symbol_table, int ic) {
 
 /* TODO: Rewrite this */
 /* TODO: Add documentation (use my_rotate as reference, maman 11 I think) */
-/* 2’s complement, 14 bits */
-char* binary(char *string) {
+char* dec_to_binary(int num) {
     char binary_array[BITS_AMOUNT];
-    int num, i, num_binary_length = 0, temp, negative = FALSE;
-
-    if (string[0] == MINUS) {
-        negative = TRUE;
-        num = atoi(copy_substring(string, 1, strlen(string)));
-    } else {
-        num = atoi(string);
-    }
+    int i, num_binary_length = 0, temp;
 
     for (i = 0; i < BITS_AMOUNT; i++) {
         binary_array[i] = '0';
     }
 
     i = num;
+
     while (i != 0){
         num_binary_length ++;
         i /= 2;
@@ -190,6 +183,25 @@ char* binary(char *string) {
         temp = num / pow(2, i - 1);
         binary_array[BITS_AMOUNT - i] = '0' + (temp % 2);
     }
+
+    return copy_string(binary_array);
+}
+
+/* TODO: Rewrite this */
+/* TODO: Add documentation (use my_rotate as reference, maman 11 I think) */
+/* 2’s complement, 14 bits */
+char* binary(char *string) {
+    char *binary_array;
+    int num, i, negative = FALSE;
+
+    if (string[0] == MINUS) {
+        negative = TRUE;
+        num = atoi(copy_substring(string, 1, strlen(string)));
+    } else {
+        num = atoi(string);
+    }
+
+    binary_array = dec_to_binary(num);
 
     if (is(negative)) {
         for (i = 0; i < BITS_AMOUNT; i ++) {
@@ -242,7 +254,30 @@ int handle_data_type(char *line, LinkedList_t memory_list) {
 
 /* TODO: Write this */
 /* TODO: Add documentation */
-void handle_string_type(char *line, LinkedList_t memory_list) {
-    printf("TODO: Handling string type of %s\n", line);
+int handle_string_type(char *line, LinkedList_t memory_list) {
+    char *data;
+    int i;
+
+    data = copy_substring(line, 7, strlen(line));
+
+    if (!isSpace(data[0])) {
+        /* TODO: ERROR HANDLING - this is an error! */
+        return 0;
+    }
+
+    data = get_string_without_whitespaces(data);
+
+    if (data[0] != '"' || data[strlen(data) - 1] != '"') {
+        /* TODO: ERROR HANDLING - this is an error! */
+        return 0;
+    }
+
+    for (i = 1; i < strlen(data) - 1; i++) {
+        add_to_list(create_node(dec_to_binary(data[i])) ,memory_list); /* TODO: Might separate to function? */
+    }
+
+    add_to_list(create_node(dec_to_binary('\0')) ,memory_list); /* TODO: Might separate to function? */
+
+    return strlen(data) - 2;
 }
 
