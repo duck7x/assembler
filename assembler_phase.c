@@ -4,7 +4,7 @@
 int assembler_phase(char** files_list) {
     int i;
 
-    for (i = 0; i < 2; i++) { /* TODO: rewrite this */
+    for (i = 0; i < 1; i++) { /* TODO: rewrite this */
         run_assembler_phase_1(files_list[i]);
         run_assembler_phase_2(files_list[i]); /* TODO: decide if to separate to two loops */
     }
@@ -16,16 +16,16 @@ int assembler_phase(char** files_list) {
 
 /* TODO: Add documentation */
 int run_assembler_phase_1(char* file_name) {
-    int ic = 100, dc = 100; /* Step 1 */
+    int ic = 0, dc = 0, l = 0; /* Step 1 */
     int err = 0; /* TODO: Handle errors with linked list */
     int label_definition_flag = FALSE; /* TODO: rename this */
     char *line;
     FILE *source_file, *dest_file;
-    LabelsLinkedList_t labels_list;
+    LabelsLinkedList_t symbol_table;
 
     printf("Running phase 1 of assembler on %s!\n", file_name); /* TODO: delete this */
 
-    labels_list = create_linked_labels_list();
+    symbol_table = create_linked_labels_list();
     line = (char *)allocate(sizeof(char) * MAX_LINE_LENGTH);
     source_file = fopen(concatenate_strings(file_name, POST_PRE_ASSEMBLER_SUFFIX), READ);
     dest_file = fopen(concatenate_strings(file_name, ".temp"), WRITE);
@@ -37,33 +37,42 @@ int run_assembler_phase_1(char* file_name) {
         }
         if (is_data_storage(line)) { /* Step 5 */
             if (is(label_definition_flag)) { /* Step 6 */
-                add_label(labels_list, line, DATA_TYPE, dc);
+                add_label(symbol_table, line, DATA_TYPE, dc);
             }
             /* Do step 7 */
+            if (is(starts_with(line, DATA_PREFIX))) {
+                handle_data_type(line);
+            } else {
+                handle_string_type(line);
+            }
         } else if (is_extern_or_entry(line)) { /* Step 8 */
             if (is_extern(line)) { /* Step 9 */
                 /* TODO: Throw warning if label */
-                add_label(labels_list, line, EXTERN_TYPE, EXTERN_DEFAULT_VALUE);
+                add_label(symbol_table, line, EXTERN_TYPE, EXTERN_DEFAULT_VALUE);
             }
         } else {
             if(is(label_definition_flag)) { /* Step 11 */
-                add_label(labels_list, line, CODE_TYPE, ic);
+                add_label(symbol_table, line, CODE_TYPE, ic);
             }
             /* Do step 12 */
             /* Do step 13 */
-            /* Do step 14 */
+            ic += l; /* Step 14 */
         }
     }
 
-    err = line[0]; /* TODO: delete this */
+/*    err = line[0]; *//* TODO: delete this *//*
 
-    if (err != 0) { /* TODO: WRITE THIS AND HANDLE ERRORS PROPERLY */ /* Step 16 */
+    if (err != 0) { *//* TODO: WRITE THIS AND HANDLE ERRORS PROPERLY *//* *//* Step 16 *//*
         printf("ERROR: Found errors in file, stopping assembler\n");
         return -1;
-    }
+    }*/
 
-    /* Do step 17 */
-    /* TODO: STEP 17 */
+    /* TODO: Rename this */
+    /* TODO: Add documentation */
+    update_symbol_table(symbol_table, ic); /* Step 17 */
+
+    printf("Phase 1 ended, printing symbol table\n"); /* TODO: delete this */
+    print_labels_list(symbol_table);
 
     return 0;
 }

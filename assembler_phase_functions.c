@@ -55,6 +55,11 @@ LabelNode_t get_next_label_node(LabelNode_t node) {
 }
 
 /* TODO: Add documentation */
+void set_label_node_value(LabelNode_t node, int new_val) {
+    node->value = new_val;
+}
+
+/* TODO: Add documentation */
 void add_to_labels_list(LabelNode_t node, LabelsLinkedList_t list) {
     if (list->list_length == 0) {
         list->head = node;
@@ -135,4 +140,27 @@ void add_label(LabelsLinkedList_t labels_list, char *line, char *type, int value
         label_name = get_node_value(get_tail(split_line));
     }
     add_to_labels_list(create_label_node(label_name, type, value), labels_list);
+}
+
+/* TODO: Add documentation */
+void update_symbol_table(LabelsLinkedList_t symbol_table, int ic) {
+    LabelNode_t current_label = get_labels_list_head(symbol_table);
+
+    while ((current_label = get_next_label_node(current_label)) != NULL) {
+        if (StringsEqual(get_label_node_type(current_label), DATA_TYPE)) {
+            set_label_node_value(current_label, get_label_node_value(current_label) + ic);
+        }
+    }
+}
+
+/* TODO: Write this */
+/* TODO: Add documentation */
+void handle_data_type(char *line) {
+    printf("Handling data type of %s\n", line);
+}
+
+/* TODO: Write this */
+/* TODO: Add documentation */
+void handle_string_type(char *line) {
+    printf("Handling string type of %s\n", line);
 }
