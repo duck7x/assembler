@@ -4,7 +4,7 @@
 int pre_assembler(char** files_list) {
     int i;
 
-    for (i = 0; i < 1; i++) { /* TODO: rewrite this */
+    for (i = 0; i < 2; i++) { /* TODO: rewrite this */
         run_pre_assembler_on_file(files_list[i]);
     }
 

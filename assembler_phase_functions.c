@@ -100,6 +100,31 @@ void print_assembler_phase(void) {
 }
 
 /* TODO: Add documentation */
+Table_t create_action_names_table() {
+    Table_t actions_names_table;
+
+    actions_names_table = create_table();
+    add_to_table(actions_names_table, "mov", "0");
+    add_to_table(actions_names_table, "cmp", "1");
+    add_to_table(actions_names_table, "add", "2");
+    add_to_table(actions_names_table, "sub", "3");
+    add_to_table(actions_names_table, "not", "4");
+    add_to_table(actions_names_table, "clr", "5");
+    add_to_table(actions_names_table, "lea", "6");
+    add_to_table(actions_names_table, "inc", "7");
+    add_to_table(actions_names_table, "dec", "8");
+    add_to_table(actions_names_table, "jmp", "9");
+    add_to_table(actions_names_table, "bne", "10");
+    add_to_table(actions_names_table, "red", "11");
+    add_to_table(actions_names_table, "prn", "12");
+    add_to_table(actions_names_table, "jsr", "13");
+    add_to_table(actions_names_table, "rts", "14");
+    add_to_table(actions_names_table, "stop", "15");
+
+    return actions_names_table;
+}
+
+/* TODO: Add documentation */
 void handle_error(LinkedList_t error_list, char *error_message) {
     /* TODO: Might not need a list if we print as we go, maybe a flag is enough and this whole thing is redundant */
     add_to_list(create_node(error_message), error_list);
@@ -281,3 +306,8 @@ int handle_string_type(char *line, LinkedList_t memory_list) {
     return strlen(data) - 2;
 }
 
+/* TODO: write this */
+/* TODO: Add documentation */
+int handle_first_word(LinkedList_t split_by_space, char *command, LinkedList_t memory_list) {
+    return 0;
+}

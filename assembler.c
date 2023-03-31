@@ -6,8 +6,8 @@ int main(void) {
     /* TODO: Change file list to linked list */
     /* TODO: Get file list from input */
 
-    char *file_list[1] = {"test2"}; /* TODO: delete this */
     /*char *file_list[2] = {"test", "test2"};*/ /* TODO: delete this */
+    char *file_list[2] = {"test2", "test3"}; /* TODO: delete this */
     /*char *file_list[10] = {"tests/test_1", "tests/test_2", "tests/test_3", "tests/test_4", "tests/test_5", "tests/test_6", "tests/test_7", "tests/test_8", "tests/test_9", "tests/test_10"}; *//* TODO: delete this */
     global_allocator = create_allocator();
 
