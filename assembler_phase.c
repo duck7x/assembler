@@ -16,14 +16,16 @@ int assembler_phase(char** files_list) {
 
 /* TODO: Add documentation */
 int run_assembler_phase_1(char* file_name) {
-    int ic = 0, dc = 0; /* Step 1 */
+    int ic = 100, dc = 100; /* Step 1 */
     int err = 0; /* TODO: Handle errors with linked list */
     int label = FALSE; /* TODO: rename this */
     char *line;
     FILE *source_file, *dest_file;
+    Table_t labels_table;
 
     printf("Running phase 1 of assembler on %s!\n", file_name); /* TODO: delete this */
 
+    labels_table = create_table();
     line = (char *)allocate(sizeof(char) * MAX_LINE_LENGTH);
     source_file = fopen(concatenate_strings(file_name, POST_PRE_ASSEMBLER_SUFFIX), READ);
     dest_file = fopen(concatenate_strings(file_name, ".temp"), WRITE);
