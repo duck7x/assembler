@@ -17,6 +17,8 @@
 
 typedef struct LabelNode *LabelNode_t; /* TODO: Add documentation */
 typedef struct LinkedLabelsList *LabelsLinkedList_t; /* TODO: Add documentation */
+typedef struct CommandNode *CommandNode_t; /* TODO: Add documentation */
+typedef struct LinkedCommandList *LinkedCommandList_t; /* TODO: Add documentation */
 
 LabelsLinkedList_t create_linked_labels_list(); /* TODO: Add documentation */
 LabelNode_t create_label_node(char* name, char* type, int value); /* TODO: Add documentation */
@@ -28,6 +30,19 @@ void set_label_node_value(LabelNode_t node, int new_val); /* TODO: Add documenta
 void add_to_labels_list(LabelNode_t node, LabelsLinkedList_t list); /* TODO: Add documentation */
 int get_labels_list_length(LabelsLinkedList_t list); /* TODO: Add documentation */
 LabelNode_t get_labels_list_head(LabelsLinkedList_t list); /* TODO: Add documentation */
+CommandNode_t create_command_node(char* command, char* code, int operands, char* source_operand_types, char* destination_operand_types); /* TODO: Add documentation */
+char* get_command_node_code(CommandNode_t node); /* TODO: Add documentation */
+char* get_command_node_command(CommandNode_t node); /* TODO: Add documentation */
+int get_command_node_operands(CommandNode_t node); /* TODO: Add documentation */
+char* get_command_node_source_operand_types(CommandNode_t node); /* TODO: Add documentation */
+char* get_command_node_destination_operand_types(CommandNode_t node); /* TODO: Add documentation */
+CommandNode_t get_next_command_node(CommandNode_t node); /* TODO: Add documentation */
+LinkedCommandList_t create_linked_command_list(); /* TODO: Add documentation */
+void add_to_commands_list(CommandNode_t node, LinkedCommandList_t list); /* TODO: Add documentation */
+int get_commands_list_length(LinkedCommandList_t list); /* TODO: Add documentation */
+CommandNode_t get_commands_list_head(LinkedCommandList_t list); /* TODO: Add documentation */
+CommandNode_t search_command_list(LinkedCommandList_t list, char* command); /* TODO: Add documentation */
+void print_commands_list(LinkedCommandList_t list); /* TODO: Add documentation */
 void print_labels_list(LabelsLinkedList_t list); /* TODO: delete this */
 void print_assembler_phase(void); /* TODO: delete this */
 Table_t create_action_names_table(); /* TODO: Add documentation */

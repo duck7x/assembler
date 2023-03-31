@@ -16,6 +16,23 @@ struct LinkedLabelsList {
 } LinkedLabelsList;
 
 /* TODO: Add documentation */
+struct CommandNode{
+    char* command;
+    char* code;
+    int operands;
+    char* source_operand_types;
+    char* destination_operand_types;
+    CommandNode_t next;
+} CommandNode;
+
+/* TODO: Add documentation */
+struct LinkedCommandList {
+    CommandNode_t head;
+    CommandNode_t tail;
+    int list_length;
+} LinkedCommandList;
+
+/* TODO: Add documentation */
 LabelsLinkedList_t create_linked_labels_list() {
     LabelsLinkedList_t list = allocate(sizeof(LinkedLabelsList));
     list->head = NULL;
@@ -79,6 +96,111 @@ int get_labels_list_length(LabelsLinkedList_t list) {
 /* TODO: Add documentation */
 LabelNode_t get_labels_list_head(LabelsLinkedList_t list) {
     return list->head;
+}
+
+/* TODO: Add documentation */
+CommandNode_t create_command_node(char* command, char* code, int operands, char* source_operand_types, char* destination_operand_types) {
+    CommandNode_t node = allocate(sizeof(CommandNode));
+
+    node->command = command;
+    node->code = code;
+    node->operands = operands;
+    node-> source_operand_types = source_operand_types;
+    node->destination_operand_types = destination_operand_types;
+    node->next = NULL;
+
+    return node;
+}
+
+/* TODO: Add documentation */
+char* get_command_node_code(CommandNode_t node) {
+    return node->code;
+}
+
+/* TODO: Add documentation */
+char* get_command_node_command(CommandNode_t node) {
+    return node->command;
+}
+
+/* TODO: Add documentation */
+int get_command_node_operands(CommandNode_t node) {
+    return node->operands;
+}
+
+/* TODO: Add documentation */
+char* get_command_node_source_operand_types(CommandNode_t node) {
+    return node->source_operand_types;
+}
+
+/* TODO: Add documentation */
+char* get_command_node_destination_operand_types(CommandNode_t node) {
+    return node->destination_operand_types;
+}
+
+/* TODO: Add documentation */
+CommandNode_t get_next_command_node(CommandNode_t node) {
+    return node->next;
+}
+
+/* TODO: Add documentation */
+LinkedCommandList_t create_linked_command_list() {
+    LinkedCommandList_t list = allocate(sizeof(LinkedLabelsList));
+    list->head = NULL;
+    list->tail = NULL;
+    list->list_length = 0;
+    return list;
+}
+
+/* TODO: Add documentation */
+void add_to_commands_list(CommandNode_t node, LinkedCommandList_t list) {
+    if (list->list_length == 0) {
+        list->head = node;
+        list->tail = node;
+    } else {
+        list->tail->next = node;
+        list->tail = node;
+    }
+    list->list_length++;
+}
+
+/* TODO: Add documentation */
+int get_commands_list_length(LinkedCommandList_t list) {
+    return list->list_length;
+}
+
+/* TODO: Add documentation */
+CommandNode_t get_commands_list_head(LinkedCommandList_t list) {
+    return list->head;
+}
+
+/* TODO: Add documentation */
+CommandNode_t search_command_list(LinkedCommandList_t list, char* command) {
+    CommandNode_t curr = get_commands_list_head(list);
+
+    while(curr != NULL) {
+        if (!strcmp(get_command_node_command(curr), command)) {
+            return curr;
+        }
+    }
+    return NULL;
+}
+
+/* TODO: delete this */
+void print_commands_list(LinkedCommandList_t list) {
+    CommandNode_t node;
+    node = get_commands_list_head(list);
+    printf("Commands list has %d items: \n", get_commands_list_length(list));
+    printf("Command\tcode\toperands\tsource_operand_types\tdestination_operand_types\n");
+    printf("------------------------\n");
+
+    while(node != NULL) {
+        printf("%s\t%s\t%d\t%s\t%s\n", get_command_node_command(node), get_command_node_code(node),
+               get_command_node_operands(node), get_command_node_source_operand_types(node),
+               get_command_node_destination_operand_types((node)));
+        printf("------------------------\n");
+        node = get_next_command_node(node);
+    }
+
 }
 
 /* TODO: DELETE THIS */
