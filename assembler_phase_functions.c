@@ -85,8 +85,9 @@ LabelNode_t get_labels_list_head(LabelsLinkedList_t list) {
 void print_labels_list(LabelsLinkedList_t list) {
     LabelNode_t node;
     node = list->head;
-    printf("Labels list has %d items: ", list->list_length);
+    printf("Labels list has %d items: \n", list->list_length);
     printf("Name\tType\tValue\n");
+    printf("------------------------\n");
     while(node != NULL) {
         printf("%s\t%s\t%d\n", node->name, node->type, node->value);
         printf("------------------------\n");
@@ -99,10 +100,10 @@ void print_assembler_phase(void) {
 }
 
 /* TODO: Add documentation */
-int starts_with_label(char *line) {
-    LinkedList_t split_line = split_string(line, ':');
-    if (get_list_length(split_line) > 1)
+int starts_with_label(LinkedList_t split_line) {
+    if (get_list_length(split_line) > 1) {
         return TRUE;
+    }
     return FALSE;
 }
 
@@ -128,10 +129,9 @@ int is_extern(char *line) {
 }
 
 /* TODO: Add documentation */
-void add_label(LabelsLinkedList_t labels_list, char *line, char *type, int value) {
+void add_label(LabelsLinkedList_t labels_list, LinkedList_t split_line, char *type, int value) {
     /* TODO: ERROR HANDLING - Check if labels exists already, and if so, error! */
     char *label_name = ""; /* TODO: Fix this */
-    LinkedList_t split_line = split_string(line, SPACE);
     /* TODO: if there's time - change to switch case */
     if (StringsEqual(type, DATA_TYPE) || StringsEqual(type, CODE_TYPE)) {
         label_name = get_node_value(get_head(split_line));

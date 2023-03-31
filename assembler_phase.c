@@ -20,6 +20,8 @@ int run_assembler_phase_1(char* file_name) {
     int err = 0; /* TODO: Handle errors with linked list */
     int label_definition_flag = FALSE; /* TODO: rename this */
     char *line;
+    char *relevant_line_bit; /* TODO: rename this is needed */
+    LinkedList_t split_by_label;
     FILE *source_file, *dest_file;
     LabelsLinkedList_t symbol_table;
 
@@ -32,33 +34,40 @@ int run_assembler_phase_1(char* file_name) {
 
     while (ReadLine(source_file, line) != EOF) {  /* TODO: rewrite this */ /* Step 2 */
         line = clean_multiple_whitespaces(line);
-        if (starts_with_label(line)) { /* Step 3 */
+        split_by_label = split_string(line, ':');
+        /* TODO: ERROR HANDLING - if split_string has more than 2 members */
+        relevant_line_bit = get_node_value(get_tail(split_by_label));
+        if (starts_with_label(split_by_label)) { /* Step 3 */
             label_definition_flag = TRUE; /* Step 4 */
         }
-        if (is_data_storage(line)) { /* Step 5 */
+        if (is_data_storage(relevant_line_bit)) { /* Step 5 */
             if (is(label_definition_flag)) { /* Step 6 */
-                add_label(symbol_table, line, DATA_TYPE, dc);
+                add_label(symbol_table, split_by_label, DATA_TYPE, dc);
             }
             /* Do step 7 */
-            if (is(starts_with(line, DATA_PREFIX))) {
-                handle_data_type(line);
+            if (is(starts_with(relevant_line_bit, DATA_PREFIX))) {
+                handle_data_type(relevant_line_bit);
             } else {
-                handle_string_type(line);
+                handle_string_type(relevant_line_bit);
             }
-        } else if (is_extern_or_entry(line)) { /* Step 8 */
-            if (is_extern(line)) { /* Step 9 */
+        } else if (is_extern_or_entry(relevant_line_bit)) { /* Step 8 */
+            if (is_extern(relevant_line_bit)) { /* Step 9 */
                 /* TODO: Throw warning if label */
-                add_label(symbol_table, line, EXTERN_TYPE, EXTERN_DEFAULT_VALUE);
+                add_label(symbol_table, split_by_label, EXTERN_TYPE, EXTERN_DEFAULT_VALUE);
             }
         } else {
             if(is(label_definition_flag)) { /* Step 11 */
-                add_label(symbol_table, line, CODE_TYPE, ic);
+                add_label(symbol_table, split_by_label, CODE_TYPE, ic);
             }
             /* Do step 12 */
             /* Do step 13 */
             ic += l; /* Step 14 */
         }
+        label_definition_flag = FALSE;
     }
+
+    fclose(source_file);
+    fclose(dest_file);
 
 /*    err = line[0]; *//* TODO: delete this *//*
 
@@ -72,7 +81,7 @@ int run_assembler_phase_1(char* file_name) {
     update_symbol_table(symbol_table, ic); /* Step 17 */
 
     printf("Phase 1 ended, printing symbol table\n"); /* TODO: delete this */
-    print_labels_list(symbol_table);
+    print_labels_list(symbol_table); /* TODO: delete this */
 
     return 0;
 }

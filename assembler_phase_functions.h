@@ -29,11 +29,11 @@ int get_labels_list_length(LabelsLinkedList_t list); /* TODO: Add documentation 
 LabelNode_t get_labels_list_head(LabelsLinkedList_t list); /* TODO: Add documentation */
 void print_labels_list(LabelsLinkedList_t list); /* TODO: delete this */
 void print_assembler_phase(void); /* TODO: delete this */
-int starts_with_label(char *line); /* TODO: Add documentation */
+int starts_with_label(LinkedList_t split_line); /* TODO: Add documentation */
 int is_data_storage(char *line); /* TODO: Add documentation */
 int is_extern_or_entry(char *line); /* TODO: Add documentation */
 int is_extern(char *line); /* TODO: Add documentation */
-void add_label(LabelsLinkedList_t labels_list, char *line, char *type, int value); /* TODO: Add documentation */
+void add_label(LabelsLinkedList_t labels_list, LinkedList_t split_line, char *type, int value); /* TODO: Add documentation */
 void update_symbol_table(LabelsLinkedList_t symbol_table, int ic); /* TODO: Add documentation */
 void handle_data_type(char *line); /* TODO: Add documentation */
 void handle_string_type(char *line); /* TODO: Add documentation */
