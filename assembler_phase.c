@@ -17,11 +17,11 @@ int assembler_phase(char** files_list) {
 
 /* TODO: Add documentation */
 int run_assembler_phase_1(char* file_name) {
-    int ic = 0, dc = 0, l = 0; /* Step 1 */
+    int ic = 100, dc = 0, l = 0; /* Step 1 */
     int label_definition_flag = FALSE; /* TODO: rename this */
     char *line;
     char *relevant_line_bit; /* TODO: rename this is needed */
-    LinkedList_t split_by_label, error_list, warning_list;
+    LinkedList_t split_by_label, error_list, warning_list, memory_list;
     FILE *source_file, *dest_file;
     LabelsLinkedList_t symbol_table;
 
@@ -29,6 +29,7 @@ int run_assembler_phase_1(char* file_name) {
 
     error_list = create_linked_list();
     warning_list = create_linked_list();
+    memory_list = create_linked_list();
     symbol_table = create_linked_labels_list();
     line = (char *)allocate(sizeof(char) * MAX_LINE_LENGTH);
     source_file = fopen(concatenate_strings(file_name, POST_PRE_ASSEMBLER_SUFFIX), READ);
@@ -57,9 +58,9 @@ int run_assembler_phase_1(char* file_name) {
             }
             /* Do step 7 */
             if (is(starts_with(relevant_line_bit, DATA_PREFIX))) {
-                handle_data_type(relevant_line_bit);
+                dc += handle_data_type(relevant_line_bit, memory_list);
             } else {
-                handle_string_type(relevant_line_bit);
+                handle_string_type(relevant_line_bit, memory_list);
             }
         } else if (is_extern_or_entry(relevant_line_bit)) { /* Step 8 */
             if (is_extern(relevant_line_bit)) { /* Step 9 */

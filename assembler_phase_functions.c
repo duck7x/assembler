@@ -108,6 +108,8 @@ void handle_error(LinkedList_t error_list, char *error_message) {
 
 /* TODO: Add documentation */
 int starts_with_label(LinkedList_t split_line) {
+    /* TODO: Ensure really a label and not just string thingie with : in it */
+    /* TODO: Ensure no space between label and :!! */
     if (get_list_length(split_line) > 1) {
         return TRUE;
     }
@@ -162,12 +164,44 @@ void update_symbol_table(LabelsLinkedList_t symbol_table, int ic) {
 
 /* TODO: Write this */
 /* TODO: Add documentation */
-void handle_data_type(char *line) {
-    printf("TODO: Handling data type of %s\n", line);
+char* binary(char *string) {
+    retuen 0;
 }
 
 /* TODO: Write this */
 /* TODO: Add documentation */
-void handle_string_type(char *line) {
+int handle_data_type(char *line, LinkedList_t memory_list) {
+    char *data, *curr_string;
+    Node_t curr_node;
+    LinkedList_t split_data;
+
+    data = copy_substring(line, 0, 5);
+    
+    if (!isSpace(data[0])) {
+        /* TODO: ERROR HANDLING - this is an error! */
+        return 0;
+    }
+
+    data = get_string_without_whitespaces(data);
+    split_data = split_string(data, ',');
+    curr_node = get_head(split_data);
+
+    while (curr_node != NULL) {
+        curr_string = get_node_value(curr_node);
+        if (strlen(curr_string) == 0) {
+            /* TODO: ERROR HANDLING - incorrect commas in data! */
+            return 0;
+        }
+        add_to_list(create_node(binary(curr_string)) ,memory_list); /* TODO: Might separate to function? */
+        curr_node = get_next_node(curr_node);
+    }
+
+    return get_list_length(split_data);
+}
+
+/* TODO: Write this */
+/* TODO: Add documentation */
+void handle_string_type(char *line, LinkedList_t memory_list) {
     printf("TODO: Handling string type of %s\n", line);
 }
+
