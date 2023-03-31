@@ -20,7 +20,7 @@ int run_pre_assembler_on_file(char* file_name) {
     line = (char *)allocate(sizeof(char) * MAX_LINE_LENGTH);
 
     source_file = fopen(concatenate_strings(file_name, INPUT_SUFFIX), READ);
-    dest_file = fopen(concatenate_strings(file_name, OUTPUT_SUFFIX), WRITE);
+    dest_file = fopen(concatenate_strings(file_name, POST_PRE_ASSEMBLER_SUFFIX), WRITE);
 
     macro_table = create_table();
 

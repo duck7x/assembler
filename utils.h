@@ -27,6 +27,7 @@ Node_t create_node(char* value); /* TODO: Add documentation */
 char* get_node_value(Node_t node);  /* TODO: Add documentation */
 Node_t get_next_node(Node_t node);  /* TODO: Add documentation */
 void add_to_list(Node_t node, LinkedList_t list); /* TODO: Add documentation */
+int get_list_length(LinkedList_t list); /* TODO: Add documentation */
 void print_list(LinkedList_t list); /* TODO: delete this */
 char* get_list_as_string(LinkedList_t list); /* TODO: Add documentation */
 Node_t get_head(LinkedList_t list); /* TODO: Add documentation */

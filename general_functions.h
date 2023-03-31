@@ -10,9 +10,9 @@
 #define READ "r" /* TODO: Add documentation */
 #define WRITE "w" /* TODO: Add documentation */
 #define INPUT_SUFFIX ".as" /* TODO: Add documentation */ /* TODO: Maybe move to pre_assembler_functions */
-#define OUTPUT_SUFFIX ".am" /* TODO: Add documentation */ /* TODO: Maybe move to pre_assembler_functions */
+#define POST_PRE_ASSEMBLER_SUFFIX ".am" /* TODO: Add documentation */ /* TODO: Maybe move to pre_assembler_functions */
 #define MAX_LINE_LENGTH 80 /* TODO: Add documentation */
-#define ReadLine(FILE, LINE) fscanf(FILE, "%[^\n] ", LINE)
+#define ReadLine(FILE, LINE) fscanf(FILE, "%[^\n] ", LINE) /* TODO: Add documentation */
 
 
 int starts_with(char *str, char *prefix); /* TODO: Add documentation */

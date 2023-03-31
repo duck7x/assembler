@@ -97,6 +97,11 @@ void add_to_list(Node_t node, LinkedList_t list) {
     list->list_length++;
 }
 
+/* TODO: Add documentation */
+int get_list_length(LinkedList_t list) {
+    return list->list_length;
+}
+
 /* TODO: DELETE THIS */
 void print_list(LinkedList_t list) {
     Node_t node;

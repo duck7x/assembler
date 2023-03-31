@@ -4,10 +4,10 @@ Allocator_t global_allocator;
 
 int main(void) {
     /* TODO: Change file list to linked list */
-    /*char *file = "test";*/
-    char *file_list[2] = {"test", "test2"};
+    /* TODO: Get file list from input */
+    char *file_list[2] = {"test", "test2"}; /* TODO: delete this */
+    /*char *file_list[10] = {"tests/test_1", "tests/test_2", "tests/test_3", "tests/test_4", "tests/test_5", "tests/test_6", "tests/test_7", "tests/test_8", "tests/test_9", "tests/test_10"}; *//* TODO: delete this */
     global_allocator = create_allocator();
-    /*file_list[0] = file;*/
 
     printf("This is the main assembler!\n");  /*TODO: delete this*/
     pre_assembler(file_list);
