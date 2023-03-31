@@ -93,8 +93,10 @@ int run_assembler_phase_1(char* file_name) {
     /* TODO: Add documentation */
     update_symbol_table(symbol_table, ic); /* Step 17 */
 
-    printf("Phase 1 ended, printing symbol table\n"); /* TODO: delete this */
+    printf("Phase 1 ended, printing symbol table:\n"); /* TODO: delete this */
     print_labels_list(symbol_table); /* TODO: delete this */
+    printf("Printing memory list:\n"); /* TODO: delete this */
+    print_list(memory_list); /* TODO: delete this */
 
     return 0;
 }

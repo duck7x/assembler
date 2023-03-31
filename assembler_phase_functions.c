@@ -167,7 +167,7 @@ void update_symbol_table(LabelsLinkedList_t symbol_table, int ic) {
 /* 2’s complement, 14 bits */
 char* binary(char *string) {
     char binary_array[BITS_AMOUNT];
-    int num, i, num_binary_length = 0, temp, negative;
+    int num, i, num_binary_length = 0, temp, negative = FALSE;
 
     if (string[0] == MINUS) {
         negative = TRUE;
@@ -216,7 +216,7 @@ int handle_data_type(char *line, LinkedList_t memory_list) {
     Node_t curr_node;
     LinkedList_t split_data;
 
-    data = copy_substring(line, 0, 5);
+    data = copy_substring(line, 5, strlen(line));
 
     if (!isSpace(data[0])) {
         /* TODO: ERROR HANDLING - this is an error! */
