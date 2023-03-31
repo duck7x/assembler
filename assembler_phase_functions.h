@@ -29,6 +29,7 @@ int get_labels_list_length(LabelsLinkedList_t list); /* TODO: Add documentation 
 LabelNode_t get_labels_list_head(LabelsLinkedList_t list); /* TODO: Add documentation */
 void print_labels_list(LabelsLinkedList_t list); /* TODO: delete this */
 void print_assembler_phase(void); /* TODO: delete this */
+void handle_error(LinkedList_t error_list, char *error_message); /* TODO: Add documentation */
 int starts_with_label(LinkedList_t split_line); /* TODO: Add documentation */
 int is_data_storage(char *line); /* TODO: Add documentation */
 int is_extern_or_entry(char *line); /* TODO: Add documentation */

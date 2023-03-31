@@ -100,6 +100,13 @@ void print_assembler_phase(void) {
 }
 
 /* TODO: Add documentation */
+void handle_error(LinkedList_t error_list, char *error_message) {
+    /* TODO: Might not need a list if we print as we go, maybe a flag is enough and this whole thing is redundant */
+    add_to_list(create_node(error_message), error_list);
+    printf("ERROR: %s\n", error_message);
+}
+
+/* TODO: Add documentation */
 int starts_with_label(LinkedList_t split_line) {
     if (get_list_length(split_line) > 1) {
         return TRUE;
@@ -156,11 +163,11 @@ void update_symbol_table(LabelsLinkedList_t symbol_table, int ic) {
 /* TODO: Write this */
 /* TODO: Add documentation */
 void handle_data_type(char *line) {
-    printf("Handling data type of %s\n", line);
+    printf("TODO: Handling data type of %s\n", line);
 }
 
 /* TODO: Write this */
 /* TODO: Add documentation */
 void handle_string_type(char *line) {
-    printf("Handling string type of %s\n", line);
+    printf("TODO: Handling string type of %s\n", line);
 }
