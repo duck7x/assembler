@@ -13,6 +13,7 @@
 #define POST_PRE_ASSEMBLER_SUFFIX ".am" /* TODO: Add documentation */ /* TODO: Maybe move to pre_assembler_functions */
 #define MAX_LINE_LENGTH 80 /* TODO: Add documentation */
 #define ReadLine(FILE, LINE) fscanf(FILE, "%[^\n] ", LINE) /* TODO: Add documentation */
+#define StringsEqual(FIRST, SECOND) strcmp(FIRST, SECOND) == 0 /* TODO: Add documentation */
 
 
 int starts_with(char *str, char *prefix); /* TODO: Add documentation */

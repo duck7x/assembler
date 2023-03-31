@@ -133,6 +133,11 @@ Node_t get_head(LinkedList_t list) {
 }
 
 /* TODO: Add documentation */
+Node_t get_tail(LinkedList_t list) {
+    return list->tail;
+}
+
+/* TODO: Add documentation */
 void* allocate(int size_of) {
     void* new_ptr = malloc(size_of);
     int current_free_allocation_index = global_allocator->number_of_allocated_elements++;

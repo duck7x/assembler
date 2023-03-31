@@ -21,11 +21,11 @@ int run_assembler_phase_1(char* file_name) {
     int label_definition_flag = FALSE; /* TODO: rename this */
     char *line;
     FILE *source_file, *dest_file;
-    Table_t labels_table;
+    LabelsLinkedList_t labels_list;
 
     printf("Running phase 1 of assembler on %s!\n", file_name); /* TODO: delete this */
 
-    labels_table = create_table();
+    labels_list = create_linked_labels_list();
     line = (char *)allocate(sizeof(char) * MAX_LINE_LENGTH);
     source_file = fopen(concatenate_strings(file_name, POST_PRE_ASSEMBLER_SUFFIX), READ);
     dest_file = fopen(concatenate_strings(file_name, ".temp"), WRITE);
@@ -37,12 +37,14 @@ int run_assembler_phase_1(char* file_name) {
         }
         if (is_data_storage(line)) { /* Step 5 */
             if (is(label_definition_flag)) { /* Step 6 */
-                add_data_label(label_name, dc, labels_table);
+                add_label(labels_list, line, DATA_TYPE, dc);
             }
             /* Do step 7 */
         } else if (is_extern_or_entry(line)) { /* Step 8 */
             if (is_extern(line)) { /* Step 9 */
                 /* Do step 9 */
+                /* TODO: Throw warning if label */
+                add_label(labels_list, line, DATA_TYPE, EXTERN_DEFAULT_VALUE);
             }
         } else {
             if(is(label_definition_flag)) { /* Step 11 */

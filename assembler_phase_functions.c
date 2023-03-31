@@ -108,12 +108,6 @@ int is_data_storage(char *line){
     return FALSE;
 }
 
-/* TODO: write this */
-/* TODO: Add documentation */
-int add_label(int dc) {
-    return TRUE;
-}
-
 /* TODO: Add documentation */
 int is_extern_or_entry(char *line) {
     if (starts_with(line, EXTERN_PREFIX) || starts_with(line, ENTRY_PREFIX))   /* TODO: Maybe improve this */
@@ -129,7 +123,16 @@ int is_extern(char *line) {
 }
 
 /* TODO: Add documentation */
-void add_data_label(char *label_name, int dc, LabelsLinkedList_t labels_table) {
+void add_label(LabelsLinkedList_t labels_list, char *line, char *type, int value) {
     /* TODO: ERROR HANDLING - Check if labels exists already, and if so, error! */
-    add_to_labels_list(create_label_node(label_name, "data", dc), labels_table);
+    char *label_name = ""; /* TODO: Fix this */
+    LinkedList_t split_line = split_string(line, SPACE);
+    /* TODO: if there's time - change to switch case */
+    if (StringsEqual(type, DATA_TYPE)) {
+        label_name = get_node_value(get_head(split_line));
+    } else if (StringsEqual(type,EXTERN_TYPE)) {
+        /* TODO: ERROR HANDLING - If there's more than one, throw error! */
+        label_name = get_node_value(get_tail(split_line));
+    }
+    add_to_labels_list(create_label_node(label_name, type, value), labels_list);
 }

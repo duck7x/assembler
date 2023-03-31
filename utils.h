@@ -31,6 +31,7 @@ int get_list_length(LinkedList_t list); /* TODO: Add documentation */
 void print_list(LinkedList_t list); /* TODO: delete this */
 char* get_list_as_string(LinkedList_t list); /* TODO: Add documentation */
 Node_t get_head(LinkedList_t list); /* TODO: Add documentation */
+Node_t get_tail(LinkedList_t list); /* TODO: Add documentation */
 void* allocate(int size_of); /* TODO: Add documentation */
 void free_all(); /* TODO: Add documentation */
 void free_all_and_allocator(); /* TODO: Add documentation */
