@@ -259,11 +259,16 @@ LinkedCommandList_t create_action_names_list() {
 }
 
 /* TODO: Add documentation */
-void handle_error(LinkedList_t error_list, char *error_message) {
-    /* TODO: Might not need a list if we print as we go, maybe a flag is enough and this whole thing is redundant */
-    add_to_list(create_node(error_message), error_list);
-    printf("ERROR: %s\n", error_message);
+void handle_error(char *error_message, int line_number, int *has_errors) {
+    *has_errors = TRUE;
+    printf("ERROR: %s on line %d\n", error_message, line_number);
 }
+
+/* TODO: Add documentation */
+void handle_warning(char *warning_message, int line_number) {
+    printf("WARNING: %s on line %d\n", warning_message, line_number);
+}
+
 
 /* TODO: Add documentation */
 int starts_with_label(LinkedList_t split_line) {
@@ -297,17 +302,28 @@ int is_extern(char *line) {
 }
 
 /* TODO: Add documentation */
-void add_label(LabelsLinkedList_t labels_list, LinkedList_t split_line, char *type, int value) {
-    /* TODO: ERROR HANDLING - Check if labels exists already, and if so, error! */
+void add_label(LabelsLinkedList_t labels_list, LinkedList_t split_line, char *type, int value, int *has_errors, int line_number) {
     char *label_name = ""; /* TODO: Fix this */
+
     /* TODO: if there's time - change to switch case */
     if (StringsEqual(type, DATA_TYPE) || StringsEqual(type, CODE_TYPE)) {
         label_name = get_node_value(get_head(split_line));
     } else if (StringsEqual(type,EXTERN_TYPE)) {
-        /* TODO: ERROR HANDLING - If there's more than one, throw error! */
+
+        if (get_list_length(split_line) > 2) {
+            handle_error("Too many words after label", line_number, has_errors); /* Needs rephrase */
+        }
         label_name = get_node_value(get_tail(split_line));
     }
-    /* TODO: ERROR HANDLING - ensure legit label name! */
+
+    /* TODO: ERROR HANDLING - Check if labels exists already, and if so, error! */
+    /*handle_error("Duplicate label", line_number, has_errors);*/
+
+    if (is_not(is_legal_label_name(label_name))) {
+        handle_error("Illegal label name", line_number, has_errors);
+        return;
+    }
+
     add_to_labels_list(create_label_node(label_name, type, value), labels_list);
 }
 

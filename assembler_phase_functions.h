@@ -55,12 +55,13 @@ void print_commands_list(LinkedCommandList_t list); /* TODO: Add documentation *
 void print_labels_list(LabelsLinkedList_t list); /* TODO: delete this */
 void print_assembler_phase(void); /* TODO: delete this */
 LinkedCommandList_t create_action_names_list(); /* TODO: Add documentation */
-void handle_error(LinkedList_t error_list, char *error_message); /* TODO: Add documentation */
+void handle_error(char *error_message, int line_number, int *has_errors); /* TODO: Add documentation */
+void handle_warning(char *warning_message, int line_number); /* TODO: Add documentation */
 int starts_with_label(LinkedList_t split_line); /* TODO: Add documentation */
 int is_data_storage(char *line); /* TODO: Add documentation */
 int is_extern_or_entry(char *line); /* TODO: Add documentation */
 int is_extern(char *line); /* TODO: Add documentation */
-void add_label(LabelsLinkedList_t labels_list, LinkedList_t split_line, char *type, int value); /* TODO: Add documentation */
+void add_label(LabelsLinkedList_t labels_list, LinkedList_t split_line, char *type, int value, int *has_errors, int line_number); /* TODO: Add documentation */
 void update_symbol_table(LabelsLinkedList_t symbol_table, int ic); /* TODO: Add documentation */
 char* dec_to_binary(int num); /* TODO: Add documentation */
 char* binary(char *string); /* TODO: Add documentation */

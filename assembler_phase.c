@@ -2,13 +2,14 @@
 
 /* TODO: Add documentation */
 int assembler_phase(char** files_list) {
-    int i;
+    int i, has_errors = 0;
     LinkedCommandList_t actions_names_list = create_action_names_list();
 
     for (i = 0; i < 1; i++) { /* TODO: rewrite this */
-        run_assembler_phase_1(files_list[i], actions_names_list);
+        has_errors += run_assembler_phase_1(files_list[i], actions_names_list);
         /* TODO: Understand if phase 2 should happen even if phase 1 has errors and handle accordingly */
-        run_assembler_phase_2(files_list[i], actions_names_list); /* TODO: decide if to separate to two loops */
+        has_errors += run_assembler_phase_2(files_list[i], actions_names_list); /* TODO: decide if to separate to two loops */
+        /* if not errors - create files! */
     }
 
     return 0;
@@ -18,19 +19,17 @@ int assembler_phase(char** files_list) {
 
 /* TODO: Add documentation */
 int run_assembler_phase_1(char* file_name, LinkedCommandList_t action_names_list) {
-    int ic = 0, dc = 0, l = 0, count = 0, i; /* Step 1 */
+    int ic = 0, dc = 0, l = 0, count = 0, i, *has_errors = FALSE; /* Step 1 */
     int label_definition_flag = FALSE; /* TODO: rename this */
     char *line, *command;
     char *relevant_line_bit; /* TODO: rename this is needed */
     char *memory_array[MEMORY_SIZE];
-    LinkedList_t split_by_label, error_list, warning_list, data_memory_list, split_by_space;
+    LinkedList_t split_by_label, data_memory_list, split_by_space;
     FILE *source_file, *dest_file;
     LabelsLinkedList_t symbol_table;
 
     printf("Running phase 1 of assembler on %s!\n", file_name); /* TODO: delete this */
 
-    error_list = create_linked_list();
-    warning_list = create_linked_list();
     data_memory_list = create_linked_list();
     symbol_table = create_linked_labels_list();
     line = (char *)allocate(sizeof(char) * MAX_LINE_LENGTH);
@@ -46,7 +45,7 @@ int run_assembler_phase_1(char* file_name, LinkedCommandList_t action_names_list
 
         if (get_list_length(split_by_label) > 2) {
             /* TODO: Not necessarily true, .string "::::" is a legit line! */
-            handle_error(error_list, "Invalid usage of ':'"); /* TODO: rewrite error */
+            handle_error("Invalid usage of ':'", count, has_errors); /* TODO: rewrite error */
         }
 
         relevant_line_bit = get_stripped_string(get_node_value(get_tail(split_by_label)));
@@ -58,7 +57,7 @@ int run_assembler_phase_1(char* file_name, LinkedCommandList_t action_names_list
 
         if (is_data_storage(relevant_line_bit)) { /* Step 5 */
             if (is(label_definition_flag)) { /* Step 6 */
-                add_label(symbol_table, split_by_label, DATA_TYPE, dc);
+                add_label(symbol_table, split_by_label, DATA_TYPE, dc, has_errors, count);
             }
             /* Step 7 */
             if (is(starts_with(relevant_line_bit, DATA_PREFIX))) {
@@ -69,11 +68,11 @@ int run_assembler_phase_1(char* file_name, LinkedCommandList_t action_names_list
         } else if (is_extern_or_entry(relevant_line_bit)) { /* Step 8 */
             if (is_extern(relevant_line_bit)) { /* Step 9 */
                 /* TODO: Throw warning if label */
-                add_label(symbol_table, split_by_space, EXTERN_TYPE, EXTERN_DEFAULT_VALUE);
+                add_label(symbol_table, split_by_space, EXTERN_TYPE, EXTERN_DEFAULT_VALUE, has_errors, count);
             }
         } else {
             if(is(label_definition_flag)) { /* Step 11 */
-                add_label(symbol_table, split_by_label, CODE_TYPE, ic);
+                add_label(symbol_table, split_by_label, CODE_TYPE, ic, has_errors, count);
             }
 
             command = get_node_value(get_head(split_by_space));
@@ -98,7 +97,7 @@ int run_assembler_phase_1(char* file_name, LinkedCommandList_t action_names_list
     fclose(source_file);
     fclose(dest_file);
 
-    if (get_list_length(error_list) != 0) { /* Step 16 */
+    if (is(*has_errors)) { /* Step 16 */
         printf("ERROR: Found errors in file, stopping assembler\n");
         return -1;
     }
