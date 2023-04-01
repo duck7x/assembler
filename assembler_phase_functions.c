@@ -545,7 +545,7 @@ int get_address_type(char *operand) {
 /* TODO: Add documentation */
 int handle_first_word(CommandNode_t command_node, char *relevant_line_bit, char memory_slot[]) {
     char *operands_string, *opcode;
-    int operands_num, i, l = 1, operand_type;
+    int operands_num, i, l = 1, operand_type, non_register_operands = FALSE;
     LinkedList_t split_operands;
 
     printf("DEBUG: Handling command:\n"); /* TODO: delete this */
@@ -577,6 +577,7 @@ int handle_first_word(CommandNode_t command_node, char *relevant_line_bit, char 
     }
     if (operands_num == 1) {
         operand_type = get_address_type(operands_string);
+        /* TODO: split to functions */
         /* TODO: ensure type fits command */
         if (operand_type == JUMP) {
             memory_slot[11] = 1;
@@ -584,16 +585,20 @@ int handle_first_word(CommandNode_t command_node, char *relevant_line_bit, char 
             /* handle 10-13 by jump params */
             split_operands = split_string(get_node_value(get_tail(split_string(copy_substring(operands_string, 0,
                                                                                               strlen(operands_string - 2)), '('))), ',');
+            /* TODO: switch to for loop to reduce code redundancy */
             operand_type = get_address_type(get_node_value(get_head(split_operands)));
+            if (operand_type != REGISTER)
+                non_register_operands = TRUE;
             memory_slot[3] = '0' + (operand_type / 2);
             memory_slot[2] = '0' + (operand_type % 2);
             operand_type = get_address_type(get_node_value(get_tail(split_operands)));
+            if (operand_type != REGISTER)
+                non_register_operands = TRUE;
             memory_slot[1] = '0' + (operand_type / 2);
             memory_slot[0] = '0' + (operand_type % 2);
 
-            if (memory_slot[3] != memory_slot [1] || memory_slot[2] != memory_slot[0])
-                l += 1;
-            
+            l += non_register_operands;
+
         } else {
             l += 1;
             /* handle 2-3 by params */
@@ -601,19 +606,25 @@ int handle_first_word(CommandNode_t command_node, char *relevant_line_bit, char 
             memory_slot[10] = '0' + (operand_type % 2);
         }
     } else if (operands_num == 2) {
-        l += 2;
+        l += 1;
         for (i = 0; i <= 3; i++) {
             memory_slot[i] = '0';
         }
         split_operands = split_string(get_string_without_whitespaces(operands_string), ',');
+        /* TODO: switch to for loop to reduce code redundancy */
         /* 4,5 bits according to first operand */
         operand_type = get_address_type(get_node_value(get_head(split_operands)));
+        if (operand_type != REGISTER)
+            non_register_operands = TRUE;
         memory_slot[11] = '0' + (operand_type / 2);
         memory_slot[10] = '0' + (operand_type % 2);
         /* 2,3 bits according to second operand */
         operand_type = get_address_type(get_node_value(get_head(split_operands)));
+        if (operand_type != REGISTER)
+            non_register_operands = TRUE;
         memory_slot[9] = '0' + (operand_type / 2);
         memory_slot[8] = '0' + (operand_type % 2);
+        l += non_register_operands;
     }
 
     printf("DEBUG: Memory slot is %s\n", memory_slot); /* TODO: delete this */
