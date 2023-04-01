@@ -238,19 +238,19 @@ LinkedCommandList_t create_action_names_list() {
     actions_names_list = create_linked_command_list();
 
     /* TODO: Instead of setting numbers, generate them */
-    add_to_commands_list(create_command_node("mov", "0000", 2, "0,1,2,3", "1,2,3"), actions_names_list);
-    add_to_commands_list(create_command_node("cmp", "0001", 2, "0,1,2,3", "0,1,2,3"), actions_names_list);
-    add_to_commands_list(create_command_node("add", "0010", 2, "0,1,2,3", "1,2,3"), actions_names_list);
-    add_to_commands_list(create_command_node("sub", "0011", 2, "0,1,2,3", "1,2,3"), actions_names_list);
-    add_to_commands_list(create_command_node("not", "0100", 1, "", "1,2,3"), actions_names_list);
-    add_to_commands_list(create_command_node("clr", "0101", 1, "", "1,2,3"), actions_names_list);
-    add_to_commands_list(create_command_node("lea", "0110", 2, "1,2", "1,2,3"), actions_names_list);
-    add_to_commands_list(create_command_node("inc", "0111", 1, "", "1,2,3"), actions_names_list);
-    add_to_commands_list(create_command_node("dec", "1000", 1, "", "1,2,3"), actions_names_list);
+    add_to_commands_list(create_command_node("mov", "0000", 2, "0,1,3", "1,3"), actions_names_list);
+    add_to_commands_list(create_command_node("cmp", "0001", 2, "0,1,3", "0,1,3"), actions_names_list);
+    add_to_commands_list(create_command_node("add", "0010", 2, "0,1,3", "1,3"), actions_names_list);
+    add_to_commands_list(create_command_node("sub", "0011", 2, "0,1,3", "1,3"), actions_names_list);
+    add_to_commands_list(create_command_node("not", "0100", 1, "", "1,3"), actions_names_list);
+    add_to_commands_list(create_command_node("clr", "0101", 1, "", "1,3"), actions_names_list);
+    add_to_commands_list(create_command_node("lea", "0110", 2, "1", "1,3"), actions_names_list);
+    add_to_commands_list(create_command_node("inc", "0111", 1, "", "1,3"), actions_names_list);
+    add_to_commands_list(create_command_node("dec", "1000", 1, "", "1,3"), actions_names_list);
     add_to_commands_list(create_command_node("jmp", "1001", 1, "", "1,2,3"), actions_names_list);
     add_to_commands_list(create_command_node("bne", "1010", 1, "", "1,2,3"), actions_names_list);
-    add_to_commands_list(create_command_node("red", "1011", 1, "", "1,2,3"), actions_names_list);
-    add_to_commands_list(create_command_node("prn", "1100", 1, "", "0,1,2,3"), actions_names_list);
+    add_to_commands_list(create_command_node("red", "1011", 1, "", "1,3"), actions_names_list);
+    add_to_commands_list(create_command_node("prn", "1100", 1, "", "0,1,3"), actions_names_list);
     add_to_commands_list(create_command_node("jsr", "1101", 1, "", "1,2,3"), actions_names_list);
     add_to_commands_list(create_command_node("rts", "1110", 0, "", ""), actions_names_list);
     add_to_commands_list(create_command_node("stop", "1111", 0, "", ""), actions_names_list);
@@ -527,13 +527,13 @@ int is_jump_address_type (char *str) {
 int get_address_type(char *operand) {
     int type = -1;
     if (is(is_immediate_address_type(operand))) {
-        type = 0;
+        type = IMMEDIATE;
     } else if (is(is_direct_address_type(operand))) {
-        type = 1;
-    } else if (is_jump_address_type(operand)) {
-        type = 2;
+        type = DIRECT;
     } else if (is(is_direct_register_type(operand))) {
-        type = 3;
+        type = REGISTER;
+    } else if (is_jump_address_type(operand)) {
+        type = JUMP;
     } else {
         /* TODO: ERROR HANDLING - illegal operand thingie! */
         printf("ERROR: illegal operand thingie!"); /* TODO: Change this */
@@ -545,7 +545,7 @@ int get_address_type(char *operand) {
 /* TODO: Add documentation */
 int handle_first_word(CommandNode_t command_node, char *relevant_line_bit, char memory_slot[]) {
     char *operands_string, *opcode;
-    int operands_num, i, l = 1;
+    int operands_num, i, l = 1, operand_type;
     LinkedList_t split_operands;
 
     printf("DEBUG: Handling command:\n"); /* TODO: delete this */
@@ -556,7 +556,7 @@ int handle_first_word(CommandNode_t command_node, char *relevant_line_bit, char 
         return -1;
     }
 
-    operands_string = clean_multiple_whitespaces(copy_substring(relevant_line_bit, strlen(get_command_node_command(command_node)), strlen(relevant_line_bit)));
+    operands_string = get_stripped_string(clean_multiple_whitespaces(copy_substring(relevant_line_bit, strlen(get_command_node_command(command_node)), strlen(relevant_line_bit))));
     split_operands = split_string(operands_string, ',');
     operands_num = get_command_node_operands(command_node);
     opcode = get_command_node_code(command_node);
@@ -565,32 +565,56 @@ int handle_first_word(CommandNode_t command_node, char *relevant_line_bit, char 
         return -1;
     }
 
+    printf("DEBUG: line is [%s] and operands_string is [%s]\n", relevant_line_bit, operands_string); /* TODO: delete this */
+
     for (i = 0; i < operands_num; i ++) {
         /* Understand l lengths according to operands */
     }
 
     /* Encode and add first word to memory array */
-    /* ERA 00, default*/
-    /* dest operand */
-    /* source operand */
-    /* opcode */
     for (i = 7; i >= 4 ; i--) {
         memory_slot[i] = opcode[i-4];
     }
     if (operands_num == 1) {
-        /* if parameter is jmp */
-            /*  */
-        /* otherwise */
-            /*  */
+        operand_type = get_address_type(operands_string);
+        /* TODO: ensure type fits command */
+        if (operand_type == JUMP) {
+            memory_slot[11] = 1;
+            l += 2; /* TODO: Ensure! */
+            /* handle 10-13 by jump params */
+            split_operands = split_string(get_node_value(get_tail(split_string(copy_substring(operands_string, 0,
+                                                                                              strlen(operands_string - 2)), '('))), ',');
+            operand_type = get_address_type(get_node_value(get_head(split_operands)));
+            memory_slot[3] = '0' + (operand_type / 2);
+            memory_slot[2] = '0' + (operand_type % 2);
+            operand_type = get_address_type(get_node_value(get_tail(split_operands)));
+            memory_slot[1] = '0' + (operand_type / 2);
+            memory_slot[0] = '0' + (operand_type % 2);
+
+            if (memory_slot[3] != memory_slot [1] || memory_slot[2] != memory_slot[0])
+                l += 1;
+            
+        } else {
+            l += 1;
+            /* handle 2-3 by params */
+            memory_slot[11] = '0' + (operand_type / 2);
+            memory_slot[10] = '0' + (operand_type % 2);
+        }
     } else if (operands_num == 2) {
+        l += 2;
         for (i = 0; i <= 3; i++) {
             memory_slot[i] = '0';
         }
-        /* 2,3 bits according to second operand */
+        split_operands = split_string(get_string_without_whitespaces(operands_string), ',');
         /* 4,5 bits according to first operand */
+        operand_type = get_address_type(get_node_value(get_head(split_operands)));
+        memory_slot[11] = '0' + (operand_type / 2);
+        memory_slot[10] = '0' + (operand_type % 2);
+        /* 2,3 bits according to second operand */
+        operand_type = get_address_type(get_node_value(get_head(split_operands)));
+        memory_slot[9] = '0' + (operand_type / 2);
+        memory_slot[8] = '0' + (operand_type % 2);
     }
-    /* second parameter */
-    /* first parameter */
 
     printf("DEBUG: Memory slot is %s\n", memory_slot); /* TODO: delete this */
 

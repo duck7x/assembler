@@ -5,7 +5,7 @@ int assembler_phase(char** files_list) {
     int i;
     LinkedCommandList_t actions_names_list = create_action_names_list();
 
-    for (i = 1; i < 2; i++) { /* TODO: rewrite this */
+    for (i = 0; i < 1; i++) { /* TODO: rewrite this */
         run_assembler_phase_1(files_list[i], actions_names_list);
         /* TODO: Understand if phase 2 should happen even if phase 1 has errors and handle accordingly */
         run_assembler_phase_2(files_list[i], actions_names_list); /* TODO: decide if to separate to two loops */
@@ -18,7 +18,7 @@ int assembler_phase(char** files_list) {
 
 /* TODO: Add documentation */
 int run_assembler_phase_1(char* file_name, LinkedCommandList_t action_names_list) {
-    int ic = 0, dc = 0, l = 0; /* Step 1 */
+    int ic = 0, dc = 0, l = 0, count = 0, i; /* Step 1 */
     int label_definition_flag = FALSE; /* TODO: rename this */
     char *line, *command;
     char *relevant_line_bit; /* TODO: rename this is needed */
@@ -38,6 +38,7 @@ int run_assembler_phase_1(char* file_name, LinkedCommandList_t action_names_list
     dest_file = fopen(concatenate_strings(file_name, ".temp"), WRITE);
 
     while (ReadLine(source_file, line) != EOF) {  /* TODO: rewrite this */ /* Step 2 */
+        count ++;
 
         line = clean_multiple_whitespaces(line);
         /* TODO: Skip line if empty or comment */
@@ -110,6 +111,10 @@ int run_assembler_phase_1(char* file_name, LinkedCommandList_t action_names_list
     print_labels_list(symbol_table); /* TODO: delete this */
     printf("Printing memory list:\n"); /* TODO: delete this */
     print_list(data_memory_list); /* TODO: delete this */
+    printf("Printing memory array:\n"); /* TODO: delete this */
+    for (i = 0; i < count; i++) { /* TODO: delete this */
+        printf("%d\t%s\n", i + FIRST_AVAILABLE_ADDRESS, memory_array[i]); /* TODO: delete this */
+    } /* TODO: delete this */
 
     return 0;
 }

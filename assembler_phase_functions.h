@@ -17,6 +17,11 @@
 #define MINUS '-' /* TODO: Add documentation */
 #define MEMORY_SIZE 256 /* TODO: Add documentation */
 #define FIRST_AVAILABLE_ADDRESS 100 /* TODO: Add documentation */
+#define IMMEDIATE 0 /* TODO: Add documentation */
+#define DIRECT 1 /* TODO: Add documentation */
+#define JUMP 2 /* TODO: Add documentation */
+#define REGISTER 3 /* TODO: Add documentation */
+
 #define IsRegister(STRING) (strlen(STRING) == 2 && STRING[0] == 'r' && STRING[1] <= '7' && STRING[1] >= '0') /* TODO: Add documentation */
 
 typedef struct LabelNode *LabelNode_t; /* TODO: Add documentation */
