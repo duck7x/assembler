@@ -181,8 +181,18 @@ CommandNode_t search_command_list(LinkedCommandList_t list, char* command) {
         if (!strcmp(get_command_node_command(curr), command)) {
             return curr;
         }
+        curr = get_next_command_node(curr);
     }
     return NULL;
+}
+
+/* TODO: delete this */
+void print_commands_node(CommandNode_t node) {
+    printf("command: %s\n", get_command_node_command(node));
+    printf("code: %s\n", get_command_node_code(node));
+    printf("operands: %d\n", get_command_node_operands(node));
+    printf("source_operand_types: %s\n", get_command_node_source_operand_types(node));
+    printf("destination_operand_types: %s\n", get_command_node_destination_operand_types(node));
 }
 
 /* TODO: delete this */
@@ -226,22 +236,24 @@ LinkedCommandList_t create_action_names_list() {
     LinkedCommandList_t actions_names_list;
 
     actions_names_list = create_linked_command_list();
-    add_to_commands_list(create_command_node("mov", "0", 2, "-1", "-1"), actions_names_list);
-    add_to_commands_list(create_command_node("cmp", "1", 2, "-1", "-1"), actions_names_list);
-    add_to_commands_list(create_command_node("add", "2", 2, "-1", "-1"), actions_names_list);
-    add_to_commands_list(create_command_node("sub", "3", 2, "-1", "-1"), actions_names_list);
-    add_to_commands_list(create_command_node("not", "4", 1, "-1", "-1"), actions_names_list);
-    add_to_commands_list(create_command_node("clr", "5", 1, "-1", "-1"), actions_names_list);
-    add_to_commands_list(create_command_node("lea", "6", 2, "-1", "-1"), actions_names_list);
-    add_to_commands_list(create_command_node("inc", "7", 1, "-1", "-1"), actions_names_list);
-    add_to_commands_list(create_command_node("dec", "8", 1, "-1", "-1"), actions_names_list);
-    add_to_commands_list(create_command_node("jmp", "9", 1, "-1", "-1"), actions_names_list);
-    add_to_commands_list(create_command_node("bne", "10", 1, "-1", "-1"), actions_names_list);
-    add_to_commands_list(create_command_node("red", "11", 1, "-1", "-1"), actions_names_list);
-    add_to_commands_list(create_command_node("prn", "12", 1, "-1", "-1"), actions_names_list);
-    add_to_commands_list(create_command_node("jsr", "13", 1, "-1", "-1"), actions_names_list);
-    add_to_commands_list(create_command_node("rts", "14", 0, "-1", "-1"), actions_names_list);
-    add_to_commands_list(create_command_node("stop", "15", 0, "-1", "-1"), actions_names_list);
+
+    /* TODO: Instead of setting numbers, generate them */
+    add_to_commands_list(create_command_node("mov", "0000", 2, "0,1,2,3", "1,2,3"), actions_names_list);
+    add_to_commands_list(create_command_node("cmp", "0001", 2, "0,1,2,3", "0,1,2,3"), actions_names_list);
+    add_to_commands_list(create_command_node("add", "0010", 2, "0,1,2,3", "1,2,3"), actions_names_list);
+    add_to_commands_list(create_command_node("sub", "0011", 2, "0,1,2,3", "1,2,3"), actions_names_list);
+    add_to_commands_list(create_command_node("not", "0100", 1, "", "1,2,3"), actions_names_list);
+    add_to_commands_list(create_command_node("clr", "0101", 1, "", "1,2,3"), actions_names_list);
+    add_to_commands_list(create_command_node("lea", "0110", 2, "1,2", "1,2,3"), actions_names_list);
+    add_to_commands_list(create_command_node("inc", "0111", 1, "", "1,2,3"), actions_names_list);
+    add_to_commands_list(create_command_node("dec", "1000", 1, "", "1,2,3"), actions_names_list);
+    add_to_commands_list(create_command_node("jmp", "1001", 1, "", "1,2,3"), actions_names_list);
+    add_to_commands_list(create_command_node("bne", "1010", 1, "", "1,2,3"), actions_names_list);
+    add_to_commands_list(create_command_node("red", "1011", 1, "", "1,2,3"), actions_names_list);
+    add_to_commands_list(create_command_node("prn", "1100", 1, "", "0,1,2,3"), actions_names_list);
+    add_to_commands_list(create_command_node("jsr", "1101", 1, "", "1,2,3"), actions_names_list);
+    add_to_commands_list(create_command_node("rts", "1110", 0, "", ""), actions_names_list);
+    add_to_commands_list(create_command_node("stop", "1111", 0, "", ""), actions_names_list);
 
     return actions_names_list;
 }
@@ -295,6 +307,7 @@ void add_label(LabelsLinkedList_t labels_list, LinkedList_t split_line, char *ty
         /* TODO: ERROR HANDLING - If there's more than one, throw error! */
         label_name = get_node_value(get_tail(split_line));
     }
+    /* TODO: ERROR HANDLING - ensure legit label name! */
     add_to_labels_list(create_label_node(label_name, type, value), labels_list);
 }
 
@@ -425,11 +438,161 @@ int handle_string_type(char *line, LinkedList_t memory_list) {
 
     add_to_list(create_node(dec_to_binary('\0')) ,memory_list); /* TODO: Might separate to function? */
 
-    return strlen(data) - 2;
+    return strlen(data) - 1;
+}
+
+/* write this */
+/* TODO: Add documentation */
+int is_legal_label_name(char *str) {
+    int i, len = strlen(str);
+
+    if (len > 30) {
+        return FALSE;
+    }
+
+    if (!isalpha(str[0])) {
+        return FALSE;
+    }
+
+    for (i = 1; i < len; i++) {
+        if ((!isalpha(str[i])) && (!isdigit(str[i]))) {
+            return FALSE;
+        }
+    }
+
+    return TRUE;
+}
+
+/* TODO: Add documentation */
+int is_immediate_address_type (char *str) {
+    if (is(starts_with(str, "#"))) {
+        return TRUE;
+    }
+    return FALSE;
+}
+
+int is_direct_address_type (char *str) {
+    if (is(is_legal_label_name(str))) {
+        return TRUE;
+    }
+    return FALSE;
+}
+
+int is_direct_register_type (char *str) {
+    if (IsRegister(str)) {
+        return TRUE;
+    }
+    return FALSE;
+}
+
+/* write this */
+/* TODO: Add documentation */
+int is_jump_address_type (char *str) {
+    int len = strlen(str);
+    char *curr_operand;
+    LinkedList_t split;
+
+    split = split_string(str, '(');
+    if (get_list_length(split) != 2) {
+        return FALSE;
+    }
+
+    if (!is_legal_label_name(get_node_value(get_head(split)))) {
+        return FALSE;
+    }
+
+    if (str[len - 1] != ')') {
+        return FALSE;
+    }
+
+    split = split_string(copy_substring(get_node_value(get_tail(split)), 0, len-2), ',');
+    if(get_list_length(split) != 2) {
+        return FALSE;
+    }
+
+    curr_operand = get_node_value(get_head(split));
+    if (is_not(is_immediate_address_type(curr_operand)) && is_not(is_direct_address_type(curr_operand)) && is_not(is_direct_register_type(curr_operand))) {
+        return FALSE;
+    }
+
+    curr_operand = get_node_value(get_tail(split));
+    if (is_not(is_immediate_address_type(curr_operand)) && is_not(is_direct_address_type(curr_operand)) && is_not(is_direct_register_type(curr_operand))) {
+        return FALSE;
+    }
+
+    return TRUE;
+}
+
+/* TODO: Add documentation */
+int get_address_type(char *operand) {
+    int type = -1;
+    if (is(is_immediate_address_type(operand))) {
+        type = 0;
+    } else if (is(is_direct_address_type(operand))) {
+        type = 1;
+    } else if (is_jump_address_type(operand)) {
+        type = 2;
+    } else if (is(is_direct_register_type(operand))) {
+        type = 3;
+    } else {
+        /* TODO: ERROR HANDLING - illegal operand thingie! */
+        printf("ERROR: illegal operand thingie!"); /* TODO: Change this */
+    }
+    return type;
 }
 
 /* TODO: write this */
 /* TODO: Add documentation */
-int handle_first_word(LinkedList_t split_by_space, char *command, LinkedList_t memory_list) {
-    return 0;
+int handle_first_word(CommandNode_t command_node, char *relevant_line_bit, char memory_slot[]) {
+    char *operands_string, *opcode;
+    int operands_num, i, l = 1;
+    LinkedList_t split_operands;
+
+    printf("DEBUG: Handling command:\n"); /* TODO: delete this */
+    print_commands_node(command_node);/* TODO: delete this */
+
+    if(command_node == NULL) {  /* Step 12 */
+        /* TODO: ERROR HANDLING - illegal command! */
+        return -1;
+    }
+
+    operands_string = clean_multiple_whitespaces(copy_substring(relevant_line_bit, strlen(get_command_node_command(command_node)), strlen(relevant_line_bit)));
+    split_operands = split_string(operands_string, ',');
+    operands_num = get_command_node_operands(command_node);
+    opcode = get_command_node_code(command_node);
+    if (get_list_length(split_operands) != operands_num) {
+        /* TODO: ERROR HANDLING - wrong amount of operands specified */
+        return -1;
+    }
+
+    for (i = 0; i < operands_num; i ++) {
+        /* Understand l lengths according to operands */
+    }
+
+    /* Encode and add first word to memory array */
+    /* ERA 00, default*/
+    /* dest operand */
+    /* source operand */
+    /* opcode */
+    for (i = 7; i >= 4 ; i--) {
+        memory_slot[i] = opcode[i-4];
+    }
+    if (operands_num == 1) {
+        /* if parameter is jmp */
+            /*  */
+        /* otherwise */
+            /*  */
+    } else if (operands_num == 2) {
+        for (i = 0; i <= 3; i++) {
+            memory_slot[i] = '0';
+        }
+        /* 2,3 bits according to second operand */
+        /* 4,5 bits according to first operand */
+    }
+    /* second parameter */
+    /* first parameter */
+
+    printf("DEBUG: Memory slot is %s\n", memory_slot); /* TODO: delete this */
+
+    return l;
 }

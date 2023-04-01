@@ -3,6 +3,7 @@
 
 #include <stdio.h>
 #include <math.h>
+#include <ctype.h>
 #include "general_functions.h"
 
 #define DATA_PREFIX ".data" /* TODO: Add documentation */
@@ -11,9 +12,12 @@
 #define ENTRY_PREFIX ".entry" /* TODO: Add documentation */
 #define DATA_TYPE "data" /* TODO: Add documentation */
 #define EXTERN_TYPE "extern" /* TODO: Add documentation */
-#define EXTERN_DEFAULT_VALUE (-1) /* TODO: Add documentation */
+#define EXTERN_DEFAULT_VALUE 0 /* TODO: Add documentation */
 #define CODE_TYPE "code" /* TODO: Add documentation */
 #define MINUS '-' /* TODO: Add documentation */
+#define MEMORY_SIZE 256 /* TODO: Add documentation */
+#define FIRST_AVAILABLE_ADDRESS 100 /* TODO: Add documentation */
+#define IsRegister(STRING) (strlen(STRING) == 2 && STRING[0] == 'r' && STRING[1] <= '7' && STRING[1] >= '0') /* TODO: Add documentation */
 
 typedef struct LabelNode *LabelNode_t; /* TODO: Add documentation */
 typedef struct LinkedLabelsList *LabelsLinkedList_t; /* TODO: Add documentation */
@@ -57,5 +61,11 @@ char* dec_to_binary(int num); /* TODO: Add documentation */
 char* binary(char *string); /* TODO: Add documentation */
 int handle_data_type(char *line, LinkedList_t memory_list); /* TODO: Add documentation */
 int handle_string_type(char *line, LinkedList_t memory_list); /* TODO: Add documentation */
-int handle_first_word(LinkedList_t split_by_space, char *command, LinkedList_t memory_list); /* TODO: Add documentation */
+int is_legal_label_name(char *str); /* TODO: Add documentation */
+int is_immediate_address_type (char *str); /* TODO: Add documentation */
+int is_direct_address_type (char *str); /* TODO: Add documentation */
+int is_direct_register_type (char *str); /* TODO: Add documentation */
+int is_jump_address_type(char *str); /* TODO: Add documentation */
+int get_address_type(char *operand); /* TODO: Add documentation */
+int handle_first_word(CommandNode_t command_node, char *relevant_line_bit, char memory_slot[]); /* TODO: Add documentation */
 #endif
