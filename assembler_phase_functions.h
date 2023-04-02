@@ -21,6 +21,7 @@
 #define DIRECT 1 /* TODO: Add documentation */
 #define JUMP 2 /* TODO: Add documentation */
 #define REGISTER 3 /* TODO: Add documentation */
+#define COMMENT_PREFIX ";" /* TODO: Add documentation */
 
 #define IsRegister(STRING) (strlen(STRING) == 2 && STRING[0] == 'r' && STRING[1] <= '7' && STRING[1] >= '0') /* TODO: Add documentation */
 
@@ -74,4 +75,5 @@ int is_direct_register_type (char *str); /* TODO: Add documentation */
 int is_jump_address_type(char *str); /* TODO: Add documentation */
 int get_address_type(char *operand); /* TODO: Add documentation */
 int handle_first_word(CommandNode_t command_node, char *relevant_line_bit, char memory_slot[]); /* TODO: Add documentation */
+int is_valid_line(char *line); /* TODO: Add documentation */
 #endif

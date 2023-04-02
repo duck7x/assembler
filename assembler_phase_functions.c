@@ -588,8 +588,8 @@ int handle_first_word(CommandNode_t command_node, char *relevant_line_bit, char 
     }
 
     /* Encode and add first word to memory array */
-    for (i = 7; i >= 4 ; i--) {
-        memory_slot[i] = opcode[i-4];
+    for (i = 6; i <= 9 ; i++) {
+        memory_slot[13-i] = opcode[i-6];
     }
     if (operands_num == 1) {
         operand_type = get_address_type(operands_string);
@@ -647,3 +647,13 @@ int handle_first_word(CommandNode_t command_node, char *relevant_line_bit, char 
 
     return l;
 }
+
+/* TODO: Add documentation */
+int is_valid_line(char *line) {
+    if (is(starts_with(line, COMMENT_PREFIX)))
+        return FALSE;
+    if (strlen(get_string_without_whitespaces(line)) == 0)
+        return FALSE;
+    return TRUE;
+}
+

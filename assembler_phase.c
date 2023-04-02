@@ -37,6 +37,16 @@ int run_assembler_phase_1(char* file_name, LinkedCommandList_t action_names_list
     dest_file = fopen(concatenate_strings(file_name, ".temp"), WRITE);
 
     while (ReadLine(source_file, line) != EOF) {  /* TODO: rewrite this */ /* Step 2 */
+
+        printf("DEBUG: Handling line [%s]\n", line); /* TODO: delete this */
+
+        if (is_not(is_valid_line(line))) {
+            printf("DEBUG: Invalid line, moving on!\n"); /* TODO: delete this */
+            continue;
+        }
+
+        printf("DEBUG: Valid line, compiling!\n"); /* TODO: delete this */
+
         count ++;
 
         line = clean_multiple_whitespaces(line);
