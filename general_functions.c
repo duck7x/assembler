@@ -93,6 +93,10 @@ char* get_string_without_whitespaces(char* str) {
 char* get_stripped_string(char* str) {
     int first_char = 0, last_char = strlen(str);
 
+    if (strlen(str) == 0) {
+        return "\0";
+    }
+
     while(isSpace(str[first_char]) && first_char < last_char)
         first_char ++;
 

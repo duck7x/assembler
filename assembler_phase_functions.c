@@ -188,6 +188,11 @@ CommandNode_t search_command_list(LinkedCommandList_t list, char* command) {
 
 /* TODO: delete this */
 void print_commands_node(CommandNode_t node) {
+    if (node == NULL) {
+        printf("NULL\n");
+        return;
+    }
+
     printf("command: %s\n", get_command_node_command(node));
     printf("code: %s\n", get_command_node_code(node));
     printf("operands: %d\n", get_command_node_operands(node));
@@ -504,7 +509,6 @@ int is_direct_register_type (char *str) {
 /* write this */
 /* TODO: Add documentation */
 int is_jump_address_type (char *str) {
-    int len = strlen(str);
     char *curr_operand;
     LinkedList_t split;
 
@@ -517,25 +521,25 @@ int is_jump_address_type (char *str) {
         return FALSE;
     }
 
-    if (str[len - 1] != ')') {
+    if (str[strlen(str) - 1] != ')') {
         return FALSE;
     }
 
-    split = split_string(copy_substring(get_node_value(get_tail(split)), 0, len-2), ',');
+    curr_operand = get_node_value(get_tail(split));
+    split = split_string(copy_substring(curr_operand, 0, strlen(curr_operand)-1), ',');
     if(get_list_length(split) != 2) {
         return FALSE;
     }
 
     curr_operand = get_node_value(get_head(split));
-    if (is_not(is_immediate_address_type(curr_operand)) && is_not(is_direct_address_type(curr_operand)) && is_not(is_direct_register_type(curr_operand))) {
+    if (!(is(is_immediate_address_type(curr_operand)) || is(is_direct_register_type(curr_operand)) || is(is_direct_address_type(curr_operand)))) {
         return FALSE;
     }
 
     curr_operand = get_node_value(get_tail(split));
-    if (is_not(is_immediate_address_type(curr_operand)) && is_not(is_direct_address_type(curr_operand)) && is_not(is_direct_register_type(curr_operand))) {
+    if (!(is(is_immediate_address_type(curr_operand)) || is(is_direct_register_type(curr_operand)) || is(is_direct_address_type(curr_operand)))) {
         return FALSE;
     }
-
     return TRUE;
 }
 
@@ -544,84 +548,104 @@ int get_address_type(char *operand) {
     int type = -1;
     if (is(is_immediate_address_type(operand))) {
         type = IMMEDIATE;
-    } else if (is(is_direct_address_type(operand))) {
-        type = DIRECT;
     } else if (is(is_direct_register_type(operand))) {
         type = REGISTER;
+    } else if (is(is_direct_address_type(operand))) {
+        type = DIRECT;
     } else if (is_jump_address_type(operand)) {
         type = JUMP;
     } else {
         /* TODO: ERROR HANDLING - illegal operand thingie! */
-        printf("ERROR: illegal operand thingie!"); /* TODO: Change this */
+        printf("ERROR: illegal operand thingie!\n"); /* TODO: Change this */
     }
     return type;
 }
 
 /* TODO: write this */
 /* TODO: Add documentation */
-int handle_first_word(CommandNode_t command_node, char *relevant_line_bit, char memory_slot[]) {
+int handle_first_word(CommandNode_t command_node, char *relevant_line_bit, char memory_slot[], int line_number, int *has_errors) {
     char *operands_string, *opcode;
     int operands_num, i, l = 1, operand_type, non_register_operands = FALSE;
     LinkedList_t split_operands;
 
+    printf("--------------\n"); /* TODO: delete this */
     printf("DEBUG: Handling command:\n"); /* TODO: delete this */
     print_commands_node(command_node);/* TODO: delete this */
 
     if(command_node == NULL) {  /* Step 12 */
-        /* TODO: ERROR HANDLING - illegal command! */
+        handle_error("Illegal command", line_number, has_errors);
         return -1;
     }
 
     operands_string = get_stripped_string(clean_multiple_whitespaces(copy_substring(relevant_line_bit, strlen(get_command_node_command(command_node)), strlen(relevant_line_bit))));
-    split_operands = split_string(operands_string, ',');
     operands_num = get_command_node_operands(command_node);
     opcode = get_command_node_code(command_node);
+
+    /* TODO: split operands differently because this way doesn't work well with jump thingies :( */
+    /* TODO: This is a quick fix, need to separate to function or redesign */
+    for (i = 0; i < strlen(operands_string); i ++) {
+        if (operands_string[i] == '(')
+            break;
+    }
+    if (i != strlen(operands_string)) {
+        split_operands = create_linked_list();
+        add_to_list(create_node(operands_string), split_operands);
+    } else
+        split_operands = split_string(operands_string, ',');
+
+    printf("DEBUG: Printing operands list\n"); /* TODO: delete this */
+    print_list(split_operands); /* TODO: delete this */
+
     if (get_list_length(split_operands) != operands_num) {
-        /* TODO: ERROR HANDLING - wrong amount of operands specified */
+        handle_error("Wrong amount of operands specified", line_number, has_errors);
         return -1;
     }
 
     printf("DEBUG: line is [%s] and operands_string is [%s]\n", relevant_line_bit, operands_string); /* TODO: delete this */
 
-    for (i = 0; i < operands_num; i ++) {
-        /* Understand l lengths according to operands */
-    }
-
     /* Encode and add first word to memory array */
     for (i = 6; i <= 9 ; i++) {
         memory_slot[13-i] = opcode[i-6];
     }
+
+    printf("DEBUG: Memory slot after adding %s to bits 6-9 is %s\n", opcode, memory_slot); /* TODO: delete this */
+
     if (operands_num == 1) {
+        printf("DEBUG: Singular operand\n"); /* TODO: delete this */
         operand_type = get_address_type(operands_string);
         /* TODO: split to functions */
         /* TODO: ensure type fits command */
         if (operand_type == JUMP) {
-            memory_slot[11] = 1;
+            printf("DEBUG: Operand is jump!\n"); /* TODO: delete this */
+            memory_slot[13-3] = '1'; /* TODO: change to 13 - something */
             l += 2; /* TODO: Ensure! */
             /* handle 10-13 by jump params */
             split_operands = split_string(get_node_value(get_tail(split_string(copy_substring(operands_string, 0,
-                                                                                              strlen(operands_string - 2)), '('))), ',');
+                                                                                              strlen(operands_string)-1), '('))), ',');
+            printf("DEBUG: split operands is\n"); /* TODO: delete this */
+            print_list(split_operands);
+
             /* TODO: switch to for loop to reduce code redundancy */
             operand_type = get_address_type(get_node_value(get_head(split_operands)));
             if (operand_type != REGISTER)
                 non_register_operands = TRUE;
-            memory_slot[3] = '0' + (operand_type / 2);
-            memory_slot[2] = '0' + (operand_type % 2);
+            memory_slot[13-10] = '0' + (operand_type / 2); /* TODO: change to 13 - something */
+            memory_slot[13-11] = '0' + (operand_type % 2); /* TODO: change to 13 - something */
             operand_type = get_address_type(get_node_value(get_tail(split_operands)));
             if (operand_type != REGISTER)
                 non_register_operands = TRUE;
-            memory_slot[1] = '0' + (operand_type / 2);
-            memory_slot[0] = '0' + (operand_type % 2);
+            memory_slot[13-12] = '0' + (operand_type / 2); /* TODO: change to 13 - something */
+            memory_slot[13-13] = '0' + (operand_type % 2); /* TODO: change to 13 - something */
 
             l += non_register_operands;
-
         } else {
             l += 1;
             /* handle 2-3 by params */
-            memory_slot[11] = '0' + (operand_type / 2);
-            memory_slot[10] = '0' + (operand_type % 2);
+            memory_slot[11] = '0' + (operand_type / 2); /* TODO: change to 13 - something */
+            memory_slot[10] = '0' + (operand_type % 2); /* TODO: change to 13 - something */
         }
     } else if (operands_num == 2) {
+        printf("DEBUG: 2 operarnds\n"); /* TODO: delete this */
         l += 1;
         for (i = 0; i <= 3; i++) {
             memory_slot[i] = '0';

@@ -74,6 +74,6 @@ int is_direct_address_type (char *str); /* TODO: Add documentation */
 int is_direct_register_type (char *str); /* TODO: Add documentation */
 int is_jump_address_type(char *str); /* TODO: Add documentation */
 int get_address_type(char *operand); /* TODO: Add documentation */
-int handle_first_word(CommandNode_t command_node, char *relevant_line_bit, char memory_slot[]); /* TODO: Add documentation */
+int handle_first_word(CommandNode_t command_node, char *relevant_line_bit, char memory_slot[], int line_number, int *has_errors); /* TODO: Add documentation */
 int is_valid_line(char *line); /* TODO: Add documentation */
 #endif
