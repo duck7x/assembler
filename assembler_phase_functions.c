@@ -68,6 +68,8 @@ char* get_label_node_name(LabelNode_t node) {
 
 /* TODO: Add documentation */
 LabelNode_t get_next_label_node(LabelNode_t node) {
+    if (node == NULL)
+        return NULL;
     return node->next;
 }
 
@@ -605,7 +607,7 @@ int handle_first_word(CommandNode_t command_node, char *relevant_line_bit, char 
 
     /* Encode and add first word to memory array */
     for (i = 6; i <= 9 ; i++) {
-        memory_slot[13-i] = opcode[i-6];
+        memory_slot[13-i] = opcode[9-i];
     }
 
     printf("DEBUG: Memory slot after adding %s to bits 6-9 is %s\n", opcode, memory_slot); /* TODO: delete this */
@@ -629,20 +631,20 @@ int handle_first_word(CommandNode_t command_node, char *relevant_line_bit, char 
             operand_type = get_address_type(get_node_value(get_head(split_operands)));
             if (operand_type != REGISTER)
                 non_register_operands = TRUE;
-            memory_slot[13-10] = '0' + (operand_type / 2); /* TODO: change to 13 - something */
-            memory_slot[13-11] = '0' + (operand_type % 2); /* TODO: change to 13 - something */
+            memory_slot[13-13] = '0' + (operand_type / 2); /* TODO: change to 13 - something */
+            memory_slot[13-12] = '0' + (operand_type % 2); /* TODO: change to 13 - something */
             operand_type = get_address_type(get_node_value(get_tail(split_operands)));
             if (operand_type != REGISTER)
                 non_register_operands = TRUE;
-            memory_slot[13-12] = '0' + (operand_type / 2); /* TODO: change to 13 - something */
-            memory_slot[13-13] = '0' + (operand_type % 2); /* TODO: change to 13 - something */
+            memory_slot[13-11] = '0' + (operand_type / 2); /* TODO: change to 13 - something */
+            memory_slot[13-10] = '0' + (operand_type % 2); /* TODO: change to 13 - something */
 
             l += non_register_operands;
         } else {
             l += 1;
             /* handle 2-3 by params */
-            memory_slot[11] = '0' + (operand_type / 2); /* TODO: change to 13 - something */
-            memory_slot[10] = '0' + (operand_type % 2); /* TODO: change to 13 - something */
+            memory_slot[13-3] = '0' + (operand_type / 2); /* TODO: change to 13 - something */
+            memory_slot[13-2] = '0' + (operand_type % 2); /* TODO: change to 13 - something */
         }
     } else if (operands_num == 2) {
         printf("DEBUG: 2 operarnds\n"); /* TODO: delete this */
@@ -656,14 +658,14 @@ int handle_first_word(CommandNode_t command_node, char *relevant_line_bit, char 
         operand_type = get_address_type(get_node_value(get_head(split_operands)));
         if (operand_type != REGISTER)
             non_register_operands = TRUE;
-        memory_slot[11] = '0' + (operand_type / 2);
-        memory_slot[10] = '0' + (operand_type % 2);
+        memory_slot[13-5] = '0' + (operand_type / 2);
+        memory_slot[13-4] = '0' + (operand_type % 2);
         /* 2,3 bits according to second operand */
-        operand_type = get_address_type(get_node_value(get_head(split_operands)));
+        operand_type = get_address_type(get_node_value(get_tail(split_operands)));
         if (operand_type != REGISTER)
             non_register_operands = TRUE;
-        memory_slot[9] = '0' + (operand_type / 2);
-        memory_slot[8] = '0' + (operand_type % 2);
+        memory_slot[13-3] = '0' + (operand_type / 2);
+        memory_slot[13-2] = '0' + (operand_type % 2);
         l += non_register_operands;
     }
 

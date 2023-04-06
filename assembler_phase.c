@@ -5,7 +5,7 @@ int assembler_phase(char** files_list) {
     int i, has_errors = 0;
     LinkedCommandList_t actions_names_list = create_action_names_list();
 
-    for (i = 2; i < 3; i++) { /* TODO: rewrite this */
+    for (i = 0; i < 1; i++) { /* TODO: rewrite this */
         has_errors += run_assembler_phase_1(files_list[i], actions_names_list);
         /* TODO: Understand if phase 2 should happen even if phase 1 has errors and handle accordingly */
         has_errors += run_assembler_phase_2(files_list[i], actions_names_list); /* TODO: decide if to separate to two loops */
@@ -35,6 +35,10 @@ int run_assembler_phase_1(char* file_name, LinkedCommandList_t action_names_list
     line = (char *)allocate(sizeof(char) * MAX_LINE_LENGTH);
     source_file = fopen(concatenate_strings(file_name, POST_PRE_ASSEMBLER_SUFFIX), READ);
     dest_file = fopen(concatenate_strings(file_name, ".temp"), WRITE);
+
+    for (i = 0; i < MEMORY_SIZE; i++) {
+        memory_array[i] = copy_string("00000000000000");
+    }
 
     while (ReadLine(source_file, line) != EOF) {  /* TODO: rewrite this */ /* Step 2 */
 
@@ -88,7 +92,7 @@ int run_assembler_phase_1(char* file_name, LinkedCommandList_t action_names_list
             }*/ /* TODO: Delete this */
             /* Do step 12 + 13 */
 
-            memory_array[ic] = copy_string("00000000000000");
+            /*memory_array[ic] = copy_string("00000000000000");*/
 
             l = handle_first_word(search_command_list(action_names_list, command), relevant_line_bit, memory_array[ic], count, &has_errors);
             printf("DEBUG: Memory slot is: %s\n", memory_array[ic]); /* TODO: delete this */
@@ -97,15 +101,14 @@ int run_assembler_phase_1(char* file_name, LinkedCommandList_t action_names_list
         }
 
         label_definition_flag = FALSE;
-        ic += 1; /* TODO: delete this */
     }
 
     fclose(source_file);
     fclose(dest_file);
-    return 1; /* TODO: delete this */
+    /*return 1;*/ /* TODO: delete this */
     if (is(has_errors)) { /* Step 16 */
         printf("ERROR: Found errors in file, stopping assembler\n");
-        return -1;
+        /*return -1;*/
     }
 
     /* TODO: Rename this */
@@ -117,7 +120,7 @@ int run_assembler_phase_1(char* file_name, LinkedCommandList_t action_names_list
     printf("Printing memory list:\n"); /* TODO: delete this */
     print_list(data_memory_list); /* TODO: delete this */
     printf("Printing memory array:\n"); /* TODO: delete this */
-    for (i = 0; i < count; i++) { /* TODO: delete this */
+    for (i = 0; i <= ic; i++) { /* TODO: delete this */
         printf("%d\t%s\n", i + FIRST_AVAILABLE_ADDRESS, memory_array[i]); /* TODO: delete this */
     } /* TODO: delete this */
 
