@@ -22,6 +22,7 @@
 #define JUMP 2 /* TODO: Add documentation */
 #define REGISTER 3 /* TODO: Add documentation */
 #define COMMENT_PREFIX ";" /* TODO: Add documentation */
+#define ENTRY_TYPE "entry" /* TODO: Add documentation */
 
 #define IsRegister(STRING) (strlen(STRING) == 2 && STRING[0] == 'r' && STRING[1] <= '7' && STRING[1] >= '0') /* TODO: Add documentation */
 
@@ -37,6 +38,7 @@ char* get_label_node_type(LabelNode_t node);  /* TODO: Add documentation */
 int get_label_node_value(LabelNode_t node);  /* TODO: Add documentation */
 LabelNode_t get_next_label_node(LabelNode_t node);  /* TODO: Add documentation */
 void set_label_node_value(LabelNode_t node, int new_val); /* TODO: Add documentation */
+void set_label_node_type(LabelNode_t node, char *new_type); /* TODO: Add documentation */
 void add_to_labels_list(LabelNode_t node, LabelsLinkedList_t list); /* TODO: Add documentation */
 int get_labels_list_length(LabelsLinkedList_t list); /* TODO: Add documentation */
 LabelNode_t get_labels_list_head(LabelsLinkedList_t list); /* TODO: Add documentation */
@@ -62,7 +64,9 @@ int starts_with_label(LinkedList_t split_line); /* TODO: Add documentation */
 int is_data_storage(char *line); /* TODO: Add documentation */
 int is_extern_or_entry(char *line); /* TODO: Add documentation */
 int is_extern(char *line); /* TODO: Add documentation */
+int is_entry(char *line); /* TODO: Add documentation */
 void add_label(LabelsLinkedList_t labels_list, LinkedList_t split_line, char *type, int value, int *has_errors, int line_number); /* TODO: Add documentation */
+void mark_label_as_entry(LabelsLinkedList_t symbol_table, char* label_name); /* TODO: Add documentation */
 void update_symbol_table(LabelsLinkedList_t symbol_table, int ic); /* TODO: Add documentation */
 char* dec_to_binary(int num); /* TODO: Add documentation */
 char* binary(char *string); /* TODO: Add documentation */
@@ -75,5 +79,6 @@ int is_direct_register_type (char *str); /* TODO: Add documentation */
 int is_jump_address_type(char *str); /* TODO: Add documentation */
 int get_address_type(char *operand); /* TODO: Add documentation */
 int handle_first_word(CommandNode_t command_node, char *relevant_line_bit, char memory_slot[], int line_number, int *has_errors); /* TODO: Add documentation */
+int handle_all_but_first_words(CommandNode_t command_node, char *relevant_line_bit, char memory_slot[], int line_number, int *has_errors); /* TODO: Add documentation */
 int is_valid_line(char *line); /* TODO: Add documentation */
 #endif

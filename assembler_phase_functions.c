@@ -79,6 +79,11 @@ void set_label_node_value(LabelNode_t node, int new_val) {
 }
 
 /* TODO: Add documentation */
+void set_label_node_type(LabelNode_t node, char *new_type) {
+    node->type = new_type;
+}
+
+/* TODO: Add documentation */
 void add_to_labels_list(LabelNode_t node, LabelsLinkedList_t list) {
     if (list->list_length == 0) {
         list->head = node;
@@ -309,6 +314,13 @@ int is_extern(char *line) {
 }
 
 /* TODO: Add documentation */
+int is_entry(char *line) {
+    if (starts_with(line, ENTRY_PREFIX))   /* TODO: Maybe improve this */
+        return TRUE;
+    return FALSE;
+}
+
+/* TODO: Add documentation */
 void add_label(LabelsLinkedList_t labels_list, LinkedList_t split_line, char *type, int value, int *has_errors, int line_number) {
     char *label_name = ""; /* TODO: Fix this */
 
@@ -316,7 +328,6 @@ void add_label(LabelsLinkedList_t labels_list, LinkedList_t split_line, char *ty
     if (StringsEqual(type, DATA_TYPE) || StringsEqual(type, CODE_TYPE)) {
         label_name = get_node_value(get_head(split_line));
     } else if (StringsEqual(type,EXTERN_TYPE)) {
-
         if (get_list_length(split_line) > 2) {
             handle_error("Too many words after label", line_number, has_errors); /* Needs rephrase */
         }
@@ -332,6 +343,21 @@ void add_label(LabelsLinkedList_t labels_list, LinkedList_t split_line, char *ty
     }
 
     add_to_labels_list(create_label_node(label_name, type, value), labels_list);
+}
+
+/* TODO: Add documentation */
+void mark_label_as_entry(LabelsLinkedList_t symbol_table, char* label_name) {
+    printf("Marking %s as entry!\n", label_name); /* TODO: delete this */
+    LabelNode_t curr_label = get_labels_list_head(symbol_table);
+    while (curr_label != NULL) {
+        if (StringsEqual(get_label_node_name(curr_label), label_name)) {
+            set_label_node_type(curr_label, ENTRY_TYPE);
+            return;
+        }
+        curr_label = get_next_label_node(curr_label);
+    }
+    /* TODO: ERROR HANDLING - label doesn't exist! */
+    printf("ERROR: Label %s doesn't exist!\n", label_name); /* TODO: delete this */
 }
 
 /* TODO: Add documentation */
@@ -674,6 +700,13 @@ int handle_first_word(CommandNode_t command_node, char *relevant_line_bit, char 
     return l;
 }
 
+/* TODO: Write this */
+/* TODO: Add documentation */
+int handle_all_but_first_words(CommandNode_t command_node, char *relevant_line_bit, char memory_slot[], int line_number, int *has_errors) {
+    printf("Handling all words of %s\n", relevant_line_bit);
+    return 0;
+}
+
 /* TODO: Add documentation */
 int is_valid_line(char *line) {
     if (is(starts_with(line, COMMENT_PREFIX)))
@@ -683,3 +716,8 @@ int is_valid_line(char *line) {
     return TRUE;
 }
 
+/* TODO: Write this */
+/* TODO: Add documentation */
+void create_files() {
+    printf("Create all files!\n"); /* TODO: delete this */
+}
