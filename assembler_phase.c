@@ -129,7 +129,9 @@ int run_assembler_phase_1(char* file_name, LinkedCommandList_t action_names_list
             l = handle_first_word(search_command_list(action_names_list, command), relevant_line_bit, memory_array[ic], count, has_errors);
             /*printf("DEBUG: Memory slot is: %s\n", memory_array[ic]); *//* TODO: delete this *//*
             printf("--------------\n"); *//* TODO: delete this */
-            ic += l; /* Step 14 */
+            /* TODO: Handle this mess of l and calculate words thingie */
+            ic += calculate_words_for_line(search_command_list(action_names_list, command), relevant_line_bit); /* Step 14 */
+            /*ic += l;*/ /* Step 14 */
         }
 
         label_definition_flag = FALSE;
@@ -162,7 +164,7 @@ int run_assembler_phase_1(char* file_name, LinkedCommandList_t action_names_list
 
 /* TODO: Add documentation */
 int run_assembler_phase_2(char* file_name, LinkedCommandList_t action_names_list, LinkedList_t *data_memory_list, LabelsLinkedList_t *symbol_table, char *memory_array[], int *has_errors) {
-    int i, ic = 0, count = 0, l = 0; /* Step 1 */
+    int ic = 0, count = 0, l = 0; /* Step 1 */
     char *line, *command;
     char *relevant_line_bit; /* TODO: rename this is needed */
     FILE *source_file;
@@ -189,7 +191,7 @@ int run_assembler_phase_2(char* file_name, LinkedCommandList_t action_names_list
 
         if (is(starts_with_label(split_by_label))) { /* Step 3 */
             /* TODO: ERROR HANDLING - Ensure not entry!!! */
-            continue;
+            relevant_line_bit = get_stripped_string(get_node_value(get_tail(split_by_label)));
         }
 
         if (is(is_data_storage(relevant_line_bit)) || is(is_extern(relevant_line_bit))) { /* Step 4 */

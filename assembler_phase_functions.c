@@ -838,7 +838,6 @@ int handle_all_but_first_words(CommandNode_t command_node, char *relevant_line_b
         if (operand_type == IMMEDIATE)
             set_immediate_type_code(memory_array[ic + 1], operands_string);
         else if (operand_type == DIRECT) {
-            printf("DEBUG: Setting memory array for %d\n", ic + 1); /* TODO: delete this */
             set_direct_type_code(memory_array[ic + 1], operands_string, symbol_table);
         }
         else if (operand_type == JUMP)
