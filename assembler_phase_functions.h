@@ -25,6 +25,8 @@
 #define REGISTER 3 /* TODO: Add documentation */
 #define COMMENT_PREFIX ";" /* TODO: Add documentation */
 #define ENTRY_TYPE "entry" /* TODO: Add documentation */
+#define SOURCE 5 /* TODO: Add documentation */
+#define DESTINATION 11 /* TODO: Add documentation */
 
 #define IsRegister(STRING) (strlen(STRING) == 2 && STRING[0] == 'r' && STRING[1] <= '7' && STRING[1] >= '0') /* TODO: Add documentation */
 
@@ -86,12 +88,11 @@ int get_address_type(char *operand); /* TODO: Add documentation */
 LinkedList_t get_split_operands(char *operands_string); /* TODO: Add documentation */
 int has_non_register_operands(LinkedList_t split_operands); /* TODO: Add documentation */
 int calculate_words_for_line(CommandNode_t command_node, char *relevant_line_bit); /* TODO: Add documentation */
-
 void set_immediate_type_code(char *memory_bit, char *operand); /* TODO: Add documentation */
 void set_direct_type_code(char *memory_bit, char *operand, LabelsLinkedList_t *symbol_table); /* TODO: Add documentation */
 void set_jump_type_code(char *memory_bit, char *operand); /* TODO: Add documentation */
-void set_register_type_code(char *memory_bit, char *operand); /* TODO: Add documentation */
-
+void set_register_type_code(char *memory_bit, char *operand, int start); /* TODO: Add documentation */
+void set_operand_code(char *operand_string, int source_or_dest, LabelsLinkedList_t *symbol_table, char *memory_array[], int ic); /* TODO: Add documentation */
 int handle_first_word(CommandNode_t command_node, char *relevant_line_bit, char memory_slot[], int line_number, int *has_errors); /* TODO: Add documentation */
 int handle_all_but_first_words(CommandNode_t command_node, char *relevant_line_bit, LabelsLinkedList_t *symbol_table, char *memory_array[], int ic, int line_number, int *has_errors); /* TODO: Add documentation */
 int is_valid_line(char *line); /* TODO: Add documentation */
