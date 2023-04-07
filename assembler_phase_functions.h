@@ -57,6 +57,7 @@ int get_commands_list_length(LinkedCommandList_t list); /* TODO: Add documentati
 CommandNode_t get_commands_list_head(LinkedCommandList_t list); /* TODO: Add documentation */
 CommandNode_t search_command_list(LinkedCommandList_t list, char* command); /* TODO: Add documentation */
 void print_commands_list(LinkedCommandList_t list); /* TODO: Add documentation */
+LabelNode_t search_labels_list(LabelsLinkedList_t list, char* label); /* TODO: Add documentation */
 void print_labels_list(LabelsLinkedList_t list); /* TODO: delete this */
 void print_assembler_phase(void); /* TODO: delete this */
 LinkedCommandList_t create_action_names_list(); /* TODO: Add documentation */
@@ -85,7 +86,13 @@ int get_address_type(char *operand); /* TODO: Add documentation */
 LinkedList_t get_split_operands(char *operands_string); /* TODO: Add documentation */
 int has_non_register_operands(LinkedList_t split_operands); /* TODO: Add documentation */
 int calculate_words_for_line(CommandNode_t command_node, char *relevant_line_bit); /* TODO: Add documentation */
+
+void set_immediate_type_code(char *memory_bit, char *operand); /* TODO: Add documentation */
+void set_direct_type_code(char *memory_bit, char *operand, LabelsLinkedList_t *symbol_table); /* TODO: Add documentation */
+void set_jump_type_code(char *memory_bit, char *operand); /* TODO: Add documentation */
+void set_register_type_code(char *memory_bit, char *operand); /* TODO: Add documentation */
+
 int handle_first_word(CommandNode_t command_node, char *relevant_line_bit, char memory_slot[], int line_number, int *has_errors); /* TODO: Add documentation */
-int handle_all_but_first_words(CommandNode_t command_node, char *relevant_line_bit, char memory_slot[], int line_number, int *has_errors); /* TODO: Add documentation */
+int handle_all_but_first_words(CommandNode_t command_node, char *relevant_line_bit, LabelsLinkedList_t *symbol_table, char *memory_array[], int ic, int line_number, int *has_errors); /* TODO: Add documentation */
 int is_valid_line(char *line); /* TODO: Add documentation */
 #endif

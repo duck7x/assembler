@@ -225,6 +225,19 @@ void print_commands_list(LinkedCommandList_t list) {
 
 }
 
+/* TODO: Add documentation */
+LabelNode_t search_labels_list(LabelsLinkedList_t list, char* label) {
+    LabelNode_t curr = get_labels_list_head(list);
+
+    while(curr != NULL) {
+        if (!strcmp(get_label_node_name(curr), label)) {
+            return curr;
+        }
+        curr = get_next_label_node(curr);
+    }
+    return NULL;
+}
+
 /* TODO: DELETE THIS */
 void print_labels_list(LabelsLinkedList_t list) {
     LabelNode_t node;
@@ -342,7 +355,7 @@ void add_label(LabelsLinkedList_t labels_list, LinkedList_t split_line, char *ty
         return;
     }
 
-    add_to_labels_list(create_label_node(label_name, type, value), labels_list);
+    add_to_labels_list(create_label_node(label_name, type, FIRST_AVAILABLE_ADDRESS + value), labels_list);
 }
 
 /* TODO: Add documentation */
@@ -682,29 +695,43 @@ int calculate_words_for_line(CommandNode_t command_node, char *relevant_line_bit
     return l;
 }
 
-/* TODO: Write this */
 /* TODO: Add documentation */
-char* get_immediate_type_code(char *memory_bit) {
-
-    return "00000000";
+void set_immediate_type_code(char *memory_bit, char *operand) {
+    set_binary_string_from_string(copy_substring(operand, 1, strlen(operand)), memory_bit, 11);
 }
 
 /* TODO: Write this */
 /* TODO: Add documentation */
-char* get_direct_type_code() {
-    return "00000000";
+void set_direct_type_code(char *memory_bit, char *operand, LabelsLinkedList_t *symbol_table) {
+    LabelNode_t label;
+    printf("DEBUG: Setting direct type code of [%s] to [%s]\n", memory_bit, operand); /* TODO: delete this */
+    /* Find label in label table */
+    label = search_labels_list(*symbol_table, operand);
+    if (label == NULL) {
+        printf("ERROR: This is an error!\n"); /* TODO: delete this */
+        /* TODO: ERROR HANDLING - label not found */
+    }
+    if (StringsEqual(get_label_node_type(label), EXTERN_TYPE))
+        memory_bit[13] = '1';
+    else {
+        memory_bit[12] = '1';
+        set_binary_string_from_num(get_label_node_value(label), memory_bit, 11);
+    }
+    printf("DEBUG: Memory bit is now [%s]\n", memory_bit); /* TODO: delete this */
 }
 
 /* TODO: Write this */
 /* TODO: Add documentation */
-char* get_jump_type_code() {
-    return "00000000";
+void set_jump_type_code(char *memory_bit, char *operand) {
+    printf("DEBUG: Setting jump type code of [%s] to [%s]\n", memory_bit, operand); /* TODO: delete this */
+    return;
 }
 
 /* TODO: Write this */
 /* TODO: Add documentation */
-char* get_register_type_code() {
-    return "00000000";
+void set_register_type_code(char *memory_bit, char *operand) {
+    printf("DEBUG: Setting register type code of [%s] to [%s]\n", memory_bit, operand); /* TODO: delete this */
+    return;
 }
 
 /* TODO: write this */
@@ -713,10 +740,6 @@ int handle_first_word(CommandNode_t command_node, char *relevant_line_bit, char 
     char *operands_string, *opcode;
     int operands_num, i, l = 1, operand_type, non_register_operands = FALSE;
     LinkedList_t split_operands;
-
-    printf("--------------\n"); /* TODO: delete this */
-    printf("DEBUG: Handling command:\n"); /* TODO: delete this */
-    print_commands_node(command_node);/* TODO: delete this */
 
     if(command_node == NULL) {  /* Step 12 */
         handle_error("Illegal command", line_number, has_errors);
@@ -729,36 +752,26 @@ int handle_first_word(CommandNode_t command_node, char *relevant_line_bit, char 
 
     split_operands = get_split_operands(operands_string);
 
-    printf("DEBUG: Printing operands list\n"); /* TODO: delete this */
-    print_list(split_operands); /* TODO: delete this */
-
     if (get_list_length(split_operands) != operands_num) {
         handle_error("Wrong amount of operands specified", line_number, has_errors);
         return -1;
     }
-
-    printf("DEBUG: line is [%s] and operands_string is [%s]\n", relevant_line_bit, operands_string); /* TODO: delete this */
 
     /* Encode and add first word to memory array */
     for (i = 6; i <= 9 ; i++) {
         memory_slot[13-i] = opcode[9-i];
     }
 
-    printf("DEBUG: Memory slot after adding %s to bits 6-9 is %s\n", opcode, memory_slot); /* TODO: delete this */
-
     if (operands_num == 1) {
-        printf("DEBUG: Singular operand\n"); /* TODO: delete this */
         operand_type = get_address_type(operands_string);
         /* TODO: split to functions */
         /* TODO: ensure type fits command */
         if (operand_type == JUMP) {
-            printf("DEBUG: Operand is jump!\n"); /* TODO: delete this */
             memory_slot[13-3] = '1'; /* TODO: change to 13 - something */
             l += 2; /* TODO: Ensure! */
             /* handle 10-13 by jump params */
             split_operands = split_string(get_node_value(get_tail(split_string(copy_substring(operands_string, 0,
                                                                                               strlen(operands_string)-1), '('))), ',');
-            printf("DEBUG: split operands is\n"); /* TODO: delete this */
             print_list(split_operands);
 
             /* TODO: switch to for loop to reduce code redundancy */
@@ -781,7 +794,6 @@ int handle_first_word(CommandNode_t command_node, char *relevant_line_bit, char 
             memory_slot[13-2] = '0' + (operand_type % 2); /* TODO: change to 13 - something */
         }
     } else if (operands_num == 2) {
-        printf("DEBUG: 2 operands\n"); /* TODO: delete this */
         l += 1;
         for (i = 0; i <= 3; i++) {
             memory_slot[i] = '0';
@@ -803,14 +815,12 @@ int handle_first_word(CommandNode_t command_node, char *relevant_line_bit, char 
         l += non_register_operands;
     }
 
-    printf("DEBUG: Memory slot is %s\n", memory_slot); /* TODO: delete this */
-
     return l;
 }
 
 /* TODO: Write this */
 /* TODO: Add documentation */
-int handle_all_but_first_words(CommandNode_t command_node, char *relevant_line_bit, char memory_slot[], int line_number, int *has_errors) {
+int handle_all_but_first_words(CommandNode_t command_node, char *relevant_line_bit, LabelsLinkedList_t *symbol_table, char *memory_array[], int ic, int line_number, int *has_errors) {
     int l, operands_num = get_command_node_operands(command_node), operand_type;
     char *operands_string;
 
@@ -824,6 +834,17 @@ int handle_all_but_first_words(CommandNode_t command_node, char *relevant_line_b
 
     if (operands_num == 1) {
         operand_type = get_address_type(operands_string);
+        /* TODO: Change to switch */
+        if (operand_type == IMMEDIATE)
+            set_immediate_type_code(memory_array[ic + 1], operands_string);
+        else if (operand_type == DIRECT) {
+            printf("DEBUG: Setting memory array for %d\n", ic + 1); /* TODO: delete this */
+            set_direct_type_code(memory_array[ic + 1], operands_string, symbol_table);
+        }
+        else if (operand_type == JUMP)
+            set_jump_type_code(memory_array[ic + 1], operands_string);
+        else if (operand_type == REGISTER)
+            set_register_type_code(memory_array[ic + 1], operands_string);
     } else if (operands_num == 2) {
 
     }

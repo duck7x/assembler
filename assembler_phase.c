@@ -74,7 +74,7 @@ int run_assembler_phase_1(char* file_name, LinkedCommandList_t action_names_list
 
     while (ReadLine(source_file, line) != EOF) {  /* TODO: rewrite this */ /* Step 2 */
 
-        printf("DEBUG: Handling line [%s]\n", line); /* TODO: delete this */
+        /*printf("DEBUG: Handling line [%s]\n", line); *//* TODO: delete this */
 
         count ++;
 
@@ -127,8 +127,8 @@ int run_assembler_phase_1(char* file_name, LinkedCommandList_t action_names_list
             /*memory_array[ic] = copy_string(DEFAULT_EMPTY_WORD);*/
 
             l = handle_first_word(search_command_list(action_names_list, command), relevant_line_bit, memory_array[ic], count, has_errors);
-            printf("DEBUG: Memory slot is: %s\n", memory_array[ic]); /* TODO: delete this */
-            printf("--------------\n"); /* TODO: delete this */
+            /*printf("DEBUG: Memory slot is: %s\n", memory_array[ic]); *//* TODO: delete this *//*
+            printf("--------------\n"); *//* TODO: delete this */
             ic += l; /* Step 14 */
         }
 
@@ -192,7 +192,7 @@ int run_assembler_phase_2(char* file_name, LinkedCommandList_t action_names_list
             continue;
         }
 
-        if (is(is_data_storage(relevant_line_bit)) || is(is_extern(relevant_line_bit))) {/* Step 4 */
+        if (is(is_data_storage(relevant_line_bit)) || is(is_extern(relevant_line_bit))) { /* Step 4 */
             continue;
         }
 
@@ -204,10 +204,9 @@ int run_assembler_phase_2(char* file_name, LinkedCommandList_t action_names_list
         }
         else /* Step 7+8 */
         {
-            printf("Step 7!\n");
             split_by_space = split_string(relevant_line_bit, SPACE);
             command = get_node_value(get_head(split_by_space));
-            l = handle_all_but_first_words(search_command_list(action_names_list, command), relevant_line_bit, memory_array[ic], count, has_errors); /* Step 7 */
+            l = handle_all_but_first_words(search_command_list(action_names_list, command), relevant_line_bit, symbol_table, memory_array, ic, count, has_errors); /* Step 7 */
             ic += l; /* Step 8 */
         }
     }
