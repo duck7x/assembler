@@ -176,8 +176,6 @@ int run_assembler_phase_2(char* file_name, LinkedCommandList_t action_names_list
     printf("Running phase 2 of assembler on %s!\n", file_name); /* TODO: delete this */
 
     while (ReadLine(source_file, line) != EOF) {  /* TODO: rewrite this */ /* Step 2 */
-        printf("DEBUG: Handling line [%s]\n", line); /* TODO: delete this */
-
         count ++;
 
         if (is_not(is_valid_line(line))) {

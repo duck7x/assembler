@@ -90,7 +90,7 @@ int has_non_register_operands(LinkedList_t split_operands); /* TODO: Add documen
 int calculate_words_for_line(CommandNode_t command_node, char *relevant_line_bit); /* TODO: Add documentation */
 void set_immediate_type_code(char *memory_bit, char *operand); /* TODO: Add documentation */
 void set_direct_type_code(char *memory_bit, char *operand, LabelsLinkedList_t *symbol_table); /* TODO: Add documentation */
-void set_jump_type_code(char *memory_bit, char *operand); /* TODO: Add documentation */
+void set_jump_type_code(char *memory_array[], int ic, char *operand, LabelsLinkedList_t *symbol_table); /* TODO: Add documentation */
 void set_register_type_code(char *memory_bit, char *operand, int start); /* TODO: Add documentation */
 void set_operand_code(char *operand_string, int source_or_dest, LabelsLinkedList_t *symbol_table, char *memory_array[], int ic); /* TODO: Add documentation */
 int handle_first_word(CommandNode_t command_node, char *relevant_line_bit, char memory_slot[], int line_number, int *has_errors); /* TODO: Add documentation */

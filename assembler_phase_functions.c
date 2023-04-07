@@ -389,7 +389,6 @@ void update_symbol_table(LabelsLinkedList_t symbol_table, int ic) {
 void set_binary_string_from_num(unsigned int num, char *binary_string, int start) {
     int i;
     for (i = start; num > 0 && i >= 0; i--) {
-        printf("DEBUG: setting [%s] at %d\n", binary_string, i); /* TODO: delete this */
         binary_string[i] = '0' + num % 2;
         num /= 2;
     }
@@ -720,17 +719,28 @@ void set_direct_type_code(char *memory_bit, char *operand, LabelsLinkedList_t *s
 
 /* TODO: Write this */
 /* TODO: Add documentation */
-void set_jump_type_code(char *memory_bit, char *operand) {
-    printf("DEBUG: Setting jump type code of [%s] to [%s]\n", memory_bit, operand); /* TODO: delete this */
-    return;
+void set_jump_type_code(char *memory_array[], int ic, char *operand, LabelsLinkedList_t *symbol_table) {
+    LinkedList_t split_operands;
+    split_operands = split_string(operand, '(');
+    char *temp, *first, *second;
+    ic ++;
+    temp = get_node_value(get_head(split_operands));
+    set_direct_type_code(memory_array[ic], temp, symbol_table);
+    /* TODO: This repeats (when two operands)*/
+    split_operands = split_string(get_string_without_whitespaces(copy_substring(get_node_value(get_tail(split_operands)), 0, strlen(operand) -
+            strlen(temp) - 2)), ',');
+    first = get_node_value(get_head(split_operands));
+    second = get_node_value(get_tail(split_operands));
+    set_operand_code(first, SOURCE, symbol_table, memory_array, ic);
+    if (get_address_type(first) != REGISTER || get_address_type(second) != REGISTER) /* TODO: Make this better and not here */
+        ic ++;
+    set_operand_code(second, DESTINATION, symbol_table, memory_array, ic);
 }
 
 /* TODO: Write this */
 /* TODO: Add documentation */
 void set_register_type_code(char *memory_bit, char *operand, int start) {
-    printf("DEBUG: Setting register type code of [%s] to [%s], starting %d\n", memory_bit, operand, start); /* TODO: delete this */
     set_binary_string_from_string(copy_substring(operand, 1, 2), memory_bit, start);
-    printf("DEBUG: Address is set to [%s]\n", memory_bit); /* TODO: delete this */
 }
 
 /* TODO: Add documentation */
@@ -744,7 +754,7 @@ void set_operand_code(char *operand_string, int source_or_dest, LabelsLinkedList
         set_direct_type_code(memory_array[ic + 1], operand_string, symbol_table);
     }
     else if (operand_type == JUMP)
-        set_jump_type_code(memory_array[ic + 1], operand_string);
+        set_jump_type_code(memory_array, ic, operand_string, symbol_table);
     else if (operand_type == REGISTER)
         set_register_type_code(memory_array[ic + 1], operand_string, source_or_dest);
 }
@@ -849,17 +859,15 @@ int handle_all_but_first_words(CommandNode_t command_node, char *relevant_line_b
     operands_string = get_stripped_string(clean_multiple_whitespaces(copy_substring(relevant_line_bit, strlen(get_command_node_command(command_node)), strlen(relevant_line_bit))));
 
     if (operands_num == 1) {
-        printf("DEBUG: Destination operand\n"); /* TODO: delete this */
         set_operand_code(operands_string, DESTINATION, symbol_table, memory_array, ic);
     } else if (operands_num == 2) {
+        /* TODO: This repeats (jump) */
         split_operands = split_string(get_string_without_whitespaces(operands_string), ',');
         first = get_node_value(get_head(split_operands));
         second = get_node_value(get_tail(split_operands));
-        printf("DEBUG: Source operand\n"); /* TODO: delete this */
         set_operand_code(first, SOURCE, symbol_table, memory_array, ic);
         if (get_address_type(first) != REGISTER || get_address_type(second) != REGISTER) /* TODO: Make this better and not here */
             ic ++;
-        printf("DEBUG: Destination operand\n"); /* TODO: delete this */
         set_operand_code(second, DESTINATION, symbol_table, memory_array, ic);
     }
 
