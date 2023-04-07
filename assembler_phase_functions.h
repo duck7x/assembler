@@ -6,6 +6,7 @@
 #include <ctype.h>
 #include "general_functions.h"
 
+#define DEFAULT_EMPTY_WORD "00000000000000" /* TODO: Add documentation */
 #define DATA_PREFIX ".data" /* TODO: Add documentation */
 #define STRING_PREFIX ".string" /* TODO: Add documentation */
 #define EXTERN_PREFIX ".extern" /* TODO: Add documentation */
@@ -15,6 +16,7 @@
 #define EXTERN_DEFAULT_VALUE 0 /* TODO: Add documentation */
 #define CODE_TYPE "code" /* TODO: Add documentation */
 #define MINUS '-' /* TODO: Add documentation */
+#define PLUS '+' /* TODO: Add documentation */
 #define MEMORY_SIZE 256 /* TODO: Add documentation */
 #define FIRST_AVAILABLE_ADDRESS 100 /* TODO: Add documentation */
 #define IMMEDIATE 0 /* TODO: Add documentation */
@@ -68,6 +70,8 @@ int is_entry(char *line); /* TODO: Add documentation */
 void add_label(LabelsLinkedList_t labels_list, LinkedList_t split_line, char *type, int value, int *has_errors, int line_number); /* TODO: Add documentation */
 void mark_label_as_entry(LabelsLinkedList_t symbol_table, char* label_name); /* TODO: Add documentation */
 void update_symbol_table(LabelsLinkedList_t symbol_table, int ic); /* TODO: Add documentation */
+void set_binary_string_from_num(unsigned int num, char *binary_string, int start); /* TODO: Add documentation */
+void set_binary_string_from_string(char *str, char *binary_string, int start); /* TODO: Add documentation */
 char* dec_to_binary(int num); /* TODO: Add documentation */
 char* binary(char *string); /* TODO: Add documentation */
 int handle_data_type(char *line, LinkedList_t memory_list); /* TODO: Add documentation */
@@ -78,6 +82,9 @@ int is_direct_address_type (char *str); /* TODO: Add documentation */
 int is_direct_register_type (char *str); /* TODO: Add documentation */
 int is_jump_address_type(char *str); /* TODO: Add documentation */
 int get_address_type(char *operand); /* TODO: Add documentation */
+LinkedList_t get_split_operands(char *operands_string); /* TODO: Add documentation */
+int has_non_register_operands(LinkedList_t split_operands); /* TODO: Add documentation */
+int calculate_words_for_line(CommandNode_t command_node, char *relevant_line_bit); /* TODO: Add documentation */
 int handle_first_word(CommandNode_t command_node, char *relevant_line_bit, char memory_slot[], int line_number, int *has_errors); /* TODO: Add documentation */
 int handle_all_but_first_words(CommandNode_t command_node, char *relevant_line_bit, char memory_slot[], int line_number, int *has_errors); /* TODO: Add documentation */
 int is_valid_line(char *line); /* TODO: Add documentation */

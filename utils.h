@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define LAST_ALLOCATION_INDEX 999 /* TODO: Add documentation */
+#define LAST_ALLOCATION_INDEX 1999 /* TODO: Add documentation */
 #define CURRENT_MAX_TABLE_SIZE 1000 /* TODO: Add documentation */
 #define TRUE 1 /* TODO: Add documentation */
 #define FALSE 0 /* TODO: Add documentation */

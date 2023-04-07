@@ -69,17 +69,18 @@ int run_assembler_phase_1(char* file_name, LinkedCommandList_t action_names_list
     source_file = fopen(concatenate_strings(file_name, POST_PRE_ASSEMBLER_SUFFIX), READ);
 
     for (i = 0; i < MEMORY_SIZE; i++) {
-        memory_array[i] = copy_string("00000000000000");
+        memory_array[i] = copy_string(DEFAULT_EMPTY_WORD);
     }
 
     while (ReadLine(source_file, line) != EOF) {  /* TODO: rewrite this */ /* Step 2 */
 
         printf("DEBUG: Handling line [%s]\n", line); /* TODO: delete this */
 
-        if (is_not(is_valid_line(line)))
-            continue;
-
         count ++;
+
+        if (is_not(is_valid_line(line))) {
+            continue;
+        }
 
         line = clean_multiple_whitespaces(line);
         split_by_label = split_string(line, ':');
@@ -123,7 +124,7 @@ int run_assembler_phase_1(char* file_name, LinkedCommandList_t action_names_list
             }*/ /* TODO: Delete this */
             /* Do step 12 + 13 */
 
-            /*memory_array[ic] = copy_string("00000000000000");*/
+            /*memory_array[ic] = copy_string(DEFAULT_EMPTY_WORD);*/
 
             l = handle_first_word(search_command_list(action_names_list, command), relevant_line_bit, memory_array[ic], count, has_errors);
             printf("DEBUG: Memory slot is: %s\n", memory_array[ic]); /* TODO: delete this */
@@ -162,10 +163,10 @@ int run_assembler_phase_1(char* file_name, LinkedCommandList_t action_names_list
 /* TODO: Add documentation */
 int run_assembler_phase_2(char* file_name, LinkedCommandList_t action_names_list, LinkedList_t *data_memory_list, LabelsLinkedList_t *symbol_table, char *memory_array[], int *has_errors) {
     int i, ic = 0, count = 0, l = 0; /* Step 1 */
-    char *line;
+    char *line, *command;
     char *relevant_line_bit; /* TODO: rename this is needed */
     FILE *source_file;
-    LinkedList_t split_by_label;
+    LinkedList_t split_by_label, split_by_space;
 
     line = (char *)allocate(sizeof(char) * MAX_LINE_LENGTH);
     source_file = fopen(concatenate_strings(file_name, POST_PRE_ASSEMBLER_SUFFIX), READ);
@@ -175,27 +176,27 @@ int run_assembler_phase_2(char* file_name, LinkedCommandList_t action_names_list
     while (ReadLine(source_file, line) != EOF) {  /* TODO: rewrite this */ /* Step 2 */
         printf("DEBUG: Handling line [%s]\n", line); /* TODO: delete this */
 
-        if (is_not(is_valid_line(line)))
-            continue;
-
         count ++;
+
+        if (is_not(is_valid_line(line))) {
+            continue;
+        }
+
 
         line = clean_multiple_whitespaces(line);
         split_by_label = split_string(line, ':');
         relevant_line_bit = get_stripped_string(line);
 
         if (is(starts_with_label(split_by_label))) { /* Step 3 */
-            printf("DEBUG: Line starts with label, moving on\n"); /* TODO: delete this */
             /* TODO: ERROR HANDLING - Ensure not entry!!! */
             continue;
         }
 
         if (is(is_data_storage(relevant_line_bit)) || is(is_extern(relevant_line_bit))) {/* Step 4 */
-            printf("DEBUG: Line is data / extern, moving on\n"); /* TODO: delete this */
             continue;
         }
 
-        if (is(is_entry(relevant_line_bit))) {/* Step 5 */
+        if (is(is_entry(relevant_line_bit))) { /* Step 5 */
             printf("Entry!\n"); /* TODO: delete this */
             /* TODO: ERROR HANDLING - Ensure there aren't too many stuff */
             /* TODO: WARNING HANDLING - in case of label */
@@ -204,12 +205,11 @@ int run_assembler_phase_2(char* file_name, LinkedCommandList_t action_names_list
         else /* Step 7+8 */
         {
             printf("Step 7!\n");
-            printf("DEBUG: Finished handling line [%s]\n", relevant_line_bit); /* TODO: delete this */
-            continue;
-            /*l = handle_all_but_first_words(command_node, relevant_line_bit, memory_array[ic], count, has_errors);*/
-            ic += l;
+            split_by_space = split_string(relevant_line_bit, SPACE);
+            command = get_node_value(get_head(split_by_space));
+            l = handle_all_but_first_words(search_command_list(action_names_list, command), relevant_line_bit, memory_array[ic], count, has_errors); /* Step 7 */
+            ic += l; /* Step 8 */
         }
-        printf("DEBUG: Finished handling line\n"); /* TODO: delete this */
     }
 
     if (is(*has_errors)) { /* Step 10 */

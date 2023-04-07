@@ -371,6 +371,36 @@ void update_symbol_table(LabelsLinkedList_t symbol_table, int ic) {
     }
 }
 
+/* 2’s complement */
+/* TODO: Add documentation */
+void set_binary_string_from_num(unsigned int num, char *binary_string, int start) {
+    int i;
+    int temp_num;
+    for (i = start; num > 0 && i >= 0; i--) {
+        binary_string[i] = '0' + num % 2;
+        num /= 2;
+    }
+}
+
+/* 2’s complement */
+/* TODO: Add documentation */
+void set_binary_string_from_string(char *str, char *binary_string, int start) {
+    int i, num, negative = FALSE;
+    if (str[0] == MINUS) {
+        negative = TRUE;
+        num = atoi(copy_substring(str, 1, strlen(str)));
+    } else if (str[0] == PLUS) {
+        num = atoi(copy_substring(str, 1, strlen(str)));
+    } else {
+        num = atoi(str);
+    }
+
+    if (is(negative))
+        num = (~num) + 1;
+
+    set_binary_string_from_num(num, binary_string, start);
+}
+
 /* TODO: Rewrite this */
 /* TODO: Add documentation (use my_rotate as reference, maman 11 I think) */
 char* dec_to_binary(int num) {
@@ -433,7 +463,7 @@ char* binary(char *string) {
 /* TODO: Write this */
 /* TODO: Add documentation */
 int handle_data_type(char *line, LinkedList_t memory_list) {
-    char *data, *curr_string;
+    char *data, *curr_string, *binary_string;
     Node_t curr_node;
     LinkedList_t split_data;
 
@@ -454,7 +484,9 @@ int handle_data_type(char *line, LinkedList_t memory_list) {
             /* TODO: ERROR HANDLING - incorrect commas in data! */
             return 0;
         }
-        add_to_list(create_node(binary(curr_string)) ,memory_list); /* TODO: Might separate to function? */
+        binary_string = copy_string(DEFAULT_EMPTY_WORD);
+        set_binary_string_from_string(curr_string, binary_string, 13);
+        add_to_list(create_node(binary_string), memory_list); /* TODO: Might separate to function? */
         curr_node = get_next_node(curr_node);
     }
 
@@ -464,7 +496,7 @@ int handle_data_type(char *line, LinkedList_t memory_list) {
 /* TODO: Write this */
 /* TODO: Add documentation */
 int handle_string_type(char *line, LinkedList_t memory_list) {
-    char *data;
+    char *data, *binary_string;
     int i;
 
     data = copy_substring(line, 7, strlen(line));
@@ -482,10 +514,12 @@ int handle_string_type(char *line, LinkedList_t memory_list) {
     }
 
     for (i = 1; i < strlen(data) - 1; i++) {
-        add_to_list(create_node(dec_to_binary(data[i])) ,memory_list); /* TODO: Might separate to function? */
+        binary_string = copy_string(DEFAULT_EMPTY_WORD);
+        set_binary_string_from_num(data[i], binary_string, 13);
+        add_to_list(create_node(binary_string), memory_list); /* TODO: Might separate to function? */
     }
 
-    add_to_list(create_node(dec_to_binary('\0')) ,memory_list); /* TODO: Might separate to function? */
+    add_to_list(create_node(DEFAULT_EMPTY_WORD), memory_list); /* TODO: Might separate to function? */ /* Adding \0 at the end */
 
     return strlen(data) - 1;
 }
@@ -589,6 +623,90 @@ int get_address_type(char *operand) {
     return type;
 }
 
+/* TODO: Add documentation */
+LinkedList_t get_split_operands(char *operands_string) {
+    int i;
+    LinkedList_t split_operands;
+
+    /* TODO: split operands differently because this way doesn't work well with jump thingies :( */
+    /* TODO: This is a quick fix, need to separate to function or redesign */
+    for (i = 0; i < strlen(operands_string); i ++) {
+        if (operands_string[i] == '(')
+            break;
+    }
+    if (i != strlen(operands_string)) {
+        split_operands = create_linked_list();
+        add_to_list(create_node(operands_string), split_operands);
+    } else
+        split_operands = split_string(operands_string, ',');
+
+    return split_operands;
+}
+
+/* Assumes a pair of operands in a split thingie */
+/* TODO: Add documentation */
+int has_non_register_operands(LinkedList_t split_operands) {
+    if (get_address_type(get_node_value(get_head(split_operands))) != REGISTER || get_address_type(get_node_value(get_tail(split_operands))) != REGISTER)
+        return TRUE;
+    return FALSE;
+}
+
+/* Assuming line is alright (will be checked separately) */
+/* TODO: Add documentation */
+int calculate_words_for_line(CommandNode_t command_node, char *relevant_line_bit) {
+    char *operands_string;
+    int operands_num, i, l = 1, operand_type, non_register_operands = FALSE;
+    LinkedList_t split_operands;
+
+    operands_string = get_stripped_string(clean_multiple_whitespaces(copy_substring(relevant_line_bit, strlen(get_command_node_command(command_node)), strlen(relevant_line_bit))));
+    operands_num = get_command_node_operands(command_node);
+
+    split_operands = get_split_operands(operands_string);
+
+    if (operands_num == 1) {
+        operand_type = get_address_type(operands_string);
+        if (operand_type == JUMP) {
+            /* Jump handling */
+            l += 2; /* TODO: Ensure! */
+            split_operands = split_string(get_node_value(get_tail(split_string(copy_substring(operands_string, 0,
+                                                                                              strlen(operands_string)-1), '('))), ',');
+            l += has_non_register_operands(split_operands);
+        } else {
+            l += 1;
+        }
+    } else if (operands_num == 2) {
+        split_operands = split_string(get_string_without_whitespaces(operands_string), ',');
+        l += 1 + has_non_register_operands(split_operands);
+    }
+
+    return l;
+}
+
+/* TODO: Write this */
+/* TODO: Add documentation */
+char* get_immediate_type_code(char *memory_bit) {
+
+    return "00000000";
+}
+
+/* TODO: Write this */
+/* TODO: Add documentation */
+char* get_direct_type_code() {
+    return "00000000";
+}
+
+/* TODO: Write this */
+/* TODO: Add documentation */
+char* get_jump_type_code() {
+    return "00000000";
+}
+
+/* TODO: Write this */
+/* TODO: Add documentation */
+char* get_register_type_code() {
+    return "00000000";
+}
+
 /* TODO: write this */
 /* TODO: Add documentation */
 int handle_first_word(CommandNode_t command_node, char *relevant_line_bit, char memory_slot[], int line_number, int *has_errors) {
@@ -609,17 +727,7 @@ int handle_first_word(CommandNode_t command_node, char *relevant_line_bit, char 
     operands_num = get_command_node_operands(command_node);
     opcode = get_command_node_code(command_node);
 
-    /* TODO: split operands differently because this way doesn't work well with jump thingies :( */
-    /* TODO: This is a quick fix, need to separate to function or redesign */
-    for (i = 0; i < strlen(operands_string); i ++) {
-        if (operands_string[i] == '(')
-            break;
-    }
-    if (i != strlen(operands_string)) {
-        split_operands = create_linked_list();
-        add_to_list(create_node(operands_string), split_operands);
-    } else
-        split_operands = split_string(operands_string, ',');
+    split_operands = get_split_operands(operands_string);
 
     printf("DEBUG: Printing operands list\n"); /* TODO: delete this */
     print_list(split_operands); /* TODO: delete this */
@@ -673,7 +781,7 @@ int handle_first_word(CommandNode_t command_node, char *relevant_line_bit, char 
             memory_slot[13-2] = '0' + (operand_type % 2); /* TODO: change to 13 - something */
         }
     } else if (operands_num == 2) {
-        printf("DEBUG: 2 operarnds\n"); /* TODO: delete this */
+        printf("DEBUG: 2 operands\n"); /* TODO: delete this */
         l += 1;
         for (i = 0; i <= 3; i++) {
             memory_slot[i] = '0';
@@ -703,8 +811,24 @@ int handle_first_word(CommandNode_t command_node, char *relevant_line_bit, char 
 /* TODO: Write this */
 /* TODO: Add documentation */
 int handle_all_but_first_words(CommandNode_t command_node, char *relevant_line_bit, char memory_slot[], int line_number, int *has_errors) {
+    int l, operands_num = get_command_node_operands(command_node), operand_type;
+    char *operands_string;
+
+    l = calculate_words_for_line(command_node, relevant_line_bit);
     printf("Handling all words of %s\n", relevant_line_bit);
-    return 0;
+
+    if (operands_num == 0)
+        return l;
+
+    operands_string = get_stripped_string(clean_multiple_whitespaces(copy_substring(relevant_line_bit, strlen(get_command_node_command(command_node)), strlen(relevant_line_bit))));
+
+    if (operands_num == 1) {
+        operand_type = get_address_type(operands_string);
+    } else if (operands_num == 2) {
+
+    }
+
+    return l;
 }
 
 /* TODO: Add documentation */
