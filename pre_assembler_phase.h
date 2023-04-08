@@ -1,4 +1,4 @@
-#ifndef PRE_ASSEMBLER_PHASE_H
+#ifndef PRE_ASSEMBLER_PHASE_H /* Prevents recursive includes */
 #define PRE_ASSEMBLER_PHASE_H
 
 #include <stdio.h>

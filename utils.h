@@ -1,4 +1,4 @@
-#ifndef UTILS_H
+#ifndef UTILS_H /* Prevents recursive includes */
 #define UTILS_H
 
 #include <stdlib.h>

@@ -1,4 +1,4 @@
-#ifndef GENERAL_FUNCTIONS_H
+#ifndef GENERAL_FUNCTIONS_H /* Prevents recursive includes */
 #define GENERAL_FUNCTIONS_H
 
 #include <stdio.h>

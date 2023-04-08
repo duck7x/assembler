@@ -1,4 +1,4 @@
-#ifndef ASSEMBLER_PHASE_FUNCTIONS_H
+#ifndef ASSEMBLER_PHASE_FUNCTIONS_H /* Prevents recursive includes */
 #define ASSEMBLER_PHASE_FUNCTIONS_H
 
 #include <stdio.h>

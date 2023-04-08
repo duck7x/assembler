@@ -1,4 +1,4 @@
-#ifndef STRUCTURES_H
+#ifndef STRUCTURES_H /* Prevents recursive includes */
 #define STRUCTURES_H
 
 #include <stdlib.h>
