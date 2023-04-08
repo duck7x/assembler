@@ -27,6 +27,9 @@
 #define ENTRY_TYPE "entry" /* TODO: Add documentation */
 #define SOURCE 5 /* TODO: Add documentation */
 #define DESTINATION 11 /* TODO: Add documentation */
+#define OBJECT_FILE_SUFFIX ".ob" /* TODO: Add documentation */
+#define EXTERNALS_FILE_SUFFIX ".ext" /* TODO: Add documentation */
+#define ENTRIES_FILE_SUFFIX ".ent" /* TODO: Add documentation */
 
 #define IsRegister(STRING) (strlen(STRING) == 2 && STRING[0] == 'r' && STRING[1] <= '7' && STRING[1] >= '0') /* TODO: Add documentation */
 
@@ -97,4 +100,7 @@ void set_operand_code(char *operand_string, int source_or_dest, LabelsLinkedList
 int handle_first_word(CommandNode_t command_node, char *relevant_line_bit, char memory_slot[], int line_number, int *has_errors); /* TODO: Add documentation */
 int handle_all_but_first_words(CommandNode_t command_node, char *relevant_line_bit, LabelsLinkedList_t *symbol_table, char *memory_array[], int ic, int line_number, int *has_errors); /* TODO: Add documentation */
 int is_valid_line(char *line); /* TODO: Add documentation */
+void write_object_file(char* file_name, char *memory_array[]); /* TODO: Add documentation */
+void create_externals_file(char* file_name); /* TODO: Add documentation */
+void create_entries_file(char* file_name); /* TODO: Add documentation */
 #endif

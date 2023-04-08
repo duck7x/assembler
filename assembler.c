@@ -2,18 +2,21 @@
 
 Allocator_t global_allocator;
 
-int main(void) {
+int main(int argc, char *argv[]) {
     /* TODO: Change file list to linked list */
     /* TODO: Get file list from input */
 
-    /*char *file_list[2] = {"test", "test2"};*/ /* TODO: delete this */
-    char *file_list[] = {"test2", "test3", "test4"}; /* TODO: delete this */
-    /*char *file_list[10] = {"tests/test_1", "tests/test_2", "tests/test_3", "tests/test_4", "tests/test_5", "tests/test_6", "tests/test_7", "tests/test_8", "tests/test_9", "tests/test_10"}; *//* TODO: delete this */
+    int i;
     global_allocator = create_allocator();
 
+    printf("DEBUG: Got %d arguments!\n", argc); /* TODO: delete this */
+    for (i = 0; i < argc; i++) {
+        printf("DEBUG: Argument #%d is %s\n", i, argv[i]); /* TODO: delete this */
+    }
+
     printf("This is the main assembler!\n");  /*TODO: delete this*/
-    pre_assembler(file_list);
-    assembler_phase(file_list);
+    pre_assembler(argv, argc);
+    assembler_phase(argv, argc);
 
     free_all_and_allocator();
     return 0;

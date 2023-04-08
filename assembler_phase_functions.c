@@ -389,9 +389,11 @@ void update_symbol_table(LabelsLinkedList_t symbol_table, int ic) {
 int add_data_symbols_to_memory(LinkedList_t data_memory_list, int ic, char *memory_array[]) {
     Node_t curr = get_head(data_memory_list);
     while (curr != NULL) {
+        printf("DEBUG: Adding %s to memory at %d\n", get_node_value(curr), ic); /* TODO: delete this */
         memory_array[ic++] = get_node_value(curr);
         curr = get_next_node(curr);
     }
+
     return ic;
 }
 
@@ -408,7 +410,7 @@ void set_binary_string_from_num(unsigned int num, char *binary_string, int start
 /* 2’s complement */
 /* TODO: Add documentation */
 void set_binary_string_from_string(char *str, char *binary_string, int start) {
-    int i, num, negative = FALSE;
+    int num, negative = FALSE;
     if (str[0] == MINUS) {
         negative = TRUE;
         num = atoi(copy_substring(str, 1, strlen(str)));
@@ -651,6 +653,8 @@ LinkedList_t get_split_operands(char *operands_string) {
     int i;
     LinkedList_t split_operands;
 
+    if (strlen(operands_string) == 0)
+        return create_linked_list();
     /* TODO: split operands differently because this way doesn't work well with jump thingies :( */
     /* TODO: This is a quick fix, need to separate to function or redesign */
     for (i = 0; i < strlen(operands_string); i ++) {
@@ -678,7 +682,7 @@ int has_non_register_operands(LinkedList_t split_operands) {
 /* TODO: Add documentation */
 int calculate_words_for_line(CommandNode_t command_node, char *relevant_line_bit) {
     char *operands_string;
-    int operands_num, i, l = 1, operand_type, non_register_operands = FALSE;
+    int operands_num, l = 1, operand_type;
     LinkedList_t split_operands;
 
     operands_string = get_stripped_string(clean_multiple_whitespaces(copy_substring(relevant_line_bit, strlen(get_command_node_command(command_node)), strlen(relevant_line_bit))));
@@ -893,6 +897,33 @@ int is_valid_line(char *line) {
 
 /* TODO: Write this */
 /* TODO: Add documentation */
-void create_files() {
-    printf("Create all files!\n"); /* TODO: delete this */
+void write_object_file(char* file_name, char *memory_array[]) {
+    int i, j;
+    FILE *dest_file;
+
+    dest_file = fopen(concatenate_strings(file_name, OBJECT_FILE_SUFFIX), APPEND);
+    for (i = 0; !(StringsEqual(memory_array[i], "\0")); i++) { /* TODO: delete this */
+        fprintf(dest_file, "%04d\t", i + FIRST_AVAILABLE_ADDRESS);
+        for (j = 0; j < 14 ; j++) {
+            if(memory_array[i][j] == '0')
+                putc('.', dest_file); /* TODO: Change to constant */
+            else
+                putc('/', dest_file); /* TODO: Change to constant */
+        }
+        putc(NEWLINE, dest_file);
+    }
+
+    fclose(dest_file);
+}
+
+/* TODO: Write this */
+/* TODO: Add documentation */
+void create_externals_file(char* file_name) {
+    printf("DEBUG: Create externals file!\n"); /* TODO: delete this */
+}
+
+/* TODO: Write this */
+/* TODO: Add documentation */
+void create_entries_file(char* file_name) {
+    printf("DEBUG: Create entries file!\n"); /* TODO: delete this */
 }

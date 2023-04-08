@@ -1,14 +1,14 @@
 #include "assembler_phase.h"
 
 /* TODO: Add documentation */
-int assembler_phase(char** files_list) {
+int assembler_phase(char** files_list, int files_count) {
     int i, j, has_errors = 0;
     LinkedCommandList_t actions_names_list = create_action_names_list();
     char *memory_array[MEMORY_SIZE];
     LinkedList_t data_memory_list = create_linked_list();
     LabelsLinkedList_t symbol_table = create_linked_labels_list();
 
-    for (i = 0; i < 1; i++) { /* TODO: rewrite this */
+    for (i = 1; i < files_count; i++) { /* TODO: rewrite this */
 
         printf("DEBUG: Running assembler on %s\n", files_list[i]); /* TODO: delete this */
 
@@ -41,6 +41,7 @@ int assembler_phase(char** files_list) {
         }
 
         /* if not errors - create files! */
+        create_files(files_list[i], memory_array, &symbol_table, &has_errors);
     }
 
     return 0;
@@ -51,7 +52,7 @@ int assembler_phase(char** files_list) {
 /* TODO: Add documentation */
 int run_assembler_phase_1(char* file_name, LinkedCommandList_t action_names_list, LinkedList_t *data_memory_list, LabelsLinkedList_t *symbol_table, char *memory_array[], int *has_errors) {
     /*int ic = 0, dc = 0, l = 0, count = 0, i, has_errors = FALSE; *//* Step 1 */
-    int ic = 0, dc = 0, l = 0, count = 0, i; /* Step 1 */
+    int ic = 0, dc = 0, l, count = 0, i; /* Step 1 */
     int label_definition_flag = FALSE; /* TODO: rename this */
     char *line, *command;
     char *relevant_line_bit; /* TODO: rename this is needed */
@@ -59,6 +60,7 @@ int run_assembler_phase_1(char* file_name, LinkedCommandList_t action_names_list
     /*LinkedList_t split_by_label, data_memory_list, split_by_space;*/
     LinkedList_t split_by_label, split_by_space;
     FILE *source_file;
+    FILE *dest_file;
     /*LabelsLinkedList_t symbol_table;*/
 
     printf("Running phase 1 of assembler on %s!\n", file_name); /* TODO: delete this */
@@ -144,6 +146,10 @@ int run_assembler_phase_1(char* file_name, LinkedCommandList_t action_names_list
         /*return -1;*/ /* TODO: Uncomment this*/
     }
 
+    dest_file = fopen(concatenate_strings(file_name, OBJECT_FILE_SUFFIX), WRITE);
+    fprintf(dest_file, "%d %d\n", ic, dc);
+    fclose(dest_file);
+
     /* TODO: Add documentation */
     update_symbol_table(*symbol_table, ic); /* Step 17 */
 
@@ -160,7 +166,7 @@ int run_assembler_phase_1(char* file_name, LinkedCommandList_t action_names_list
         printf("%d\t%s\n", i + FIRST_AVAILABLE_ADDRESS, memory_array[i]); *//* TODO: delete this *//*
     } *//* TODO: delete this */
 
-    return 0;
+    return *has_errors;
 }
 
 /* TODO: Add documentation */
@@ -221,5 +227,13 @@ int run_assembler_phase_2(char* file_name, LinkedCommandList_t action_names_list
 
     /*create_files();*/
 
+    return 0;
+}
+
+/* TODO: Add documentation */
+int create_files(char* file_name, char *memory_array[], LabelsLinkedList_t *symbol_table, int *has_errors) {
+    write_object_file(file_name, memory_array);
+    create_externals_file(file_name);
+    create_entries_file(file_name);
     return 0;
 }

@@ -8,6 +8,8 @@
 #define CURRENT_MAX_TABLE_SIZE 1000 /* TODO: Add documentation */
 #define TRUE 1 /* TODO: Add documentation */
 #define FALSE 0 /* TODO: Add documentation */
+#define CHAR_SIZE 8 /* TODO: Add documentation */
+
 #define is(VAR) (VAR == TRUE) /* TODO: Add documentation */
 #define is_not(VAR) (VAR == FALSE) /* TODO: Add documentation */
 #define isSpace(CHAR) (CHAR == ' ' || CHAR == '\t') /* TODO: Add documentation */

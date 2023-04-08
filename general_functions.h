@@ -9,6 +9,7 @@
 #define SPACE ' ' /* TODO: Add documentation */
 #define READ "r" /* TODO: Add documentation */
 #define WRITE "w" /* TODO: Add documentation */
+#define APPEND "a" /* TODO: Add documentation */
 #define INPUT_SUFFIX ".as" /* TODO: Add documentation */ /* TODO: Maybe move to pre_assembler_functions */
 #define POST_PRE_ASSEMBLER_SUFFIX ".am" /* TODO: Add documentation */ /* TODO: Maybe move to pre_assembler_functions */
 #define MAX_LINE_LENGTH 80 /* TODO: Add documentation */

@@ -1,10 +1,10 @@
 #include "pre_assembler_phase.h"
 
 /* TODO: Add documentation */
-int pre_assembler(char** files_list) {
+int pre_assembler(char** files_list, int files_count) {
     int i;
 
-    for (i = 0; i < 1; i++) { /* TODO: rewrite this */
+    for (i = 1; i < files_count; i++) { /* TODO: rewrite this */
         run_pre_assembler_on_file(files_list[i]);
     }
 
