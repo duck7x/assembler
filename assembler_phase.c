@@ -5,47 +5,24 @@ int assembler_phase(char** files_list, int files_count) {
     int i, j;
     has_errors = FALSE;
     LinkedCommandList_t actions_names_list = create_action_names_list();
-    char *memory_array[MEMORY_SIZE];
+    char *memory_array[MEMORY_SIZE], *current_file;
     LinkedList_t data_memory_list = create_linked_list();
     Table_t extern_memory_table = create_table();
     LabelsLinkedList_t symbol_table = create_linked_labels_list();
 
-    for (i = 1; i < files_count; i++) { /* TODO: rewrite this */
+    for (i = 1; i < files_count; i++) {
 
-        printf("DEBUG: Running assembler on %s\n", files_list[i]); /* TODO: delete this */
+        current_file = files_list[i];
+        /* TODO: Ensure file exist, throw error if not! */
+        run_assembler_phase_1(current_file, actions_names_list, &data_memory_list, &symbol_table, memory_array);
+        run_assembler_phase_2(current_file, actions_names_list, &data_memory_list, &extern_memory_table, &symbol_table, memory_array); /* TODO: decide if to separate to two loops */
 
-        run_assembler_phase_1(files_list[i], actions_names_list, &data_memory_list, &symbol_table, memory_array);
-
-        printf("DEBUG: Symbol table after phase 1\n"); /* TODO: delete this */
-        print_labels_list(symbol_table); /* TODO: delete this */
-
-        printf("DEBUG: Data memory table after phase 1\n"); /* TODO: delete this */
-        print_list(data_memory_list); /* TODO: delete this */
-
-        printf("DEBUG: Memory array after phase 1\n"); /* TODO: delete this */
-        for (j = 0; !(StringsEqual(memory_array[j], "\0")); j++) { /* TODO: delete this */
-            printf("%d\t%s\n", j + FIRST_AVAILABLE_ADDRESS, memory_array[j]); /* TODO: delete this */
+        if (is_not(has_errors))
+            create_files(current_file, memory_array, &symbol_table, &extern_memory_table);
+        else {
+            printf("CRITICAL: Not creating files for %s due to previous errors\n", current_file);
+            /* TODO: If any errors - delete all created files */
         }
-
-
-        /* TODO: Understand if phase 2 should happen even if phase 1 has errors and handle accordingly */
-        run_assembler_phase_2(files_list[i], actions_names_list, &data_memory_list, &extern_memory_table, &symbol_table, memory_array); /* TODO: decide if to separate to two loops */
-
-        printf("DEBUG: Symbol table after phase 2\n"); /* TODO: delete this */
-        print_labels_list(symbol_table); /* TODO: delete this */
-
-        printf("DEBUG: Data memory table after phase 2\n"); /* TODO: delete this */
-        print_list(data_memory_list); /* TODO: delete this */
-
-        printf("DEBUG: Memory array after phase 2\n"); /* TODO: delete this */
-        for (j = 0; !(StringsEqual(memory_array[j], "\0")); j++) { /* TODO: delete this */
-            printf("%d\t%s\n", j + FIRST_AVAILABLE_ADDRESS, memory_array[j]); /* TODO: delete this */
-        }
-
-        /* TODO: If any errors - delete all created files */
-
-        /* if not errors - create files! */
-        create_files(files_list[i], memory_array, &symbol_table, &extern_memory_table);
     }
 
     return 0;

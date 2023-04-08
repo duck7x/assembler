@@ -5,6 +5,7 @@ int pre_assembler(char** files_list, int files_count) {
     int i;
 
     for (i = 1; i < files_count; i++) { /* TODO: rewrite this */
+        /* TODO: Ensure file exist, throw error if not! */
         run_pre_assembler_on_file(files_list[i]);
     }
 
