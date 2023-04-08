@@ -41,6 +41,8 @@ int assembler_phase(char** files_list, int files_count) {
             printf("%d\t%s\n", j + FIRST_AVAILABLE_ADDRESS, memory_array[j]); /* TODO: delete this */
         }
 
+        /* TODO: If any errors - delete all created files */
+
         /* if not errors - create files! */
         create_files(files_list[i], memory_array, &symbol_table, &extern_memory_table, &has_errors);
     }
