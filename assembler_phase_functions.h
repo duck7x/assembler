@@ -102,5 +102,5 @@ int handle_all_but_first_words(CommandNode_t command_node, char *relevant_line_b
 int is_valid_line(char *line); /* TODO: Add documentation */
 void write_object_file(char* file_name, char *memory_array[]); /* TODO: Add documentation */
 void create_externals_file(char* file_name); /* TODO: Add documentation */
-void create_entries_file(char* file_name); /* TODO: Add documentation */
+void create_entries_file(char* file_name, LabelsLinkedList_t symbol_table); /* TODO: Add documentation */
 #endif

@@ -234,6 +234,6 @@ int run_assembler_phase_2(char* file_name, LinkedCommandList_t action_names_list
 int create_files(char* file_name, char *memory_array[], LabelsLinkedList_t *symbol_table, int *has_errors) {
     write_object_file(file_name, memory_array);
     create_externals_file(file_name);
-    create_entries_file(file_name);
+    create_entries_file(file_name, *symbol_table);
     return 0;
 }

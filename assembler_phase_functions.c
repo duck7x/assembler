@@ -919,11 +919,27 @@ void write_object_file(char* file_name, char *memory_array[]) {
 /* TODO: Write this */
 /* TODO: Add documentation */
 void create_externals_file(char* file_name) {
+    int has_externals = FALSE;
+    /* TODO: Need to have externals linked list or something!!! */
+    /* TODO: Maybe create as we go? I dunno  */
     printf("DEBUG: Create externals file!\n"); /* TODO: delete this */
 }
 
 /* TODO: Write this */
 /* TODO: Add documentation */
-void create_entries_file(char* file_name) {
-    printf("DEBUG: Create entries file!\n"); /* TODO: delete this */
+void create_entries_file(char* file_name, LabelsLinkedList_t symbol_table) {
+    int has_entries = FALSE;
+    FILE *dest_file;
+
+    LabelNode_t curr_label = get_labels_list_head(symbol_table);
+    while (curr_label != NULL) {
+        if (StringsEqual(get_label_node_type(curr_label), ENTRY_TYPE)) { /* TODO: Maybe make into a function */
+            if (is_not(has_entries)) {
+                dest_file = fopen(concatenate_strings(file_name, ENTRIES_FILE_SUFFIX), WRITE);
+                has_entries = TRUE;
+            }
+            fprintf(dest_file, "%s\t%04d\n", get_label_node_name(curr_label), get_label_node_value(curr_label));
+        }
+        curr_label = get_next_label_node(curr_label);
+    }
 }
