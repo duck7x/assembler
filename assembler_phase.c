@@ -2,7 +2,8 @@
 
 /* TODO: Add documentation */
 int assembler_phase(char** files_list, int files_count) {
-    int i, j, has_errors = 0;
+    int i, j;
+    has_errors = FALSE;
     LinkedCommandList_t actions_names_list = create_action_names_list();
     char *memory_array[MEMORY_SIZE];
     LinkedList_t data_memory_list = create_linked_list();
@@ -13,7 +14,7 @@ int assembler_phase(char** files_list, int files_count) {
 
         printf("DEBUG: Running assembler on %s\n", files_list[i]); /* TODO: delete this */
 
-        has_errors += run_assembler_phase_1(files_list[i], actions_names_list, &data_memory_list, &symbol_table, memory_array, &has_errors);
+        run_assembler_phase_1(files_list[i], actions_names_list, &data_memory_list, &symbol_table, memory_array);
 
         printf("DEBUG: Symbol table after phase 1\n"); /* TODO: delete this */
         print_labels_list(symbol_table); /* TODO: delete this */
@@ -28,7 +29,7 @@ int assembler_phase(char** files_list, int files_count) {
 
 
         /* TODO: Understand if phase 2 should happen even if phase 1 has errors and handle accordingly */
-        has_errors += run_assembler_phase_2(files_list[i], actions_names_list, &data_memory_list, &extern_memory_table, &symbol_table, memory_array, &has_errors); /* TODO: decide if to separate to two loops */
+        run_assembler_phase_2(files_list[i], actions_names_list, &data_memory_list, &extern_memory_table, &symbol_table, memory_array); /* TODO: decide if to separate to two loops */
 
         printf("DEBUG: Symbol table after phase 2\n"); /* TODO: delete this */
         print_labels_list(symbol_table); /* TODO: delete this */
@@ -44,7 +45,7 @@ int assembler_phase(char** files_list, int files_count) {
         /* TODO: If any errors - delete all created files */
 
         /* if not errors - create files! */
-        create_files(files_list[i], memory_array, &symbol_table, &extern_memory_table, &has_errors);
+        create_files(files_list[i], memory_array, &symbol_table, &extern_memory_table);
     }
 
     return 0;
@@ -53,9 +54,8 @@ int assembler_phase(char** files_list, int files_count) {
 }
 
 /* TODO: Add documentation */
-int run_assembler_phase_1(char* file_name, LinkedCommandList_t action_names_list, LinkedList_t *data_memory_list, LabelsLinkedList_t *symbol_table, char *memory_array[], int *has_errors) {
-    /*int ic = 0, dc = 0, l = 0, count = 0, i, has_errors = FALSE; *//* Step 1 */
-    int ic = 0, dc = 0, l, count = 0, i; /* Step 1 */
+int run_assembler_phase_1(char* file_name, LinkedCommandList_t action_names_list, LinkedList_t *data_memory_list, LabelsLinkedList_t *symbol_table, char *memory_array[]) {
+    int ic = 0, dc = 0, l, i; /* Step 1 */
     int label_definition_flag = FALSE; /* TODO: rename this */
     char *line, *command;
     char *relevant_line_bit; /* TODO: rename this is needed */
@@ -68,6 +68,7 @@ int run_assembler_phase_1(char* file_name, LinkedCommandList_t action_names_list
 
     printf("Running phase 1 of assembler on %s!\n", file_name); /* TODO: delete this */
 
+    line_count = 0;
     *data_memory_list = create_linked_list();
     *symbol_table = create_linked_labels_list();
     line = (char *)allocate(sizeof(char) * MAX_LINE_LENGTH);
@@ -81,7 +82,7 @@ int run_assembler_phase_1(char* file_name, LinkedCommandList_t action_names_list
 
         /*printf("DEBUG: Handling line [%s]\n", line); *//* TODO: delete this */
 
-        count ++;
+        line_count ++;
 
         if (is_not(is_valid_line(line))) {
             continue;
@@ -92,7 +93,7 @@ int run_assembler_phase_1(char* file_name, LinkedCommandList_t action_names_list
 
         if (get_list_length(split_by_label) > 2) {
             /* TODO: Not necessarily true, .string "::::" is a legit line! */
-            handle_error("Invalid usage of ':'", count, has_errors); /* TODO: rewrite error */
+            handle_error("Invalid usage of ':'"); /* TODO: rewrite error */
         }
 
         relevant_line_bit = get_stripped_string(get_node_value(get_tail(split_by_label)));
@@ -104,7 +105,7 @@ int run_assembler_phase_1(char* file_name, LinkedCommandList_t action_names_list
 
         if (is_data_storage(relevant_line_bit)) { /* Step 5 */
             if (is(label_definition_flag)) { /* Step 6 */
-                add_label(*symbol_table, split_by_label, DATA_TYPE, dc, has_errors, count);
+                add_label(*symbol_table, split_by_label, DATA_TYPE, dc);
             }
             /* Step 7 */
             if (is(starts_with(relevant_line_bit, DATA_PREFIX))) {
@@ -115,11 +116,11 @@ int run_assembler_phase_1(char* file_name, LinkedCommandList_t action_names_list
         } else if (is_extern_or_entry(relevant_line_bit)) { /* Step 8 */
             if (is_extern(relevant_line_bit)) { /* Step 9 */
                 /* TODO: Throw warning if label */
-                add_label(*symbol_table, split_by_space, EXTERN_TYPE, EXTERN_DEFAULT_VALUE, has_errors, count);
+                add_label(*symbol_table, split_by_space, EXTERN_TYPE, EXTERN_DEFAULT_VALUE);
             }
         } else {
             if(is(label_definition_flag)) { /* Step 11 */
-                add_label(*symbol_table, split_by_label, CODE_TYPE, ic, has_errors, count);
+                add_label(*symbol_table, split_by_label, CODE_TYPE, ic);
             }
 
             command = get_node_value(get_head(split_by_space));
@@ -131,7 +132,7 @@ int run_assembler_phase_1(char* file_name, LinkedCommandList_t action_names_list
 
             /*memory_array[ic] = copy_string(DEFAULT_EMPTY_WORD);*/
 
-            l = handle_first_word(search_command_list(action_names_list, command), relevant_line_bit, memory_array[ic], count, has_errors);
+            l = handle_first_word(search_command_list(action_names_list, command), relevant_line_bit, memory_array[ic]);
             /*printf("DEBUG: Memory slot is: %s\n", memory_array[ic]); *//* TODO: delete this *//*
             printf("--------------\n"); *//* TODO: delete this */
             /* TODO: Handle this mess of l and calculate words thingie */
@@ -144,7 +145,7 @@ int run_assembler_phase_1(char* file_name, LinkedCommandList_t action_names_list
 
     fclose(source_file);
     /*return 1;*/ /* TODO: delete this */
-    if (is(*has_errors)) { /* Step 16 */
+    if (is(has_errors)) { /* Step 16 */
         printf("ERROR: Found errors in file, stopping assembler\n");
         /*return -1;*/ /* TODO: Uncomment this*/
     }
@@ -169,12 +170,12 @@ int run_assembler_phase_1(char* file_name, LinkedCommandList_t action_names_list
         printf("%d\t%s\n", i + FIRST_AVAILABLE_ADDRESS, memory_array[i]); *//* TODO: delete this *//*
     } *//* TODO: delete this */
 
-    return *has_errors;
+    return has_errors;
 }
 
 /* TODO: Add documentation */
-int run_assembler_phase_2(char* file_name, LinkedCommandList_t action_names_list, Table_t *data_memory_list, LinkedList_t *extern_memory_table, LabelsLinkedList_t *symbol_table, char *memory_array[], int *has_errors) {
-    int ic = 0, count = 0, l = 0; /* Step 1 */
+int run_assembler_phase_2(char* file_name, LinkedCommandList_t action_names_list, Table_t *data_memory_list, LinkedList_t *extern_memory_table, LabelsLinkedList_t *symbol_table, char *memory_array[]) {
+    int ic = 0, l = 0; /* Step 1 */
     char *line, *command;
     char *relevant_line_bit; /* TODO: rename this is needed */
     FILE *source_file;
@@ -182,11 +183,12 @@ int run_assembler_phase_2(char* file_name, LinkedCommandList_t action_names_list
 
     line = (char *)allocate(sizeof(char) * MAX_LINE_LENGTH);
     source_file = fopen(concatenate_strings(file_name, POST_PRE_ASSEMBLER_SUFFIX), READ);
+    line_count = 0;
 
     printf("Running phase 2 of assembler on %s!\n", file_name); /* TODO: delete this */
 
     while (ReadLine(source_file, line) != EOF) {  /* TODO: rewrite this */ /* Step 2 */
-        count ++;
+        line_count ++;
 
         if (is_not(is_valid_line(line))) {
             continue;
@@ -215,14 +217,14 @@ int run_assembler_phase_2(char* file_name, LinkedCommandList_t action_names_list
         {
             split_by_space = split_string(relevant_line_bit, SPACE);
             command = get_node_value(get_head(split_by_space));
-            l = handle_all_but_first_words(search_command_list(action_names_list, command), relevant_line_bit, extern_memory_table, symbol_table, memory_array, ic, count, has_errors); /* Step 7 */
+            l = handle_all_but_first_words(search_command_list(action_names_list, command), relevant_line_bit, extern_memory_table, symbol_table, memory_array, ic); /* Step 7 */
             ic += l; /* Step 8 */
         }
     }
 
     fclose(source_file);
 
-    if (is(*has_errors)) { /* Step 10 */
+    if (is(has_errors)) { /* Step 10 */
         printf("ERROR: Found errors in file, stopping assembler\n");
         return -1;
     }
@@ -233,7 +235,7 @@ int run_assembler_phase_2(char* file_name, LinkedCommandList_t action_names_list
 }
 
 /* TODO: Add documentation */
-int create_files(char* file_name, char *memory_array[], LabelsLinkedList_t *symbol_table, Table_t *external_memory_table, int *has_errors) {
+int create_files(char* file_name, char *memory_array[], LabelsLinkedList_t *symbol_table, Table_t *external_memory_table) {
     write_object_file(file_name, memory_array);
     create_externals_file(file_name, *external_memory_table);
     create_entries_file(file_name, *symbol_table);

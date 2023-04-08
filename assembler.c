@@ -1,6 +1,7 @@
 #include "assembler.h"
 
 Allocator_t global_allocator;
+int has_errors, line_count;
 
 int main(int argc, char *argv[]) {
     /* TODO: Change file list to linked list */

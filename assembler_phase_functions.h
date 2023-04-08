@@ -66,14 +66,14 @@ LabelNode_t search_labels_list(LabelsLinkedList_t list, char* label); /* TODO: A
 void print_labels_list(LabelsLinkedList_t list); /* TODO: delete this */
 void print_assembler_phase(void); /* TODO: delete this */
 LinkedCommandList_t create_action_names_list(); /* TODO: Add documentation */
-void handle_error(char *error_message, int line_number, int *has_errors); /* TODO: Add documentation */
-void handle_warning(char *warning_message, int line_number); /* TODO: Add documentation */
+void handle_error(char *error_message); /* TODO: Add documentation */
+void handle_warning(char *warning_message); /* TODO: Add documentation */
 int starts_with_label(LinkedList_t split_line); /* TODO: Add documentation */
 int is_data_storage(char *line); /* TODO: Add documentation */
 int is_extern_or_entry(char *line); /* TODO: Add documentation */
 int is_extern(char *line); /* TODO: Add documentation */
 int is_entry(char *line); /* TODO: Add documentation */
-void add_label(LabelsLinkedList_t labels_list, LinkedList_t split_line, char *type, int value, int *has_errors, int line_number); /* TODO: Add documentation */
+void add_label(LabelsLinkedList_t labels_list, LinkedList_t split_line, char *type, int value); /* TODO: Add documentation */
 void mark_label_as_entry(LabelsLinkedList_t symbol_table, char* label_name); /* TODO: Add documentation */
 void update_symbol_table(LabelsLinkedList_t symbol_table, int ic); /* TODO: Add documentation */
 int add_data_symbols_to_memory(LinkedList_t data_memory_list, int ic, char *memory_array[]); /* TODO: Add documentation */
@@ -97,8 +97,8 @@ void set_direct_type_code(char *memory_bit, char *operand, Table_t *extern_memor
 void set_jump_type_code(char *memory_array[], int ic, char *operand, Table_t *extern_memory_table, LabelsLinkedList_t *symbol_table); /* TODO: Add documentation */
 void set_register_type_code(char *memory_bit, char *operand, int start); /* TODO: Add documentation */
 void set_operand_code(char *operand_string, int source_or_dest, Table_t *extern_memory_table, LabelsLinkedList_t *symbol_table, char *memory_array[], int ic); /* TODO: Add documentation */
-int handle_first_word(CommandNode_t command_node, char *relevant_line_bit, char memory_slot[], int line_number, int *has_errors); /* TODO: Add documentation */
-int handle_all_but_first_words(CommandNode_t command_node, char *relevant_line_bit, Table_t *extern_memory_table, LabelsLinkedList_t *symbol_table, char *memory_array[], int ic, int line_number, int *has_errors); /* TODO: Add documentation */
+int handle_first_word(CommandNode_t command_node, char *relevant_line_bit, char memory_slot[]); /* TODO: Add documentation */
+int handle_all_but_first_words(CommandNode_t command_node, char *relevant_line_bit, Table_t *extern_memory_table, LabelsLinkedList_t *symbol_table, char *memory_array[], int ic); /* TODO: Add documentation */
 int is_valid_line(char *line); /* TODO: Add documentation */
 void write_object_file(char* file_name, char *memory_array[]); /* TODO: Add documentation */
 void create_externals_file(char* file_name, Table_t external_memory_table); /* TODO: Add documentation */

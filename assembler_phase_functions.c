@@ -284,14 +284,14 @@ LinkedCommandList_t create_action_names_list() {
 }
 
 /* TODO: Add documentation */
-void handle_error(char *error_message, int line_number, int *has_errors) {
-    *has_errors = TRUE;
-    printf("ERROR: %s on line %d\n", error_message, line_number);
+void handle_error(char *error_message) {
+    has_errors = TRUE;
+    printf("ERROR: %s on line %d\n", error_message, line_count);
 }
 
 /* TODO: Add documentation */
-void handle_warning(char *warning_message, int line_number) {
-    printf("WARNING: %s on line %d\n", warning_message, line_number);
+void handle_warning(char *warning_message) {
+    printf("WARNING: %s on line %d\n", warning_message, line_count);
 }
 
 
@@ -334,7 +334,7 @@ int is_entry(char *line) {
 }
 
 /* TODO: Add documentation */
-void add_label(LabelsLinkedList_t labels_list, LinkedList_t split_line, char *type, int value, int *has_errors, int line_number) {
+void add_label(LabelsLinkedList_t labels_list, LinkedList_t split_line, char *type, int value) {
     char *label_name = ""; /* TODO: Fix this */
 
     /* TODO: if there's time - change to switch case */
@@ -342,16 +342,16 @@ void add_label(LabelsLinkedList_t labels_list, LinkedList_t split_line, char *ty
         label_name = get_node_value(get_head(split_line));
     } else if (StringsEqual(type,EXTERN_TYPE)) {
         if (get_list_length(split_line) > 2) {
-            handle_error("Too many words after label", line_number, has_errors); /* Needs rephrase */
+            handle_error("Too many words after label"); /* Needs rephrase */
         }
         label_name = get_node_value(get_tail(split_line));
     }
 
     /* TODO: ERROR HANDLING - Check if labels exists already, and if so, error! */
-    /*handle_error("Duplicate label", line_number, has_errors);*/
+    /*handle_error("Duplicate label");*/
 
     if (is_not(is_legal_label_name(label_name))) {
-        handle_error("Illegal label name", line_number, has_errors);
+        handle_error("Illegal label name");
         return;
     }
 
@@ -388,7 +388,6 @@ void update_symbol_table(LabelsLinkedList_t symbol_table, int ic) {
 int add_data_symbols_to_memory(LinkedList_t data_memory_list, int ic, char *memory_array[]) {
     Node_t curr = get_head(data_memory_list);
     while (curr != NULL) {
-        printf("DEBUG: Adding %s to memory at %d\n", get_node_value(curr), ic); /* TODO: delete this */
         memory_array[ic++] = get_node_value(curr);
         curr = get_next_node(curr);
     }
@@ -740,8 +739,8 @@ void set_direct_type_code(char *memory_bit, char *operand, Table_t *extern_memor
 /* TODO: Add documentation */
 void set_jump_type_code(char *memory_array[], int ic, char *operand, Table_t *extern_memory_table, LabelsLinkedList_t *symbol_table) {
     LinkedList_t split_operands;
-    split_operands = split_string(operand, '(');
     char *temp, *first, *second;
+    split_operands = split_string(operand, '(');
     ic ++;
     temp = get_node_value(get_head(split_operands));
     set_direct_type_code(memory_array[ic], temp, extern_memory_table, symbol_table, ic);
@@ -780,13 +779,13 @@ void set_operand_code(char *operand_string, int source_or_dest, Table_t *extern_
 
 /* TODO: write this */
 /* TODO: Add documentation */
-int handle_first_word(CommandNode_t command_node, char *relevant_line_bit, char memory_slot[], int line_number, int *has_errors) {
+int handle_first_word(CommandNode_t command_node, char *relevant_line_bit, char memory_slot[]) {
     char *operands_string, *opcode;
     int operands_num, i, l = 1, operand_type, non_register_operands = FALSE;
     LinkedList_t split_operands;
 
     if(command_node == NULL) {  /* Step 12 */
-        handle_error("Illegal command", line_number, has_errors);
+        handle_error("Illegal command");
         return -1;
     }
 
@@ -797,7 +796,7 @@ int handle_first_word(CommandNode_t command_node, char *relevant_line_bit, char 
     split_operands = get_split_operands(operands_string);
 
     if (get_list_length(split_operands) != operands_num) {
-        handle_error("Wrong amount of operands specified", line_number, has_errors);
+        handle_error("Wrong amount of operands specified");
         return -1;
     }
 
@@ -862,7 +861,7 @@ int handle_first_word(CommandNode_t command_node, char *relevant_line_bit, char 
 
 /* TODO: Write this */
 /* TODO: Add documentation */
-int handle_all_but_first_words(CommandNode_t command_node, char *relevant_line_bit, Table_t *extern_memory_table, LabelsLinkedList_t *symbol_table, char *memory_array[], int ic, int line_number, int *has_errors) {
+int handle_all_but_first_words(CommandNode_t command_node, char *relevant_line_bit, Table_t *extern_memory_table, LabelsLinkedList_t *symbol_table, char *memory_array[], int ic) {
     int l, operands_num = get_command_node_operands(command_node);
     char *operands_string, *first, *second;
     LinkedList_t split_operands;

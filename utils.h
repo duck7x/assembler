@@ -20,6 +20,8 @@ typedef struct Table *Table_t; /* TODO: Add documentation */
 typedef struct Node *Node_t; /* TODO: Add documentation */
 typedef struct LinkedList *LinkedList_t; /* TODO: Add documentation */
 extern Allocator_t global_allocator; /* TODO: Add documentation */
+extern int has_errors; /* TODO: Add documentation */
+extern int line_count; /* TODO: Add documentation */
 
 Allocator_t create_allocator(); /* TODO: Add documentation */
 Table_t create_table(); /* TODO: Add documentation */
