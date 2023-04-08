@@ -19,7 +19,7 @@ void pre_assembler(char** files_array, int files_count);
     INPUT:  file_name is the name of the file. The function will run the pre-assembler phase on file_name.as
     OUTPUT: 0 if no errors were encountered and -1 if any errors occurred.
  */
-int run_pre_assembler_on_file(char* file_name); /* Runs pre-assembler phase on a given file by file name */
+int run_pre_assembler_on_file(char* file_name);
 
 /*  Gets a file, a line and a macro_table.
     Adds the extended version of that line to the given file, based on the macro_table.
@@ -29,6 +29,6 @@ int run_pre_assembler_on_file(char* file_name); /* Runs pre-assembler phase on a
             macro_table is a table containing all macros defined so far in the .as file.
     OUTPUT: This function doesn't return anything.
 */
-void write_line_to_expanded_file(FILE *dest_file, char* line, Table_t macro_table); /* Gets a line, writes expanded version of it to the given file */
+void write_line_to_expanded_file(FILE *dest_file, char* line, Table_t macro_table);
 
 #endif
