@@ -93,14 +93,14 @@ LinkedList_t get_split_operands(char *operands_string); /* TODO: Add documentati
 int has_non_register_operands(LinkedList_t split_operands); /* TODO: Add documentation */
 int calculate_words_for_line(CommandNode_t command_node, char *relevant_line_bit); /* TODO: Add documentation */
 void set_immediate_type_code(char *memory_bit, char *operand); /* TODO: Add documentation */
-void set_direct_type_code(char *memory_bit, char *operand, LabelsLinkedList_t *symbol_table); /* TODO: Add documentation */
-void set_jump_type_code(char *memory_array[], int ic, char *operand, LabelsLinkedList_t *symbol_table); /* TODO: Add documentation */
+void set_direct_type_code(char *memory_bit, char *operand, Table_t *extern_memory_table ,LabelsLinkedList_t *symbol_table, int ic); /* TODO: Add documentation */
+void set_jump_type_code(char *memory_array[], int ic, char *operand, Table_t *extern_memory_table, LabelsLinkedList_t *symbol_table); /* TODO: Add documentation */
 void set_register_type_code(char *memory_bit, char *operand, int start); /* TODO: Add documentation */
-void set_operand_code(char *operand_string, int source_or_dest, LabelsLinkedList_t *symbol_table, char *memory_array[], int ic); /* TODO: Add documentation */
+void set_operand_code(char *operand_string, int source_or_dest, Table_t *extern_memory_table, LabelsLinkedList_t *symbol_table, char *memory_array[], int ic); /* TODO: Add documentation */
 int handle_first_word(CommandNode_t command_node, char *relevant_line_bit, char memory_slot[], int line_number, int *has_errors); /* TODO: Add documentation */
-int handle_all_but_first_words(CommandNode_t command_node, char *relevant_line_bit, LabelsLinkedList_t *symbol_table, char *memory_array[], int ic, int line_number, int *has_errors); /* TODO: Add documentation */
+int handle_all_but_first_words(CommandNode_t command_node, char *relevant_line_bit, Table_t *extern_memory_table, LabelsLinkedList_t *symbol_table, char *memory_array[], int ic, int line_number, int *has_errors); /* TODO: Add documentation */
 int is_valid_line(char *line); /* TODO: Add documentation */
 void write_object_file(char* file_name, char *memory_array[]); /* TODO: Add documentation */
-void create_externals_file(char* file_name); /* TODO: Add documentation */
+void create_externals_file(char* file_name, Table_t external_memory_table); /* TODO: Add documentation */
 void create_entries_file(char* file_name, LabelsLinkedList_t symbol_table); /* TODO: Add documentation */
 #endif

@@ -251,12 +251,33 @@ void add_to_table_if_not_exists(Table_t t, char* key, char* value) {
     add_to_table(t, key, value);
 }
 
+/* TODO: Add documentation */
+int get_number_of_pairs(Table_t t) {
+    return t->number_of_pairs;
+}
+
+/* TODO: Add documentation */
+Pair_t* get_pair_array(Table_t t) {
+    return t->pair_table;
+}
+
+
 /* TODO: delete this */
 void print_table(Table_t t) {
     int i;
     for (i=0; i < t->number_of_pairs; i++) {
         print_pair(t->pair_table[i]);
     }
+}
+
+/* TODO: Add documentation */
+char* get_pair_key(Pair_t p) {
+    return p->key;
+}
+
+/* TODO: Add documentation */
+char* get_pair_value(Pair_t p) {
+    return p->value;
 }
 
 /* TODO: delete this */

@@ -6,6 +6,7 @@ int assembler_phase(char** files_list, int files_count) {
     LinkedCommandList_t actions_names_list = create_action_names_list();
     char *memory_array[MEMORY_SIZE];
     LinkedList_t data_memory_list = create_linked_list();
+    Table_t extern_memory_table = create_table();
     LabelsLinkedList_t symbol_table = create_linked_labels_list();
 
     for (i = 1; i < files_count; i++) { /* TODO: rewrite this */
@@ -27,7 +28,7 @@ int assembler_phase(char** files_list, int files_count) {
 
 
         /* TODO: Understand if phase 2 should happen even if phase 1 has errors and handle accordingly */
-        has_errors += run_assembler_phase_2(files_list[i], actions_names_list, &data_memory_list, &symbol_table, memory_array, &has_errors); /* TODO: decide if to separate to two loops */
+        has_errors += run_assembler_phase_2(files_list[i], actions_names_list, &data_memory_list, &extern_memory_table, &symbol_table, memory_array, &has_errors); /* TODO: decide if to separate to two loops */
 
         printf("DEBUG: Symbol table after phase 2\n"); /* TODO: delete this */
         print_labels_list(symbol_table); /* TODO: delete this */
@@ -41,7 +42,7 @@ int assembler_phase(char** files_list, int files_count) {
         }
 
         /* if not errors - create files! */
-        create_files(files_list[i], memory_array, &symbol_table, &has_errors);
+        create_files(files_list[i], memory_array, &symbol_table, &extern_memory_table, &has_errors);
     }
 
     return 0;
@@ -170,7 +171,7 @@ int run_assembler_phase_1(char* file_name, LinkedCommandList_t action_names_list
 }
 
 /* TODO: Add documentation */
-int run_assembler_phase_2(char* file_name, LinkedCommandList_t action_names_list, LinkedList_t *data_memory_list, LabelsLinkedList_t *symbol_table, char *memory_array[], int *has_errors) {
+int run_assembler_phase_2(char* file_name, LinkedCommandList_t action_names_list, Table_t *data_memory_list, LinkedList_t *extern_memory_table, LabelsLinkedList_t *symbol_table, char *memory_array[], int *has_errors) {
     int ic = 0, count = 0, l = 0; /* Step 1 */
     char *line, *command;
     char *relevant_line_bit; /* TODO: rename this is needed */
@@ -204,7 +205,6 @@ int run_assembler_phase_2(char* file_name, LinkedCommandList_t action_names_list
         }
 
         if (is(is_entry(relevant_line_bit))) { /* Step 5 */
-            printf("Entry!\n"); /* TODO: delete this */
             /* TODO: ERROR HANDLING - Ensure there aren't too many stuff */
             /* TODO: WARNING HANDLING - in case of label */
             mark_label_as_entry(*symbol_table, get_node_value(get_tail(split_string(relevant_line_bit, SPACE)))); /* Step 6 */
@@ -213,7 +213,7 @@ int run_assembler_phase_2(char* file_name, LinkedCommandList_t action_names_list
         {
             split_by_space = split_string(relevant_line_bit, SPACE);
             command = get_node_value(get_head(split_by_space));
-            l = handle_all_but_first_words(search_command_list(action_names_list, command), relevant_line_bit, symbol_table, memory_array, ic, count, has_errors); /* Step 7 */
+            l = handle_all_but_first_words(search_command_list(action_names_list, command), relevant_line_bit, extern_memory_table, symbol_table, memory_array, ic, count, has_errors); /* Step 7 */
             ic += l; /* Step 8 */
         }
     }
@@ -231,9 +231,9 @@ int run_assembler_phase_2(char* file_name, LinkedCommandList_t action_names_list
 }
 
 /* TODO: Add documentation */
-int create_files(char* file_name, char *memory_array[], LabelsLinkedList_t *symbol_table, int *has_errors) {
+int create_files(char* file_name, char *memory_array[], LabelsLinkedList_t *symbol_table, Table_t *external_memory_table, int *has_errors) {
     write_object_file(file_name, memory_array);
-    create_externals_file(file_name);
+    create_externals_file(file_name, *external_memory_table);
     create_entries_file(file_name, *symbol_table);
     return 0;
 }

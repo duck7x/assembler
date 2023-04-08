@@ -360,7 +360,6 @@ void add_label(LabelsLinkedList_t labels_list, LinkedList_t split_line, char *ty
 
 /* TODO: Add documentation */
 void mark_label_as_entry(LabelsLinkedList_t symbol_table, char* label_name) {
-    printf("Marking %s as entry!\n", label_name); /* TODO: delete this */
     LabelNode_t curr_label = get_labels_list_head(symbol_table);
     while (curr_label != NULL) {
         if (StringsEqual(get_label_node_name(curr_label), label_name)) {
@@ -716,16 +715,21 @@ void set_immediate_type_code(char *memory_bit, char *operand) {
 
 /* TODO: Write this */
 /* TODO: Add documentation */
-void set_direct_type_code(char *memory_bit, char *operand, LabelsLinkedList_t *symbol_table) {
+void set_direct_type_code(char *memory_bit, char *operand, Table_t *extern_memory_table ,LabelsLinkedList_t *symbol_table, int ic) {
     LabelNode_t label;
+    char temp[5];
     /* Find label in label table */
     label = search_labels_list(*symbol_table, operand);
     if (label == NULL) {
         printf("ERROR: This is an error!\n"); /* TODO: delete this */
         /* TODO: ERROR HANDLING - label not found */
     }
-    if (StringsEqual(get_label_node_type(label), EXTERN_TYPE))
+    if (StringsEqual(get_label_node_type(label), EXTERN_TYPE)) {
         memory_bit[13] = '1';
+        sprintf(temp, "%04d", ic + FIRST_AVAILABLE_ADDRESS);
+        add_to_table(*extern_memory_table, temp, get_label_node_name(label));
+        /* TODO: Add to extern label list */
+    }
     else {
         memory_bit[12] = '1';
         set_binary_string_from_num(get_label_node_value(label), memory_bit, 11);
@@ -734,22 +738,22 @@ void set_direct_type_code(char *memory_bit, char *operand, LabelsLinkedList_t *s
 
 /* TODO: Write this */
 /* TODO: Add documentation */
-void set_jump_type_code(char *memory_array[], int ic, char *operand, LabelsLinkedList_t *symbol_table) {
+void set_jump_type_code(char *memory_array[], int ic, char *operand, Table_t *extern_memory_table, LabelsLinkedList_t *symbol_table) {
     LinkedList_t split_operands;
     split_operands = split_string(operand, '(');
     char *temp, *first, *second;
     ic ++;
     temp = get_node_value(get_head(split_operands));
-    set_direct_type_code(memory_array[ic], temp, symbol_table);
+    set_direct_type_code(memory_array[ic], temp, extern_memory_table, symbol_table, ic);
     /* TODO: This repeats (when two operands)*/
     split_operands = split_string(get_string_without_whitespaces(copy_substring(get_node_value(get_tail(split_operands)), 0, strlen(operand) -
             strlen(temp) - 2)), ',');
     first = get_node_value(get_head(split_operands));
     second = get_node_value(get_tail(split_operands));
-    set_operand_code(first, SOURCE, symbol_table, memory_array, ic);
+    set_operand_code(first, SOURCE, extern_memory_table, symbol_table, memory_array, ic);
     if (get_address_type(first) != REGISTER || get_address_type(second) != REGISTER) /* TODO: Make this better and not here */
         ic ++;
-    set_operand_code(second, DESTINATION, symbol_table, memory_array, ic);
+    set_operand_code(second, DESTINATION, extern_memory_table, symbol_table, memory_array, ic);
 }
 
 /* TODO: Write this */
@@ -759,17 +763,17 @@ void set_register_type_code(char *memory_bit, char *operand, int start) {
 }
 
 /* TODO: Add documentation */
-void set_operand_code(char *operand_string, int source_or_dest, LabelsLinkedList_t *symbol_table, char *memory_array[], int ic) {
+void set_operand_code(char *operand_string, int source_or_dest, Table_t *extern_memory_table, LabelsLinkedList_t *symbol_table, char *memory_array[], int ic) {
     int operand_type;
     operand_type = get_address_type(operand_string);
     /* TODO: Change to switch */
     if (operand_type == IMMEDIATE)
         set_immediate_type_code(memory_array[ic + 1], operand_string);
     else if (operand_type == DIRECT) {
-        set_direct_type_code(memory_array[ic + 1], operand_string, symbol_table);
+        set_direct_type_code(memory_array[ic + 1], operand_string, extern_memory_table ,symbol_table, ic);
     }
     else if (operand_type == JUMP)
-        set_jump_type_code(memory_array, ic, operand_string, symbol_table);
+        set_jump_type_code(memory_array, ic, operand_string, extern_memory_table, symbol_table);
     else if (operand_type == REGISTER)
         set_register_type_code(memory_array[ic + 1], operand_string, source_or_dest);
 }
@@ -858,7 +862,7 @@ int handle_first_word(CommandNode_t command_node, char *relevant_line_bit, char 
 
 /* TODO: Write this */
 /* TODO: Add documentation */
-int handle_all_but_first_words(CommandNode_t command_node, char *relevant_line_bit, LabelsLinkedList_t *symbol_table, char *memory_array[], int ic, int line_number, int *has_errors) {
+int handle_all_but_first_words(CommandNode_t command_node, char *relevant_line_bit, Table_t *extern_memory_table, LabelsLinkedList_t *symbol_table, char *memory_array[], int ic, int line_number, int *has_errors) {
     int l, operands_num = get_command_node_operands(command_node);
     char *operands_string, *first, *second;
     LinkedList_t split_operands;
@@ -871,16 +875,16 @@ int handle_all_but_first_words(CommandNode_t command_node, char *relevant_line_b
     operands_string = get_stripped_string(clean_multiple_whitespaces(copy_substring(relevant_line_bit, strlen(get_command_node_command(command_node)), strlen(relevant_line_bit))));
 
     if (operands_num == 1) {
-        set_operand_code(operands_string, DESTINATION, symbol_table, memory_array, ic);
+        set_operand_code(operands_string, DESTINATION, extern_memory_table, symbol_table, memory_array, ic);
     } else if (operands_num == 2) {
         /* TODO: This repeats (jump) */
         split_operands = split_string(get_string_without_whitespaces(operands_string), ',');
         first = get_node_value(get_head(split_operands));
         second = get_node_value(get_tail(split_operands));
-        set_operand_code(first, SOURCE, symbol_table, memory_array, ic);
+        set_operand_code(first, SOURCE, extern_memory_table, symbol_table, memory_array, ic);
         if (get_address_type(first) != REGISTER || get_address_type(second) != REGISTER) /* TODO: Make this better and not here */
             ic ++;
-        set_operand_code(second, DESTINATION, symbol_table, memory_array, ic);
+        set_operand_code(second, DESTINATION, extern_memory_table, symbol_table, memory_array, ic);
     }
 
     return l;
@@ -918,11 +922,24 @@ void write_object_file(char* file_name, char *memory_array[]) {
 
 /* TODO: Write this */
 /* TODO: Add documentation */
-void create_externals_file(char* file_name) {
-    int has_externals = FALSE;
-    /* TODO: Need to have externals linked list or something!!! */
-    /* TODO: Maybe create as we go? I dunno  */
-    printf("DEBUG: Create externals file!\n"); /* TODO: delete this */
+void create_externals_file(char* file_name, Table_t external_memory_table) {
+    int i, externals_amount;
+    FILE *dest_file;
+    Pair_t *pairs_array;
+
+    externals_amount = get_number_of_pairs(external_memory_table);
+
+    if (externals_amount == 0)
+        return;
+
+    dest_file = fopen(concatenate_strings(file_name, EXTERNALS_FILE_SUFFIX), WRITE);
+    pairs_array = get_pair_array(external_memory_table);
+
+    for (i = 0; i < externals_amount; i++) {
+        fprintf(dest_file, "%s\t%s\n", get_pair_value(pairs_array[i]), get_pair_key(pairs_array[i]));
+    }
+
+    fclose(dest_file);
 }
 
 /* TODO: Write this */
