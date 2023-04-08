@@ -51,8 +51,8 @@ int is_an_existing_macro(char* mcr_name, Table_t macro_table) {
 }
 
 /* TODO: Add documentation */
-void write_existing_macro(char* macro, FILE *file, Table_t macro_table) {
-    write_line_to_file(file, get_value_from_table(macro_table, macro)); /* TODO: Not line, more like "chunk" */
+void write_existing_macro_to_file(char* macro, FILE *file, Table_t macro_table) {
+    write_string_to_file(file, get_value_from_table(macro_table, macro)); /* TODO: Not line, more like "chunk" */
 }
 
 /* TODO: Write this */

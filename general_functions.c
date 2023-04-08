@@ -49,17 +49,15 @@ LinkedList_t split_string(char* str, char delimiter) {
     return list;
 }
 
+/* TODO: Ensure that works! */
 /* TODO: Add documentation */
-/* Replaces all spaces (including tabs!) with a single space! */
-char* clean_multiple_whitespaces(char* str) {
+char* get_clean_and_stripped_string(char* str) {
     int i;
-    /*char* cleaned_str;*/
     int cleaned_str_index = 0;
-    int following_space = FALSE;
+    int following_space = TRUE;
 
-    /*cleaned_str = copy_string(str);*/
     i = 0;
-    while (str[i] != '\0') {
+    while (str[i] != END_OF_STRING) {
         if (isSpace(str[i])) {
             if (!is(following_space)) {
                 following_space = TRUE;
@@ -74,7 +72,40 @@ char* clean_multiple_whitespaces(char* str) {
         i++;
     }
 
-    str[cleaned_str_index] = '\0';
+    if (isSpace(str[cleaned_str_index - 1]))
+        str[cleaned_str_index - 1] = END_OF_STRING;
+    else
+        str[cleaned_str_index] = END_OF_STRING;
+
+    return str;
+}
+
+/* TODO: Add documentation */
+/* Replaces all spaces (including tabs!) with a single space! */
+char* clean_multiple_whitespaces(char* str) {
+    int i;
+    /*char* cleaned_str;*/
+    int cleaned_str_index = 0;
+    int following_space = FALSE;
+
+    /*cleaned_str = copy_string(str);*/
+    i = 0;
+    while (str[i] != END_OF_STRING) {
+        if (isSpace(str[i])) {
+            if (!is(following_space)) {
+                following_space = TRUE;
+                str[cleaned_str_index] = SPACE;
+                cleaned_str_index++;
+            }
+        } else {
+            following_space = FALSE;
+            str[cleaned_str_index] = str[i];
+            cleaned_str_index++;
+        }
+        i++;
+    }
+
+    str[cleaned_str_index] = END_OF_STRING;
 
     return str;
 
@@ -117,6 +148,6 @@ char* get_stripped_string(char* str) {
 }
 
 /* TODO: Add documentation */
-void write_line_to_file(FILE* file, char* line) {
-    fputs(line, file);
+void write_string_to_file(FILE* file, char* string) {
+    fputs(string, file);
 }

@@ -7,6 +7,7 @@
 
 #define TRUE 1 /* TODO: Add documentation */
 #define FALSE 0 /* TODO: Add documentation */
+#define END_OF_STRING '\0' /* TODO: Add documentation */
 
 #define is(VAR) (VAR == TRUE) /* TODO: Add documentation */
 #define is_not(VAR) (VAR == FALSE) /* TODO: Add documentation */

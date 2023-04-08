@@ -16,7 +16,7 @@ char* copy_substring(char* str, int start, int end) {
     for (i = 0; i < end - start; ++i) {
         copied_str[i] = str[start + i];
     }
-    copied_str[i] = '\0';
+    copied_str[i] = END_OF_STRING;
     return copied_str;
 }
 
@@ -39,7 +39,7 @@ char* concatenate_strings(char* first, char* second) {
         concatenated_str[i+first_len] = second[i];
     }
 
-    concatenated_str[len]='\0';
+    concatenated_str[len]=END_OF_STRING;
 
     return concatenated_str;
 }
@@ -54,6 +54,6 @@ char* append_char_to_string(char* str, int c) {
         new_str[i] = str[i];
     }
     new_str[i++] = c + 0;
-    new_str[i] = '\0';
+    new_str[i] = END_OF_STRING;
     return new_str;
 }

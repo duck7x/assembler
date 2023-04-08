@@ -27,9 +27,10 @@ void handle_warning(char *warning_message); /* TODO: Add documentation */
 int starts_with(char *str, char *prefix); /* TODO: Add documentation */
 int get_index_till_delimiter(char* str, char delimiter); /* TODO: Add documentation */
 LinkedList_t split_string(char* str, char delimiter); /* TODO: Add documentation */
+char* get_clean_and_stripped_string(char* str); /* TODO: Add documentation */
 char* clean_multiple_whitespaces(char* str); /* TODO: Add documentation */
 char* get_string_without_whitespaces(char* str); /* TODO: Add documentation */
 char* get_stripped_string(char* str); /* TODO: Add documentation */
-void write_line_to_file(FILE* file, char* line); /* TODO: Maybe change name to "append_chunk_to_file */ /* TODO: Add documentation */
+void write_string_to_file(FILE* file, char* string); /* TODO: Maybe change name to "append_chunk_to_file */ /* TODO: Add documentation */
 
 #endif
