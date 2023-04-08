@@ -1,9 +1,5 @@
 #include "assembler_phase_functions.h"
 
-void print_assembler_phase(void) {
-    printf("This is the assembler phase (printed by assembler phase functions)\n");
-}
-
 /* TODO: Add documentation */
 LinkedCommandList_t create_action_names_list() {
     LinkedCommandList_t actions_names_list;
@@ -116,8 +112,7 @@ void mark_label_as_entry(LabelsLinkedList_t symbol_table, char* label_name) {
         }
         curr_label = get_next_label_node(curr_label);
     }
-    /* TODO: ERROR HANDLING - label doesn't exist! */
-    printf("ERROR: Label %s doesn't exist!\n", label_name); /* TODO: delete this */
+    handle_error("Entry label doesn't exist");
 }
 
 /* TODO: Rename this */
@@ -172,66 +167,6 @@ void set_binary_string_from_string(char *str, char *binary_string, int start) {
     set_binary_string_from_num(num, binary_string, start);
 }
 
-/* TODO: Rewrite this */
-/* TODO: Add documentation (use my_rotate as reference, maman 11 I think) */
-char* dec_to_binary(int num) {
-    char binary_array[BITS_AMOUNT];
-    int i, num_binary_length = 0, temp;
-
-    for (i = 0; i < BITS_AMOUNT; i++) {
-        binary_array[i] = '0';
-    }
-
-    i = num;
-
-    while (i != 0){
-        num_binary_length ++;
-        i /= 2;
-    }
-
-    for (i = num_binary_length; i > 0; i--){
-        temp = num / pow(2, i - 1);
-        binary_array[BITS_AMOUNT - i] = '0' + (temp % 2);
-    }
-
-    return copy_string(binary_array);
-}
-
-/* TODO: Rewrite this */
-/* TODO: Add documentation (use my_rotate as reference, maman 11 I think) */
-/* 2’s complement, 14 bits */
-char* binary(char *string) {
-    char *binary_array;
-    int num, i, negative = FALSE;
-
-    if (string[0] == MINUS) {
-        negative = TRUE;
-        num = atoi(copy_substring(string, 1, strlen(string)));
-    } else {
-        num = atoi(string);
-    }
-
-    binary_array = dec_to_binary(num);
-
-    if (is(negative)) {
-        for (i = 0; i < BITS_AMOUNT; i ++) {
-            binary_array[i] = binary_array[i] == '0' ? '1' : '0';
-        }
-
-        for (i = BITS_AMOUNT - 1; i >= 0; i--) {
-            if (binary_array[i] == '1')
-                binary_array[i] = '0';
-            else {
-                binary_array[i] = '1';
-                break;
-            }
-        }
-    }
-
-    return copy_string(binary_array);
-}
-
-/* TODO: Write this */
 /* TODO: Add documentation */
 int handle_data_type(char *line, LinkedList_t memory_list) {
     char *data, *curr_string, *binary_string;
@@ -246,13 +181,13 @@ int handle_data_type(char *line, LinkedList_t memory_list) {
     }
 
     data = get_string_without_whitespaces(data);
-    split_data = split_string(data, ',');
+    split_data = split_string(data, COMMA);
     curr_node = get_head(split_data);
 
     while (curr_node != NULL) {
         curr_string = get_node_value(curr_node);
         if (strlen(curr_string) == 0) {
-            /* TODO: ERROR HANDLING - incorrect commas in data! */
+            handle_error("Incorrect commas in data");
             return 0;
         }
         binary_string = copy_string(DEFAULT_EMPTY_WORD);
@@ -264,7 +199,6 @@ int handle_data_type(char *line, LinkedList_t memory_list) {
     return get_list_length(split_data);
 }
 
-/* TODO: Write this */
 /* TODO: Add documentation */
 int handle_string_type(char *line, LinkedList_t memory_list) {
     char *data, *binary_string;
@@ -280,7 +214,7 @@ int handle_string_type(char *line, LinkedList_t memory_list) {
     data = get_string_without_whitespaces(data);
 
     if (data[0] != '"' || data[strlen(data) - 1] != '"') {
-        /* TODO: ERROR HANDLING - this is an error! */
+        handle_error("Missing quotation marks at the edge of string definition");
         return 0;
     }
 
@@ -295,7 +229,6 @@ int handle_string_type(char *line, LinkedList_t memory_list) {
     return strlen(data) - 1;
 }
 
-/* write this */
 /* TODO: Add documentation */
 int is_legal_label_name(char *str) {
     int i, len = strlen(str);
@@ -345,7 +278,7 @@ int is_jump_address_type (char *str) {
     char *curr_operand;
     LinkedList_t split;
 
-    split = split_string(str, '(');
+    split = split_string(str, LEFT_BRACKET);
     if (get_list_length(split) != 2) {
         return FALSE;
     }
@@ -354,12 +287,12 @@ int is_jump_address_type (char *str) {
         return FALSE;
     }
 
-    if (str[strlen(str) - 1] != ')') {
+    if (str[strlen(str) - 1] != RIGHT_BRACKET) {
         return FALSE;
     }
 
     curr_operand = get_node_value(get_tail(split));
-    split = split_string(copy_substring(curr_operand, 0, strlen(curr_operand)-1), ',');
+    split = split_string(copy_substring(curr_operand, 0, strlen(curr_operand)-1), COMMA);
     if(get_list_length(split) != 2) {
         return FALSE;
     }
@@ -388,8 +321,7 @@ int get_address_type(char *operand) {
     } else if (is_jump_address_type(operand)) {
         type = JUMP;
     } else {
-        /* TODO: ERROR HANDLING - illegal operand thingie! */
-        printf("ERROR: illegal operand thingie!\n"); /* TODO: Change this */
+        handle_error("Illegal operand");
     }
     return type;
 }
@@ -404,14 +336,14 @@ LinkedList_t get_split_operands(char *operands_string) {
     /* TODO: split operands differently because this way doesn't work well with jump thingies :( */
     /* TODO: This is a quick fix, need to separate to function or redesign */
     for (i = 0; i < strlen(operands_string); i ++) {
-        if (operands_string[i] == '(')
+        if (operands_string[i] == LEFT_BRACKET)
             break;
     }
     if (i != strlen(operands_string)) {
         split_operands = create_linked_list();
         add_to_list(create_node(operands_string), split_operands);
     } else
-        split_operands = split_string(operands_string, ',');
+        split_operands = split_string(operands_string, COMMA);
 
     return split_operands;
 }
@@ -442,13 +374,13 @@ int calculate_words_for_line(CommandNode_t command_node, char *relevant_line_bit
             /* Jump handling */
             l += 2; /* TODO: Ensure! */
             split_operands = split_string(get_node_value(get_tail(split_string(copy_substring(operands_string, 0,
-                                                                                              strlen(operands_string)-1), '('))), ',');
+                                                                                              strlen(operands_string)-1), LEFT_BRACKET))), COMMA);
             l += has_non_register_operands(split_operands);
         } else {
             l += 1;
         }
     } else if (operands_num == 2) {
-        split_operands = split_string(get_string_without_whitespaces(operands_string), ',');
+        split_operands = split_string(get_string_without_whitespaces(operands_string), COMMA);
         l += 1 + has_non_register_operands(split_operands);
     }
 
@@ -460,7 +392,6 @@ void set_immediate_type_code(char *memory_bit, char *operand) {
     set_binary_string_from_string(copy_substring(operand, 1, strlen(operand)), memory_bit, 11);
 }
 
-/* TODO: Write this */
 /* TODO: Add documentation */
 void set_direct_type_code(char *memory_bit, char *operand, Table_t *extern_memory_table ,LabelsLinkedList_t *symbol_table, int ic) {
     LabelNode_t label;
@@ -483,18 +414,17 @@ void set_direct_type_code(char *memory_bit, char *operand, Table_t *extern_memor
     }
 }
 
-/* TODO: Write this */
 /* TODO: Add documentation */
 void set_jump_type_code(char *memory_array[], int ic, char *operand, Table_t *extern_memory_table, LabelsLinkedList_t *symbol_table) {
     LinkedList_t split_operands;
     char *temp, *first, *second;
-    split_operands = split_string(operand, '(');
+    split_operands = split_string(operand, LEFT_BRACKET);
     ic ++;
     temp = get_node_value(get_head(split_operands));
     set_direct_type_code(memory_array[ic], temp, extern_memory_table, symbol_table, ic);
     /* TODO: This repeats (when two operands)*/
     split_operands = split_string(get_string_without_whitespaces(copy_substring(get_node_value(get_tail(split_operands)), 0, strlen(operand) -
-            strlen(temp) - 2)), ',');
+            strlen(temp) - 2)), COMMA);
     first = get_node_value(get_head(split_operands));
     second = get_node_value(get_tail(split_operands));
     set_operand_code(first, SOURCE, extern_memory_table, symbol_table, memory_array, ic);
@@ -503,7 +433,6 @@ void set_jump_type_code(char *memory_array[], int ic, char *operand, Table_t *ex
     set_operand_code(second, DESTINATION, extern_memory_table, symbol_table, memory_array, ic);
 }
 
-/* TODO: Write this */
 /* TODO: Add documentation */
 void set_register_type_code(char *memory_bit, char *operand, int start) {
     set_binary_string_from_string(copy_substring(operand, 1, 2), memory_bit, start);
@@ -525,7 +454,6 @@ void set_operand_code(char *operand_string, int source_or_dest, Table_t *extern_
         set_register_type_code(memory_array[ic + 1], operand_string, source_or_dest);
 }
 
-/* TODO: write this */
 /* TODO: Add documentation */
 int handle_first_word(CommandNode_t command_node, char *relevant_line_bit, char memory_slot[]) {
     char *operands_string, *opcode;
@@ -562,7 +490,7 @@ int handle_first_word(CommandNode_t command_node, char *relevant_line_bit, char 
             l += 2; /* TODO: Ensure! */
             /* handle 10-13 by jump params */
             split_operands = split_string(get_node_value(get_tail(split_string(copy_substring(operands_string, 0,
-                                                                                              strlen(operands_string)-1), '('))), ',');
+                                                                                              strlen(operands_string)-1), LEFT_BRACKET))), COMMA);
             /* TODO: switch to for loop to reduce code redundancy */
             operand_type = get_address_type(get_node_value(get_head(split_operands)));
             if (operand_type != REGISTER)
@@ -587,7 +515,7 @@ int handle_first_word(CommandNode_t command_node, char *relevant_line_bit, char 
         for (i = 0; i <= 3; i++) {
             memory_slot[i] = '0';
         }
-        split_operands = split_string(get_string_without_whitespaces(operands_string), ',');
+        split_operands = split_string(get_string_without_whitespaces(operands_string), COMMA);
         /* TODO: switch to for loop to reduce code redundancy */
         /* 4,5 bits according to first operand */
         operand_type = get_address_type(get_node_value(get_head(split_operands)));
@@ -607,7 +535,6 @@ int handle_first_word(CommandNode_t command_node, char *relevant_line_bit, char 
     return l;
 }
 
-/* TODO: Write this */
 /* TODO: Add documentation */
 int handle_all_but_first_words(CommandNode_t command_node, char *relevant_line_bit, Table_t *extern_memory_table, LabelsLinkedList_t *symbol_table, char *memory_array[], int ic) {
     int l, operands_num = get_command_node_operands(command_node);
@@ -625,7 +552,7 @@ int handle_all_but_first_words(CommandNode_t command_node, char *relevant_line_b
         set_operand_code(operands_string, DESTINATION, extern_memory_table, symbol_table, memory_array, ic);
     } else if (operands_num == 2) {
         /* TODO: This repeats (jump) */
-        split_operands = split_string(get_string_without_whitespaces(operands_string), ',');
+        split_operands = split_string(get_string_without_whitespaces(operands_string), COMMA);
         first = get_node_value(get_head(split_operands));
         second = get_node_value(get_tail(split_operands));
         set_operand_code(first, SOURCE, extern_memory_table, symbol_table, memory_array, ic);
@@ -646,7 +573,6 @@ int is_valid_line(char *line) {
     return TRUE;
 }
 
-/* TODO: Write this */
 /* TODO: Add documentation */
 void write_object_file(char* file_name, char *memory_array[]) {
     int i, j;
@@ -667,7 +593,6 @@ void write_object_file(char* file_name, char *memory_array[]) {
     fclose(dest_file);
 }
 
-/* TODO: Write this */
 /* TODO: Add documentation */
 void create_externals_file(char* file_name, Table_t external_memory_table) {
     int i, externals_amount;
@@ -689,7 +614,6 @@ void create_externals_file(char* file_name, Table_t external_memory_table) {
     fclose(dest_file);
 }
 
-/* TODO: Write this */
 /* TODO: Add documentation */
 void create_entries_file(char* file_name, LabelsLinkedList_t symbol_table) {
     int has_entries = FALSE;

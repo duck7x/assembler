@@ -7,8 +7,6 @@
 #define MACRO_DEFINITION_PREFIX "mcr " /* TODO: Add documentation */
 #define MACRO_DEFINITION_SUFFIX "endmcr" /* TODO: Add documentation */
 
-void print_pre_assembler_phase(void); /* TODO: delete this */
-
 /* Checks if a given line is a macro definition. Gets an array representing a line, returns TRUE if it's a macro definition and FALSE otherwise*/
 int is_start_of_macro_definition(char* line);
 

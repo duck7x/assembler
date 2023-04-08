@@ -1,10 +1,5 @@
 #include "pre_assembler_functions.h"
 
-void print_pre_assembler_phase(void) {
-    printf("This is the pre-assembler phase (printed by pre-assembler phase functions)\n");
-}
-
-/* TODO: Write this */
 /*  The function checks if the given line is a beginning of a macro definition
     using starts_with from general_functions */
 int is_start_of_macro_definition(char* line) {
@@ -13,7 +8,6 @@ int is_start_of_macro_definition(char* line) {
     return FALSE;
 }
 
-/* TODO: Write this */
 /*  The function checks if the given line is an ending of a macro definition
     using starts_with from general_functions */
 int is_end_of_macro_definition(char* line) {
@@ -23,7 +17,6 @@ int is_end_of_macro_definition(char* line) {
     return FALSE;
 }
 
-/* TODO: Write this */
 /*  We assume the line is cleaned! */
 /*  The function goes through the file from the given line where the beginning mcr is until reaching endmcr
     And adds everything in between to the macro table under the macro name */
@@ -57,7 +50,6 @@ int is_an_existing_macro(char* mcr_name, Table_t macro_table) {
     return TRUE;
 }
 
-/* TODO: Write this */
 /* TODO: Add documentation */
 void write_existing_macro(char* macro, FILE *file, Table_t macro_table) {
     write_line_to_file(file, get_value_from_table(macro_table, macro)); /* TODO: Not line, more like "chunk" */

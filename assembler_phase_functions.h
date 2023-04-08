@@ -33,7 +33,6 @@
 
 #define IsRegister(STRING) (strlen(STRING) == 2 && STRING[0] == 'r' && STRING[1] <= '7' && STRING[1] >= '0') /* TODO: Add documentation */
 
-void print_assembler_phase(void); /* TODO: delete this */
 LinkedCommandList_t create_action_names_list(); /* TODO: Add documentation */
 void handle_error(char *error_message); /* TODO: Add documentation */
 void handle_warning(char *warning_message); /* TODO: Add documentation */
@@ -48,8 +47,6 @@ void update_symbol_table(LabelsLinkedList_t symbol_table, int ic); /* TODO: Add 
 int add_data_symbols_to_memory(LinkedList_t data_memory_list, int ic, char *memory_array[]); /* TODO: Add documentation */
 void set_binary_string_from_num(unsigned int num, char *binary_string, int start); /* TODO: Add documentation */
 void set_binary_string_from_string(char *str, char *binary_string, int start); /* TODO: Add documentation */
-char* dec_to_binary(int num); /* TODO: Add documentation */
-char* binary(char *string); /* TODO: Add documentation */
 int handle_data_type(char *line, LinkedList_t memory_list); /* TODO: Add documentation */
 int handle_string_type(char *line, LinkedList_t memory_list); /* TODO: Add documentation */
 int is_legal_label_name(char *str); /* TODO: Add documentation */

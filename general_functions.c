@@ -1,6 +1,5 @@
 #include "general_functions.h"
 
-
 /* TODO: Add documentation */
 int starts_with(char *str, char *prefix) {
     if (strncmp(prefix, str, strlen(prefix)) == 0)
@@ -123,7 +122,6 @@ char* get_next_line_stripped(FILE* file, char* line) {
 }
 
 /* TODO: Add documentation */
-/* TODO: write this */
 void write_line_to_file(FILE* file, char* line) {
     fputs(line, file);
 }

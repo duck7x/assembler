@@ -5,13 +5,18 @@
 #include "utils.h"
 
 #define NEWLINE '\n' /* TODO: Add documentation */
-#define isEndOfLine(CHAR) (CHAR == EOF || CHAR == '\n') /* TODO: Add documentation */
 #define SPACE ' ' /* TODO: Add documentation */
+#define COMMA ',' /* TODO: Add documentation */
+#define COLON ':' /* TODO: Add documentation */
+#define COLON ':' /* TODO: Add documentation */
+#define COLON ':' /* TODO: Add documentation */
+#define RIGHT_BRACKET ')' /* TODO: Add documentation */
+#define LEFT_BRACKET '(' /* TODO: Add documentation */
 #define READ "r" /* TODO: Add documentation */
 #define WRITE "w" /* TODO: Add documentation */
 #define APPEND "a" /* TODO: Add documentation */
 #define INPUT_SUFFIX ".as" /* TODO: Add documentation */ /* TODO: Maybe move to pre_assembler_functions */
-#define POST_PRE_ASSEMBLER_SUFFIX ".am" /* TODO: Add documentation */ /* TODO: Maybe move to pre_assembler_functions */
+#define POST_PRE_ASSEMBLER_SUFFIX ".am" /* TODO: Add documentation */
 #define MAX_LINE_LENGTH 80 /* TODO: Add documentation */
 #define ReadLine(FILE, LINE) fscanf(FILE, "%[^\n] ", LINE) /* TODO: Add documentation */
 #define StringsEqual(FIRST, SECOND) strcmp(FIRST, SECOND) == 0 /* TODO: Add documentation */

@@ -4,9 +4,9 @@
 int pre_assembler(char** files_list, int files_count) {
     int i;
 
-    for (i = 1; i < files_count; i++) { /* TODO: rewrite this */
-        /* TODO: Ensure file exist, throw error if not! */
+    for (i = 1; i < files_count; i++) {
         run_pre_assembler_on_file(files_list[i]);
+        free_all();
     }
 
     return 0;
@@ -21,17 +21,23 @@ int run_pre_assembler_on_file(char* file_name) {
     line = (char *)allocate(sizeof(char) * MAX_LINE_LENGTH);
 
     source_file = fopen(concatenate_strings(file_name, INPUT_SUFFIX), READ);
+
+    if (source_file == NULL) {
+        printf("ERROR: File %s%s doesn't exist! Skipping it...\n", file_name, INPUT_SUFFIX);
+        return -1;
+    }
+
     dest_file = fopen(concatenate_strings(file_name, POST_PRE_ASSEMBLER_SUFFIX), WRITE);
 
     macro_table = create_table();
 
-    while (ReadLine(source_file, line) != EOF) {  /* TODO: rewrite this */
-        line = clean_multiple_whitespaces(line);
+
+    while (ReadLine(source_file, line) != EOF) {
+        line = get_stripped_string(clean_multiple_whitespaces(line));
         if (is_start_of_macro_definition(line))
             add_macro(source_file, line, macro_table);
         else
             write_line_to_expanded_file(dest_file, line, macro_table);
-        /*line = get_next_line_stripped(source_file, line);*/
     }
 
     fclose(source_file);
@@ -51,7 +57,7 @@ void write_line_to_expanded_file(FILE *dest_file, char* line, Table_t macro_tabl
 
     while(current_word != NULL) {
         /* TODO: Maybe combine those two functions to one */
-        if (get_node_value(current_word) != get_node_value(get_head(line_split)))
+        if (get_node_value(current_word) != get_node_value(get_head(line_split))) /* TODO: Maybe use strings equal */
             fputc(SPACE, dest_file);
         if (is_an_existing_macro(get_node_value(current_word), macro_table))
             write_existing_macro(get_node_value(current_word), dest_file, macro_table);
