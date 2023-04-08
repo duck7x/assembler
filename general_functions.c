@@ -1,6 +1,17 @@
 #include "general_functions.h"
 
 /* TODO: Add documentation */
+void handle_error(char *error_message) {
+    has_errors = TRUE;
+    printf("ERROR: %s on line %d\n", error_message, line_count);
+}
+
+/* TODO: Add documentation */
+void handle_warning(char *warning_message) {
+    printf("WARNING: %s on line %d\n", warning_message, line_count);
+}
+
+/* TODO: Add documentation */
 int starts_with(char *str, char *prefix) {
     if (strncmp(prefix, str, strlen(prefix)) == 0)
         return TRUE;
@@ -103,22 +114,6 @@ char* get_stripped_string(char* str) {
         last_char --;
 
     return copy_substring(str, first_char, last_char);
-}
-
-/* TODO: delete this */
-/* TODO: Add documentation */
-char* get_next_line(FILE* file, char* line) {
-    fscanf(file, "%s", line);
-    return line;
-}
-
-/* TODO: delete this */
-/* TODO: Add documentation */
-/* TODO: Make this better without allocating so much */
-/* TODO: Adding EOF to string is bad, don't do it, it causes ? to be printed */
-char* get_next_line_stripped(FILE* file, char* line) {
-    line = get_next_line(file, line);
-    return clean_multiple_whitespaces(line);
 }
 
 /* TODO: Add documentation */

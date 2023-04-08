@@ -27,16 +27,6 @@ LinkedCommandList_t create_action_names_list() {
     return actions_names_list;
 }
 
-/* TODO: Add documentation */
-void handle_error(char *error_message) {
-    has_errors = TRUE;
-    printf("ERROR: %s on line %d\n", error_message, line_count);
-}
-
-/* TODO: Add documentation */
-void handle_warning(char *warning_message) {
-    printf("WARNING: %s on line %d\n", warning_message, line_count);
-}
 
 
 /* TODO: Add documentation */

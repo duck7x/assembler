@@ -22,15 +22,14 @@
 #define StringsEqual(FIRST, SECOND) strcmp(FIRST, SECOND) == 0 /* TODO: Add documentation */
 #define BITS_AMOUNT 14 /* TODO: Add documentation */ /* TODO: rename this */
 
-
+void handle_error(char *error_message); /* TODO: Add documentation */
+void handle_warning(char *warning_message); /* TODO: Add documentation */
 int starts_with(char *str, char *prefix); /* TODO: Add documentation */
 int get_index_till_delimiter(char* str, char delimiter); /* TODO: Add documentation */
 LinkedList_t split_string(char* str, char delimiter); /* TODO: Add documentation */
 char* clean_multiple_whitespaces(char* str); /* TODO: Add documentation */
 char* get_string_without_whitespaces(char* str); /* TODO: Add documentation */
 char* get_stripped_string(char* str); /* TODO: Add documentation */
-char* get_next_line(FILE* file, char* line); /* TODO: Add documentation */
-char* get_next_line_stripped(FILE* file, char* line); /* TODO: Add documentation */
 void write_line_to_file(FILE* file, char* line); /* TODO: Maybe change name to "append_chunk_to_file */ /* TODO: Add documentation */
 
 #endif

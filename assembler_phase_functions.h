@@ -34,8 +34,6 @@
 #define IsRegister(STRING) (strlen(STRING) == 2 && STRING[0] == 'r' && STRING[1] <= '7' && STRING[1] >= '0') /* TODO: Add documentation */
 
 LinkedCommandList_t create_action_names_list(); /* TODO: Add documentation */
-void handle_error(char *error_message); /* TODO: Add documentation */
-void handle_warning(char *warning_message); /* TODO: Add documentation */
 int starts_with_label(LinkedList_t split_line); /* TODO: Add documentation */
 int is_data_storage(char *line); /* TODO: Add documentation */
 int is_extern_or_entry(char *line); /* TODO: Add documentation */
