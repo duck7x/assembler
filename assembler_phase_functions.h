@@ -73,6 +73,7 @@ int is_entry(char *line); /* TODO: Add documentation */
 void add_label(LabelsLinkedList_t labels_list, LinkedList_t split_line, char *type, int value, int *has_errors, int line_number); /* TODO: Add documentation */
 void mark_label_as_entry(LabelsLinkedList_t symbol_table, char* label_name); /* TODO: Add documentation */
 void update_symbol_table(LabelsLinkedList_t symbol_table, int ic); /* TODO: Add documentation */
+int add_data_symbols_to_memory(LinkedList_t data_memory_list, int ic, char *memory_array[]); /* TODO: Add documentation */
 void set_binary_string_from_num(unsigned int num, char *binary_string, int start); /* TODO: Add documentation */
 void set_binary_string_from_string(char *str, char *binary_string, int start); /* TODO: Add documentation */
 char* dec_to_binary(int num); /* TODO: Add documentation */

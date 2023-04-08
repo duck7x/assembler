@@ -373,6 +373,7 @@ void mark_label_as_entry(LabelsLinkedList_t symbol_table, char* label_name) {
     printf("ERROR: Label %s doesn't exist!\n", label_name); /* TODO: delete this */
 }
 
+/* TODO: Rename this */
 /* TODO: Add documentation */
 void update_symbol_table(LabelsLinkedList_t symbol_table, int ic) {
     LabelNode_t current_label = get_labels_list_head(symbol_table);
@@ -382,6 +383,16 @@ void update_symbol_table(LabelsLinkedList_t symbol_table, int ic) {
             set_label_node_value(current_label, get_label_node_value(current_label) + ic);
         }
     }
+}
+
+/* TODO: Add documentation */
+int add_data_symbols_to_memory(LinkedList_t data_memory_list, int ic, char *memory_array[]) {
+    Node_t curr = get_head(data_memory_list);
+    while (curr != NULL) {
+        memory_array[ic++] = get_node_value(curr);
+        curr = get_next_node(curr);
+    }
+    return ic;
 }
 
 /* 2’s complement */
@@ -797,8 +808,6 @@ int handle_first_word(CommandNode_t command_node, char *relevant_line_bit, char 
             /* handle 10-13 by jump params */
             split_operands = split_string(get_node_value(get_tail(split_string(copy_substring(operands_string, 0,
                                                                                               strlen(operands_string)-1), '('))), ',');
-            print_list(split_operands);
-
             /* TODO: switch to for loop to reduce code redundancy */
             operand_type = get_address_type(get_node_value(get_head(split_operands)));
             if (operand_type != REGISTER)
@@ -851,7 +860,6 @@ int handle_all_but_first_words(CommandNode_t command_node, char *relevant_line_b
     LinkedList_t split_operands;
 
     l = calculate_words_for_line(command_node, relevant_line_bit);
-    printf("Handling all words of %s\n", relevant_line_bit);
 
     if (operands_num == 0)
         return l;

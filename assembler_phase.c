@@ -144,11 +144,12 @@ int run_assembler_phase_1(char* file_name, LinkedCommandList_t action_names_list
         /*return -1;*/ /* TODO: Uncomment this*/
     }
 
-    /* TODO: Rename this */
     /* TODO: Add documentation */
     update_symbol_table(*symbol_table, ic); /* Step 17 */
 
-    memory_array[ic + 1] = "\0";
+    ic = add_data_symbols_to_memory(*data_memory_list, ic, memory_array);
+
+    memory_array[ic] = "\0";
 
     /*printf("Phase 1 ended, printing symbol table:\n"); *//* TODO: delete this *//*
     print_labels_list(symbol_table); *//* TODO: delete this *//*
@@ -210,6 +211,8 @@ int run_assembler_phase_2(char* file_name, LinkedCommandList_t action_names_list
             ic += l; /* Step 8 */
         }
     }
+
+    fclose(source_file);
 
     if (is(*has_errors)) { /* Step 10 */
         printf("ERROR: Found errors in file, stopping assembler\n");
