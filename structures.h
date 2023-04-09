@@ -1,8 +1,6 @@
 #ifndef STRUCTURES_H /* Prevents recursive includes */
 #define STRUCTURES_H
 
-#include <stdlib.h>
-#include <string.h>
 #include "stdio.h"  /* TODO: delete this if not needed */
 #include "utils.h"
 
