@@ -17,7 +17,7 @@ int assembler_phase(char** files_list, int files_count) {
 
         current_file = files_list[i];
         run_assembler_phase_1(current_file, actions_names_list, &data_memory_list, &symbol_table, memory_array);
-        run_assembler_phase_2(current_file, actions_names_list, &data_memory_list, &extern_memory_table, &symbol_table, memory_array); /* TODO: decide if to separate to two loops */
+        run_assembler_phase_2(current_file, actions_names_list, &extern_memory_table, &symbol_table, memory_array); /* TODO: decide if to separate to two loops */
 
         if (is_not(has_errors))
             create_files(current_file, memory_array, &symbol_table, &extern_memory_table);
