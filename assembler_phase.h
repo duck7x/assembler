@@ -13,7 +13,7 @@
     OUTPUT: Returns 0 if all went well
             and -1 if any errors prevented the assembler run (in which case, no files will be created).
 */
-int assembler_phase(char** files_list, int files_count); /* TODO: Add documentation */
+int assembler_phase(char** files_list, int files_count);
 
 /*
     INPUT:

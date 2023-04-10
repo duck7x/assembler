@@ -2,7 +2,6 @@
 #define ASSEMBLER_PHASE_FUNCTIONS_H
 
 #include <stdio.h>
-#include <math.h>
 #include <ctype.h>
 #include "general_functions.h"
 
