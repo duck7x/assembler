@@ -292,7 +292,7 @@ int get_command_node_operands(CommandNode_t node);
     INPUT:  node - a CommandNode_t struct.
     OUTPUT: The source_operand_types field of the given node.
 */
-char* get_command_node_source_operand_types(CommandNode_t node); /* TODO: Add documentation */
+char* get_command_node_source_operand_types(CommandNode_t node);
 
 /*  Gets a command node object and returns the string of the allowed destination operands of that node.
     INPUT:  node - a CommandNode_t struct.

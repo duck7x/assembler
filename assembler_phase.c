@@ -1,27 +1,35 @@
 #include "assembler_phase.h"
 
-/* TODO: Add documentation */
+/*  Gets an array of files, and the amount of files in that array.
+    This function assumes that the pre-assembler phase has already been done for each of those files.
+    Using a for loop, the function goes through the files in the list and runs the first and second assembler phase for it.
+    If both phases went well with no errors (as indicated by the has_errors global variable),
+    Creates all required files using create_files function.
+    If there were any errors during the first or second phase of the assembler,
+    All created files (including the one created by the pre-assembler) will be deleted.
+    In such case, a CRITICAL message will be printed.
+*/
 int assembler_phase(char** files_list, int files_count) {
     int i;
-    char *memory_array[MEMORY_SIZE], *current_file;
-    LinkedCommandList_t actions_names_list = create_action_names_list();
-    LinkedList_t data_memory_list = create_linked_list();
-    Table_t extern_memory_table = create_table();
-    LabelsLinkedList_t symbol_table = create_linked_labels_list();
+    char *memory_array[MEMORY_SIZE], *current_file;  /* Represents the code image of the assembler */
+    LinkedCommandList_t actions_names_list = create_action_names_list();  /* Contains the allowed assembly commands */
+    LabelsLinkedList_t symbol_table = create_linked_labels_list();  /* Will contain all the labels in the code */
+    LinkedList_t data_memory_list = create_linked_list();  /* Represents the data image of the assembler  */
+    Table_t extern_memory_table = create_table();  /* Will contain all the external labels usage in the code */
 
     has_errors = FALSE;
 
     for (i = 1; i < files_count; i++) {
 
-        has_errors = FALSE;
+        has_errors = FALSE;  /* Ensures that errors in previous files will not affect the following ones */
 
         current_file = files_list[i];
         run_assembler_phase_1(current_file, actions_names_list, &data_memory_list, &symbol_table, memory_array);
-        run_assembler_phase_2(current_file, actions_names_list, &extern_memory_table, &symbol_table, memory_array); /* TODO: decide if to separate to two loops */
+        run_assembler_phase_2(current_file, actions_names_list, &extern_memory_table, &symbol_table, memory_array);
 
-        if (is_not(has_errors))
+        if (is_not(has_errors))  /* Files will be created only if both assembler phase finished with no errors */
             create_files(current_file, memory_array, &symbol_table, &extern_memory_table);
-        else {
+        else {  /* Some files are created during the process. If there has been any errors, those files needs to be deleted */
             printf("CRITICAL: Not creating files for %s due to previous errors\n", current_file);
             delete_created_files(current_file);
             return -1;
@@ -189,14 +197,19 @@ int run_assembler_phase_2(char* file_name, LinkedCommandList_t action_names_list
     return is(has_errors) ? 0 : -1;
 }
 
-/* TODO: Add documentation */
+/*  Gets a file name, a memory array, a symbol table and an externals memory table.
+    Generates all relevant files using write_object_file, create_externals_file and create_entries_file function.
+*/
 void create_files(char* file_name, char *memory_array[], LabelsLinkedList_t *symbol_table, Table_t *external_memory_table) {
     write_object_file(file_name, memory_array);
     create_externals_file(file_name, *external_memory_table);
     create_entries_file(file_name, *symbol_table);
 }
 
-/* TODO: Add documentation */
+/*  Gets a string representing a file name.
+    Attempts to remove all files with that name and assembly compiler related suffixes, using the files remove method.
+    Suffixes to be deleted are POST_PRE_ASSEMBLER_SUFFIX, OBJECT_FILE_SUFFIX, EXTERNALS_FILE_SUFFIX and ENTRIES_FILE_SUFFIX.
+*/
 void delete_created_files(char *file_name) {
     remove(concatenate_strings(file_name, POST_PRE_ASSEMBLER_SUFFIX));
     remove(concatenate_strings(file_name, OBJECT_FILE_SUFFIX));
