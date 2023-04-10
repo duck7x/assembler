@@ -1,39 +1,56 @@
 #include "structures.h"
 
-/* Structures struct definition */
+/* Structures struct definitions */
+
 /* TODO: Add documentation */
 struct Allocator {
     int number_of_allocated_elements;
     void* ptr_list[LAST_ALLOCATION_INDEX+1];
 } Allocator;
 
-/* TODO: Add documentation */
+/*  Represents pairs of key and value
+    Helps to create dictionary-like objects
+*/
 struct Pair{
     char* key;
     char* value;
 } Pair;
 
-/* TODO: Add documentation */
+/*  Dictionary-like object
+    Holds a list of key-value pairs
+*/
 struct Table{
     int current_table_size;
     int number_of_pairs;
     Pair_t pair_table[CURRENT_MAX_TABLE_SIZE];
 } Table;
 
-/* TODO: Add documentation */
+/*  Represents a node in a strings linked list.
+    value - the string itself
+    next - the next node in the list
+*/
 struct Node{
     char* value;
     Node_t next;
 } Node;
 
-/* TODO: Add documentation */
+/*  A strings linked list
+    Head - start of list
+    Tail - end of list
+    list_length - amount of strings in the list
+*/
 struct LinkedList {
     Node_t head;
     Node_t tail;
     int list_length;
 } LinkedList;
 
-/* TODO: Add documentation */
+/*  Represents a node in a labels linked list.
+    name - the label's name
+    type - the label's type
+    value - the label's value
+    next - the next label node in the list
+*/
 struct LabelNode{
     char* name;
     char* type;
@@ -41,14 +58,25 @@ struct LabelNode{
     LabelNode_t next;
 } LabelNode;
 
-/* TODO: Add documentation */
+/*  A labels linked list
+    Head - start of list
+    Tail - end of list
+    list_length - amount of strings in the list
+*/
 struct LinkedLabelsList {
     LabelNode_t head;
     LabelNode_t tail;
     int list_length;
 } LinkedLabelsList;
 
-/* TODO: Add documentation */
+/*  Represents a node in a commands linked list.
+    command - the command's name
+    code - the command's opt code
+    operands - amount of operands the command should have
+    source_operand_types - allowed source operand types
+    destination_operand_types - allowed destination operand types
+    next - the next command node in the list
+*/
 struct CommandNode{
     char* command;
     char* code;
@@ -58,7 +86,11 @@ struct CommandNode{
     CommandNode_t next;
 } CommandNode;
 
-/* TODO: Add documentation */
+/*  A commands linked list
+    Head - start of list
+    Tail - end of list
+    list_length - amount of strings in the list
+*/
 struct LinkedCommandList {
     CommandNode_t head;
     CommandNode_t tail;
@@ -110,7 +142,11 @@ void free_all_and_allocator() {
 }
 
 /* Pair methods */
-/* TODO: Add documentation */
+
+/*  Creates a pair object out of the given key (string) and value (string).
+    Allocates the required memory and stores a copy of those string in the relevant fields
+    of the newly created Pair_t struct.
+*/
 Pair_t create_pair(char* key, char* value) {
     Pair_t pair = allocate(sizeof(Pair));
     pair->key = copy_string(key);
@@ -118,12 +154,16 @@ Pair_t create_pair(char* key, char* value) {
     return pair;
 }
 
-/* TODO: Add documentation */
+/*  Gets a Pair_t struct.
+    Returns the key field of that pair.
+*/
 char* get_pair_key(Pair_t p) {
     return p->key;
 }
 
-/* TODO: Add documentation */
+/*  Gets a Pair_t struct.
+    Returns the value field of that pair.
+*/
 char* get_pair_value(Pair_t p) {
     return p->value;
 }
@@ -134,7 +174,10 @@ void print_pair(Pair_t p) {
 }
 
 /* Table methods */
-/* TODO: Add documentation */
+
+/*  Creates an empty table object.
+    Allocates the required memory, sets the table size and sets the number of pairs to 0.
+*/
 Table_t create_table() {
     Table_t table = allocate(sizeof(Table));
     table->current_table_size = CURRENT_MAX_TABLE_SIZE;
@@ -142,6 +185,7 @@ Table_t create_table() {
     return table;
 }
 
+/* YOU ARE HERE */
 /* TODO: Add documentation */
 void add_to_table(Table_t t, char* key, char* value) {
     Pair_t pair;

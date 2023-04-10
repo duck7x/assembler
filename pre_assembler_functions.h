@@ -1,7 +1,6 @@
 #ifndef PRE_ASSEMBLER_FUNCTIONS_H /* Prevents recursive includes */
 #define PRE_ASSEMBLER_FUNCTIONS_H
 
-#include <stdio.h>
 #include "general_functions.h"
 
 #define MACRO_DEFINITION_PREFIX "mcr " /* A prefix that indicates a beginning of a macro definition */
