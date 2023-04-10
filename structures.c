@@ -196,9 +196,9 @@ void add_to_table(Table_t t, char* key, char* value) {
 }
 
 /*  Gets a table object and a string representing a key.
-   Using a for look, go the pairs in the given table and checks if they have the given key.
-   If so, return the valur of that pair.
-   If such key is not found, return NULL.
+    Using a for loop, goes through the pairs in the given table and checks if they have the given key.
+    If so, return the value of that pair.
+    If such key is not found, return NULL.
 */
 char* get_value_from_table(Table_t t, char* key) {
     int i;
@@ -310,8 +310,9 @@ int get_list_length(LinkedList_t list) {
     return list->list_length;
 }
 
-/*  YOU ARE HERE
-
+/*  Gets a linked list object.
+    Goes through it via a for lop and concatenates each value to all of its previous values (using concatenate_strings)
+    Returns the concatenated string.
 */
 char* get_list_as_string(LinkedList_t list) {
     Node_t node;
@@ -351,7 +352,11 @@ void print_list(LinkedList_t list) {
 }
 
 /* LabelNode methods */
-/* TODO: Add documentation */
+
+/*  Gets two strings representing name and type, and an int representing a value.
+    Creates a new label node object with the given strings and int as its contents, and NULL as its next.
+    Returns the newly created label node.
+*/
 LabelNode_t create_label_node(char* name, char* type, int value) {
     LabelNode_t node = allocate(sizeof(LabelNode));
     node->name = name;
@@ -361,40 +366,58 @@ LabelNode_t create_label_node(char* name, char* type, int value) {
     return node;
 }
 
-/* TODO: Add documentation */
+/*  Gets a LabelNode_t struct.
+    Returns the type field of that label node.
+*/
 char* get_label_node_type(LabelNode_t node) {
     return node->type;
 }
 
-/* TODO: Add documentation */
+/*  Gets a LabelNode_t struct.
+    Returns the value field of that label node.
+*/
 int get_label_node_value(LabelNode_t node) {
     return node->value;
 }
 
-/* TODO: Add documentation */
+/*  Gets a LabelNode_t struct.
+    Returns the name field of that label node.
+*/
 char* get_label_node_name(LabelNode_t node) {
     return node->name;
 }
 
-/* TODO: Add documentation */
+/*  Gets a LabelNode_t struct.
+    Returns the next field of that label node.
+*/
 LabelNode_t get_next_label_node(LabelNode_t node) {
     if (node == NULL)
         return NULL;
     return node->next;
 }
 
-/* TODO: Add documentation */
+/*  Gets a LabelNode_t struct and an int.
+    Sets the node's value to be the given int.
+*/
 void set_label_node_value(LabelNode_t node, int new_val) {
     node->value = new_val;
 }
 
-/* TODO: Add documentation */
+/*  Gets a LabelNode_t struct and a string.
+    Sets the node's type to be the given string.
+*/
 void set_label_node_type(LabelNode_t node, char *new_type) {
     node->type = new_type;
 }
 
 /* LinkedLabelsList methods */
-/* TODO: Add documentation */
+
+
+/*  Creates an empty linked labels list object.
+    Allocates the required memory,
+    Sets the list head and tail to NULL
+    And sets the list's length to 0.
+*/
 LabelsLinkedList_t create_linked_labels_list() {
     LabelsLinkedList_t list = allocate(sizeof(LinkedLabelsList));
     list->head = NULL;
@@ -404,7 +427,12 @@ LabelsLinkedList_t create_linked_labels_list() {
 }
 
 
-/* TODO: Add documentation */
+/*  Gets a linked labels list object, and a label node object.
+    If the list is empty, the given label node is set as the list's head.
+    Otherwise, it is set as the list's tail's next.
+    Either way, the given label node is set as the list's tail.
+    Also, raises the value of the list length by one.
+*/
 void add_to_labels_list(LabelNode_t node, LabelsLinkedList_t list) {
     if (list->list_length == 0) {
         list->head = node;
@@ -416,17 +444,25 @@ void add_to_labels_list(LabelNode_t node, LabelsLinkedList_t list) {
     list->list_length++;
 }
 
-/* TODO: Add documentation */
+/*  Gets a linked labels list object.
+    Returns the current list length.
+*/
 int get_labels_list_length(LabelsLinkedList_t list) {
     return list->list_length;
 }
 
-/* TODO: Add documentation */
+/*  Gets a LabelsLinkedList_t struct.
+    Returns the head field of that list.
+*/
 LabelNode_t get_labels_list_head(LabelsLinkedList_t list) {
     return list->head;
 }
 
-/* TODO: Add documentation */
+/*  Gets a linked labels list object and a string representing a label name.
+    Using a while loop, goes through the labels in the given list and checks if they have the given name.
+    If so, return that label node.
+    If such label is not found, return NULL.
+*/
 LabelNode_t search_labels_list(LabelsLinkedList_t list, char* label) {
     LabelNode_t curr = get_labels_list_head(list);
 
@@ -454,7 +490,12 @@ void print_labels_list(LabelsLinkedList_t list) {
 }
 
 /* CommandNode methods */
-/* TODO: Add documentation */
+
+/*  Gets some strings representing a command, its code, allowed source and destination operands type
+    And an int representing the amount of operands the command should have.
+    Creates a new command node object with the given strings and int as its contents, and NULL as its next.
+    Returns the newly created command node.
+*/
 CommandNode_t create_command_node(char* command, char* code, int operands, char* source_operand_types, char* destination_operand_types) {
     CommandNode_t node = allocate(sizeof(CommandNode));
 
@@ -468,32 +509,44 @@ CommandNode_t create_command_node(char* command, char* code, int operands, char*
     return node;
 }
 
-/* TODO: Add documentation */
+/*  Gets a CommandNode_t struct.
+    Returns the code field of that command node.
+*/
 char* get_command_node_code(CommandNode_t node) {
     return node->code;
 }
 
-/* TODO: Add documentation */
+/*  Gets a CommandNode_t struct.
+    Returns the command field of that command node.
+*/
 char* get_command_node_command(CommandNode_t node) {
     return node->command;
 }
 
-/* TODO: Add documentation */
+/*  Gets a CommandNode_t struct.
+    Returns the operands field of that command node.
+*/
 int get_command_node_operands(CommandNode_t node) {
     return node->operands;
 }
 
-/* TODO: Add documentation */
+/*  Gets a CommandNode_t struct.
+    Returns the source_operand_types field of that command node.
+*/
 char* get_command_node_source_operand_types(CommandNode_t node) {
     return node->source_operand_types;
 }
 
-/* TODO: Add documentation */
+/*  Gets a CommandNode_t struct.
+    Returns the destination_operand_types field of that command node.
+*/
 char* get_command_node_destination_operand_types(CommandNode_t node) {
     return node->destination_operand_types;
 }
 
-/* TODO: Add documentation */
+/*  Gets a CommandNode_t struct.
+    Returns the next field of that command node.
+*/
 CommandNode_t get_next_command_node(CommandNode_t node) {
     return node->next;
 }
@@ -513,7 +566,12 @@ void print_commands_node(CommandNode_t node) {
 }
 
 /* LinkedCommandList methods */
-/* TODO: Add documentation */
+
+/*  Creates an empty linked commands list object.
+    Allocates the required memory,
+    Sets the list head and tail to NULL
+    And sets the list's length to 0.
+*/
 LinkedCommandList_t create_linked_command_list() {
     LinkedCommandList_t list = allocate(sizeof(LinkedLabelsList));
     list->head = NULL;
@@ -522,7 +580,12 @@ LinkedCommandList_t create_linked_command_list() {
     return list;
 }
 
-/* TODO: Add documentation */
+/*  Gets a linked commands list object, and a command node object.
+    If the list is empty, the given command node is set as the list's head.
+    Otherwise, it is set as the list's tail's next.
+    Either way, the given command node is set as the list's tail.
+    Also, raises the value of the list length by one.
+*/
 void add_to_commands_list(CommandNode_t node, LinkedCommandList_t list) {
     if (list->list_length == 0) {
         list->head = node;
@@ -534,17 +597,25 @@ void add_to_commands_list(CommandNode_t node, LinkedCommandList_t list) {
     list->list_length++;
 }
 
-/* TODO: Add documentation */
+/*  Gets a linked commands list object.
+    Returns the current list length.
+*/
 int get_commands_list_length(LinkedCommandList_t list) {
     return list->list_length;
 }
 
-/* TODO: Add documentation */
+/*  Gets a LinkedCommandList_t struct.
+    Returns the head field of that list.
+*/
 CommandNode_t get_commands_list_head(LinkedCommandList_t list) {
     return list->head;
 }
 
-/* TODO: Add documentation */
+/*  Gets a linked commands list object and a string representing a command name.
+    Using a while loop, goes through the commands in the given list and checks if they have the given name.
+    If so, return that command node.
+    If such command is not found, return NULL.
+*/
 CommandNode_t search_command_list(LinkedCommandList_t list, char* command) {
     CommandNode_t curr = get_commands_list_head(list);
 
