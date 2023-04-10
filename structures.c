@@ -185,23 +185,21 @@ Table_t create_table() {
     return table;
 }
 
-/* YOU ARE HERE */
-/* TODO: Add documentation */
+/*  Gets a table object, a string representing a key and a string representing a value.
+    Creates a pair out of the given key and value, using the create_pair function.
+    Then, adds that pair to the given table.
+*/
 void add_to_table(Table_t t, char* key, char* value) {
     Pair_t pair;
     pair = create_pair(key, value);
     t->pair_table[t->number_of_pairs++] = pair;
 }
 
-/* TODO: Add documentation */
-void add_to_table_if_not_exists(Table_t t, char* key, char* value) {
-    if (get_value_from_table(t, key)) {
-        return;  /* TODO: Handle better */
-    }
-    add_to_table(t, key, value);
-}
-
-/* TODO: Add documentation */
+/*  Gets a table object and a string representing a key.
+   Using a for look, go the pairs in the given table and checks if they have the given key.
+   If so, return the valur of that pair.
+   If such key is not found, return NULL.
+*/
 char* get_value_from_table(Table_t t, char* key) {
     int i;
     for (i=0; i < t->number_of_pairs; i++) {
@@ -212,12 +210,28 @@ char* get_value_from_table(Table_t t, char* key) {
     return NULL;
 }
 
-/* TODO: Add documentation */
+/*  Gets a table object, a string representing a key and a string representing a value.
+    Using the get_value_from_table function, checks if the key already exists in the given table.
+    If not, creates a pair out of the given key and value, using the create_pair function
+    and adds that pair to the given table.
+*/
+void add_to_table_if_not_exists(Table_t t, char* key, char* value) {
+    if (get_value_from_table(t, key)) {
+        return;
+    }
+    add_to_table(t, key, value);
+}
+
+/*  Gets a table object.
+    Returns the number of pairs it currently hold.
+*/
 int get_number_of_pairs(Table_t t) {
     return t->number_of_pairs;
 }
 
-/* TODO: Add documentation */
+/*  Gets a table object.
+    Returns the array of pairs that table holds.
+*/
 Pair_t* get_pair_array(Table_t t) {
     return t->pair_table;
 }
@@ -232,7 +246,11 @@ void print_table(Table_t t) {
 }
 
 /* Node methods */
-/* TODO: Add documentation */
+
+/*  Gets a string representing a value.
+    Creates a new node object with the given string as its value and NULL as its next.
+    Returns the newly created node.
+*/
 Node_t create_node(char* value) {
     Node_t node = allocate(sizeof(Node));
     node->value = value;
@@ -240,18 +258,27 @@ Node_t create_node(char* value) {
     return node;
 }
 
-/* TODO: Add documentation */
+/*  Gets a Node_t struct.
+    Returns the value field of that node.
+*/
 char* get_node_value(Node_t node) {
     return node->value;
 }
 
-/* TODO: Add documentation */
+/*  Gets a Node_t struct.
+    Returns the next field of that node.
+*/
 Node_t get_next_node(Node_t node) {
     return node->next;
 }
 
 /* LinkedList methods */
-/* TODO: Add documentation */
+
+/*  Creates an empty linked list object.
+    Allocates the required memory,
+    Sets the list head and tail to NULL
+    And sets the list's length to 0.
+*/
 LinkedList_t create_linked_list() {
     LinkedList_t list = allocate(sizeof(LinkedList));
     list->head = NULL;
@@ -260,24 +287,32 @@ LinkedList_t create_linked_list() {
     return list;
 }
 
-/* TODO: Add documentation */
-void add_to_list(Node_t node, LinkedList_t list) {
+/*  Gets a linked list object, and a node object.
+    If the list is empty, the given node is set as the list's head.
+    Otherwise, it is set as the list's tail's next.
+    Either way, the given node is set as the list's tail.
+    Also, raises the value of the list length by one.
+*/
+void add_node_to_list(Node_t node, LinkedList_t list) {
     if (list->list_length == 0) {
         list->head = node;
-        list->tail = node;
     } else {
         list->tail->next = node;
-        list->tail = node;
     }
+    list->tail = node;
     list->list_length++;
 }
 
-/* TODO: Add documentation */
+/*  Gets a linked list object.
+    Returns the current list length.
+*/
 int get_list_length(LinkedList_t list) {
     return list->list_length;
 }
 
-/* TODO: Add documentation */
+/*  YOU ARE HERE
+
+*/
 char* get_list_as_string(LinkedList_t list) {
     Node_t node;
     int i;
@@ -290,13 +325,16 @@ char* get_list_as_string(LinkedList_t list) {
     return list_as_string;
 }
 
-/* TODO: Add documentation */
+/*  Gets a LinkedList_t struct.
+    Returns the head field of that list.
+*/
 Node_t get_head(LinkedList_t list) {
     return list->head;
 }
 
-/* TODO: Add documentation */
-Node_t get_tail(LinkedList_t list) {
+/*  Gets a LinkedList_t struct.
+    Returns the tail field of that list.
+*/Node_t get_tail(LinkedList_t list) {
     return list->tail;
 }
 

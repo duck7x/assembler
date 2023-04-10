@@ -52,7 +52,7 @@ void add_macro(FILE *file, char* line, Table_t mcr_table) {
     ReadLine(file, line);
 
     while (is_not(is_end_of_macro_definition(line))) {
-        add_to_list(create_node(concatenate_strings(line, "\n")), mcr_content);
+        add_node_to_list(create_node(concatenate_strings(line, "\n")), mcr_content);
         ReadLine(file, line);
     }
 

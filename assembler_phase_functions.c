@@ -182,7 +182,7 @@ int handle_data_type(char *line, LinkedList_t memory_list) {
         }
         binary_string = copy_string(DEFAULT_EMPTY_WORD);
         set_binary_string_from_string(curr_string, binary_string, 13);
-        add_to_list(create_node(binary_string), memory_list); /* TODO: Might separate to function? */
+        add_node_to_list(create_node(binary_string), memory_list); /* TODO: Might separate to function? */
         curr_node = get_next_node(curr_node);
     }
 
@@ -211,10 +211,10 @@ int handle_string_type(char *line, LinkedList_t memory_list) {
     for (i = 1; i < strlen(data) - 1; i++) {
         binary_string = copy_string(DEFAULT_EMPTY_WORD);
         set_binary_string_from_num(data[i], binary_string, 13);
-        add_to_list(create_node(binary_string), memory_list); /* TODO: Might separate to function? */
+        add_node_to_list(create_node(binary_string), memory_list); /* TODO: Might separate to function? */
     }
 
-    add_to_list(create_node(DEFAULT_EMPTY_WORD), memory_list); /* TODO: Might separate to function? */ /* Adding \0 at the end */
+    add_node_to_list(create_node(DEFAULT_EMPTY_WORD), memory_list); /* TODO: Might separate to function? */ /* Adding \0 at the end */
 
     return strlen(data) - 1;
 }
@@ -331,7 +331,7 @@ LinkedList_t get_split_operands(char *operands_string) {
     }
     if (i != strlen(operands_string)) {
         split_operands = create_linked_list();
-        add_to_list(create_node(operands_string), split_operands);
+        add_node_to_list(create_node(operands_string), split_operands);
     } else
         split_operands = split_string(operands_string, COMMA);
 

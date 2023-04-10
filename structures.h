@@ -51,50 +51,121 @@ void print_pair(Pair_t p); /* TODO: delete this */
 
 /* Table methods */
 
-/*  Creates an empty table object
+/*  Creates an empty table object.
     INPUT:  This function doesn't have an input.
-    OUTPUT: an empty table object
+    OUTPUT: an empty table object.
 */
 Table_t create_table();
-/*  YOU ARE HERE
-    INPUT:
-    OUTPUT:
+
+/*  Gets a table, a key (string) and a value (string),
+    Adds the key and value as a pair to the table.
+    INPUT:  t - a table object.
+            key - a string representing the desired key.
+            value - a string representing the desired value.
+    OUTPUT: This function doesn't return anything.
 */
-void add_to_table(Table_t t, char* key, char* value); /* TODO: Add documentation */
-/*
-    INPUT:
-    OUTPUT:
+void add_to_table(Table_t t, char* key, char* value);
+
+/*  Gets a table and a string representing a key
+    Searches the table and returns the value in that key's pair.
+    If there is no pair with that key in the table, the function returns NULL.
+    INPUT:  t - a table object.
+            key - a string representing the desired key.
+    OUTPUT: The value (string) that is paired with the given key.
+            If the key is not in the table, returns NULL.
 */
-void add_to_table_if_not_exists(Table_t t, char* key, char* value); /* TODO: Add documentation */
-/*
-    INPUT:
-    OUTPUT:
+char* get_value_from_table(Table_t t, char* key);
+
+/*  Gets a table, a key (string) and a value (string),
+    If the table doesn't contain such key already,
+    The function adds the key and value as a pair to the table.
+    INPUT:  t - a table object.
+            key - a string representing the desired key
+            value - a string representing the desired value
+    OUTPUT: This function doesn't return anything
 */
-char* get_value_from_table(Table_t t, char* key); /* TODO: Add documentation */
-/*
-    INPUT:
-    OUTPUT:
+void add_to_table_if_not_exists(Table_t t, char* key, char* value);
+
+/*  Gets a table object and returns the amount of pairs it hold.
+    INPUT:  t - a table object.
+    OUTPUT: An int representing the amount of pairs in t.
 */
-int get_number_of_pairs(Table_t t); /* TODO: Add documentation */
-/*
-    INPUT:
-    OUTPUT:
+int get_number_of_pairs(Table_t t);
+
+/*  Gets a table object and returns its pairs array.
+    INPUT:  t - a table object.
+    OUTPUT: An array of pairs representing all the pairs in the table.
 */
-Pair_t* get_pair_array(Table_t t); /* TODO: Add documentation */
+Pair_t* get_pair_array(Table_t t);
+
 void print_table(Table_t t); /* TODO: delete this */
 
 /* Node methods */
-Node_t create_node(char* value); /* TODO: Add documentation */
-char* get_node_value(Node_t node); /* TODO: Add documentation */
-Node_t get_next_node(Node_t node); /* TODO: Add documentation */
+
+/*  Gets a string representing a value.
+    Creates a node with this string as its value and a NULL next.
+    INPUT:  value - the value for the new node.
+    OUTPUT: A node object with the given value.
+*/
+Node_t create_node(char* value);
+
+/*  Gets a node object and returns the string of the value of that node
+    INPUT:  node - a Node_t struct.
+    OUTPUT: The value field of the given node.
+*/
+char* get_node_value(Node_t node);
+
+/*  Gets a node object and returns the node (or NULL) in the next field of that node
+    INPUT:  node - a Node_t struct.
+    OUTPUT: The next field of the given node.
+*/
+Node_t get_next_node(Node_t node);
 
 /* LinkedList methods */
-LinkedList_t create_linked_list(); /* TODO: Add documentation */
-void add_to_list(Node_t node, LinkedList_t list); /* TODO: Add documentation */
-int get_list_length(LinkedList_t list); /* TODO: Add documentation */
-char* get_list_as_string(LinkedList_t list); /* TODO: Add documentation */
-Node_t get_head(LinkedList_t list); /* TODO: Add documentation */
-Node_t get_tail(LinkedList_t list); /* TODO: Add documentation */
+
+/*  Creates an empty linked list object.
+    INPUT:  This function doesn't have an input.
+    OUTPUT: an empty linked list object.
+*/
+LinkedList_t create_linked_list();
+
+/*  Gets a linked list, and a node.
+    Adds that node as the next node of the list.
+    INPUT:  node - a node object to be added to the list.
+            list - the list to add the node to.
+    OUTPUT: This function doesn't return anything.
+*/
+void add_node_to_list(Node_t node, LinkedList_t list);
+
+/*  Gets a linked list object and returns that list's current length.
+    INPUT:  list - a linked list object.
+    OUTPUT: An int representing the length of that list.
+*/
+int get_list_length(LinkedList_t list);
+
+/*  Gets a linked list object.
+    Returns a string of all the items in that list concatenated without any separators.
+    INPUT:  list - a linked list object.
+    OUTPUT: A string representing all the contents of that list.
+*/
+char* get_list_as_string(LinkedList_t list);
+
+/*  Gets a linked list object and returns the first node on that list.
+    INPUT:  list - a LinkedList_t struct.
+    OUTPUT: The head of that list.
+*/
+Node_t get_head(LinkedList_t list);
+
+/*  Gets a linked list object and returns the last node on that list.
+    INPUT:  list - a LinkedList_t struct.
+    OUTPUT: The tail of that list.
+*/
+Node_t get_tail(LinkedList_t list);
+
+/*
+    INPUT:
+    OUTPUT:
+*/
 void print_list(LinkedList_t list); /* TODO: delete this */
 
 /* LabelNode methods */
