@@ -63,7 +63,7 @@ void write_line_to_expanded_file(FILE *dest_file, char* line, Table_t macro_tabl
     Node_t current_node;  /* Our current location in the linked list */
 
     line_split = split_string(line, SPACE);
-    first_word = get_node_value(get_head(line_split));
+    first_word = GetHeadValue(line_split);
     current_node = get_head(line_split);
 
     while(current_node != NULL) {

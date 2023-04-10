@@ -73,16 +73,17 @@ void add_label(LabelsLinkedList_t labels_list, LinkedList_t split_line, char *ty
 
     /* TODO: if there's time - change to switch case */
     if (StringsEqual(type, DATA_TYPE) || StringsEqual(type, CODE_TYPE)) {
-        label_name = get_node_value(get_head(split_line));
+        label_name = GetHeadValue(split_line);
     } else if (StringsEqual(type,EXTERN_TYPE)) {
         if (get_list_length(split_line) > 2) {
             handle_error("Too many words after label"); /* Needs rephrase */
         }
-        label_name = get_node_value(get_tail(split_line));
+        label_name = GetTailValue(split_line);
     }
 
-    /* TODO: ERROR HANDLING - Check if labels exists already, and if so, error! */
-    /*handle_error("Duplicate label");*/
+    if(search_labels_list(labels_list, label_name)) {
+        handle_error("Duplicate label");
+    }
 
     if (is_not(is_legal_label_name(label_name))) {
         handle_error("Illegal label name");
@@ -273,7 +274,7 @@ int is_jump_address_type (char *str) {
         return FALSE;
     }
 
-    if (!is_legal_label_name(get_node_value(get_head(split)))) {
+    if (!is_legal_label_name(GetHeadValue(split))) {
         return FALSE;
     }
 
@@ -281,18 +282,18 @@ int is_jump_address_type (char *str) {
         return FALSE;
     }
 
-    curr_operand = get_node_value(get_tail(split));
+    curr_operand = GetTailValue(split);
     split = split_string(copy_substring(curr_operand, 0, strlen(curr_operand)-1), COMMA);
     if(get_list_length(split) != 2) {
         return FALSE;
     }
 
-    curr_operand = get_node_value(get_head(split));
+    curr_operand = GetHeadValue(split);
     if (!(is(is_immediate_address_type(curr_operand)) || is(is_direct_register_type(curr_operand)) || is(is_direct_address_type(curr_operand)))) {
         return FALSE;
     }
 
-    curr_operand = get_node_value(get_tail(split));
+    curr_operand = GetTailValue(split);
     if (!(is(is_immediate_address_type(curr_operand)) || is(is_direct_register_type(curr_operand)) || is(is_direct_address_type(curr_operand)))) {
         return FALSE;
     }
@@ -341,7 +342,7 @@ LinkedList_t get_split_operands(char *operands_string) {
 /* Assumes a pair of operands in a split thingie */
 /* TODO: Add documentation */
 int has_non_register_operands(LinkedList_t split_operands) {
-    if (get_address_type(get_node_value(get_head(split_operands))) != REGISTER || get_address_type(get_node_value(get_tail(split_operands))) != REGISTER)
+    if (get_address_type(GetHeadValue(split_operands)) != REGISTER || get_address_type(GetTailValue(split_operands)) != REGISTER)
         return TRUE;
     return FALSE;
 }
@@ -353,7 +354,7 @@ int calculate_words_for_line(CommandNode_t command_node, char *relevant_line_bit
     int operands_num, l = 1, operand_type;
     LinkedList_t split_operands;
 
-    operands_string = get_stripped_string(clean_multiple_whitespaces(copy_substring(relevant_line_bit, strlen(get_command_node_command(command_node)), strlen(relevant_line_bit))));
+    operands_string = get_clean_and_stripped_string(copy_substring(relevant_line_bit, strlen(get_command_node_command(command_node)), strlen(relevant_line_bit)));
     operands_num = get_command_node_operands(command_node);
 
     split_operands = get_split_operands(operands_string);
@@ -363,8 +364,8 @@ int calculate_words_for_line(CommandNode_t command_node, char *relevant_line_bit
         if (operand_type == JUMP) {
             /* Jump handling */
             l += 2; /* TODO: Ensure! */
-            split_operands = split_string(get_node_value(get_tail(split_string(copy_substring(operands_string, 0,
-                                                                                              strlen(operands_string)-1), LEFT_BRACKET))), COMMA);
+            split_operands = split_string(GetTailValue(split_string(copy_substring(operands_string, 0,
+                                                                                              strlen(operands_string)-1), LEFT_BRACKET)), COMMA);
             l += has_non_register_operands(split_operands);
         } else {
             l += 1;
@@ -389,8 +390,7 @@ void set_direct_type_code(char *memory_bit, char *operand, Table_t *extern_memor
     /* Find label in label table */
     label = search_labels_list(*symbol_table, operand);
     if (label == NULL) {
-        printf("ERROR: This is an error!\n"); /* TODO: delete this */
-        /* TODO: ERROR HANDLING - label not found */
+        handle_error("Label doesn't exist for direct type operand");
     }
     if (StringsEqual(get_label_node_type(label), EXTERN_TYPE)) {
         memory_bit[13] = '1';
@@ -410,13 +410,13 @@ void set_jump_type_code(char *memory_array[], int ic, char *operand, Table_t *ex
     char *temp, *first, *second;
     split_operands = split_string(operand, LEFT_BRACKET);
     ic ++;
-    temp = get_node_value(get_head(split_operands));
+    temp = GetHeadValue(split_operands);
     set_direct_type_code(memory_array[ic], temp, extern_memory_table, symbol_table, ic);
     /* TODO: This repeats (when two operands)*/
-    split_operands = split_string(get_string_without_whitespaces(copy_substring(get_node_value(get_tail(split_operands)), 0, strlen(operand) -
+    split_operands = split_string(get_string_without_whitespaces(copy_substring(GetTailValue(split_operands), 0, strlen(operand) -
             strlen(temp) - 2)), COMMA);
-    first = get_node_value(get_head(split_operands));
-    second = get_node_value(get_tail(split_operands));
+    first = GetHeadValue(split_operands);
+    second = GetTailValue(split_operands);
     set_operand_code(first, SOURCE, extern_memory_table, symbol_table, memory_array, ic);
     if (get_address_type(first) != REGISTER || get_address_type(second) != REGISTER) /* TODO: Make this better and not here */
         ic ++;
@@ -455,7 +455,7 @@ int handle_first_word(CommandNode_t command_node, char *relevant_line_bit, char 
         return -1;
     }
 
-    operands_string = get_stripped_string(clean_multiple_whitespaces(copy_substring(relevant_line_bit, strlen(get_command_node_command(command_node)), strlen(relevant_line_bit))));
+    operands_string = get_clean_and_stripped_string(copy_substring(relevant_line_bit, strlen(get_command_node_command(command_node)), strlen(relevant_line_bit)));
     operands_num = get_command_node_operands(command_node);
     opcode = get_command_node_code(command_node);
 
@@ -479,15 +479,15 @@ int handle_first_word(CommandNode_t command_node, char *relevant_line_bit, char 
             memory_slot[13-3] = '1'; /* TODO: change to 13 - something */
             l += 2; /* TODO: Ensure! */
             /* handle 10-13 by jump params */
-            split_operands = split_string(get_node_value(get_tail(split_string(copy_substring(operands_string, 0,
-                                                                                              strlen(operands_string)-1), LEFT_BRACKET))), COMMA);
+            split_operands = split_string(GetTailValue(split_string(copy_substring(operands_string, 0,
+                                                                                              strlen(operands_string)-1), LEFT_BRACKET)), COMMA);
             /* TODO: switch to for loop to reduce code redundancy */
-            operand_type = get_address_type(get_node_value(get_head(split_operands)));
+            operand_type = get_address_type(GetHeadValue(split_operands));
             if (operand_type != REGISTER)
                 non_register_operands = TRUE;
             memory_slot[13-13] = '0' + (operand_type / 2); /* TODO: change to 13 - something */
             memory_slot[13-12] = '0' + (operand_type % 2); /* TODO: change to 13 - something */
-            operand_type = get_address_type(get_node_value(get_tail(split_operands)));
+            operand_type = get_address_type(GetTailValue(split_operands));
             if (operand_type != REGISTER)
                 non_register_operands = TRUE;
             memory_slot[13-11] = '0' + (operand_type / 2); /* TODO: change to 13 - something */
@@ -508,13 +508,13 @@ int handle_first_word(CommandNode_t command_node, char *relevant_line_bit, char 
         split_operands = split_string(get_string_without_whitespaces(operands_string), COMMA);
         /* TODO: switch to for loop to reduce code redundancy */
         /* 4,5 bits according to first operand */
-        operand_type = get_address_type(get_node_value(get_head(split_operands)));
+        operand_type = get_address_type(GetHeadValue(split_operands));
         if (operand_type != REGISTER)
             non_register_operands = TRUE;
         memory_slot[13-5] = '0' + (operand_type / 2);
         memory_slot[13-4] = '0' + (operand_type % 2);
         /* 2,3 bits according to second operand */
-        operand_type = get_address_type(get_node_value(get_tail(split_operands)));
+        operand_type = get_address_type(GetTailValue(split_operands));
         if (operand_type != REGISTER)
             non_register_operands = TRUE;
         memory_slot[13-3] = '0' + (operand_type / 2);
@@ -536,15 +536,15 @@ int handle_all_but_first_words(CommandNode_t command_node, char *relevant_line_b
     if (operands_num == 0)
         return l;
 
-    operands_string = get_stripped_string(clean_multiple_whitespaces(copy_substring(relevant_line_bit, strlen(get_command_node_command(command_node)), strlen(relevant_line_bit))));
+    operands_string = get_clean_and_stripped_string(copy_substring(relevant_line_bit, strlen(get_command_node_command(command_node)), strlen(relevant_line_bit)));
 
     if (operands_num == 1) {
         set_operand_code(operands_string, DESTINATION, extern_memory_table, symbol_table, memory_array, ic);
     } else if (operands_num == 2) {
         /* TODO: This repeats (jump) */
         split_operands = split_string(get_string_without_whitespaces(operands_string), COMMA);
-        first = get_node_value(get_head(split_operands));
-        second = get_node_value(get_tail(split_operands));
+        first = GetHeadValue(split_operands);
+        second = GetTailValue(split_operands);
         set_operand_code(first, SOURCE, extern_memory_table, symbol_table, memory_array, ic);
         if (get_address_type(first) != REGISTER || get_address_type(second) != REGISTER) /* TODO: Make this better and not here */
             ic ++;

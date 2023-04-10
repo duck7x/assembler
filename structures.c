@@ -335,7 +335,8 @@ Node_t get_head(LinkedList_t list) {
 
 /*  Gets a LinkedList_t struct.
     Returns the tail field of that list.
-*/Node_t get_tail(LinkedList_t list) {
+*/
+Node_t get_tail(LinkedList_t list) {
     return list->tail;
 }
 

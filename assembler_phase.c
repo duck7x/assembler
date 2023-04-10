@@ -79,7 +79,7 @@ int run_assembler_phase_1(char* file_name, LinkedCommandList_t action_names_list
             handle_error("Invalid usage of ':'"); /* TODO: rewrite error */
         }
 
-        relevant_line_bit = get_stripped_string(get_node_value(get_tail(split_by_label)));
+        relevant_line_bit = get_stripped_string(GetTailValue(split_by_label));
         split_by_space = split_string(relevant_line_bit, SPACE);
 
         if (starts_with_label(split_by_label)) {
@@ -99,7 +99,9 @@ int run_assembler_phase_1(char* file_name, LinkedCommandList_t action_names_list
 
         } else if (is_extern_or_entry(relevant_line_bit)) {
             if (is_extern(relevant_line_bit)) {
-                /* TODO: Throw warning if label */
+                if(is(label_definition_flag)) {
+                    handle_warning("Label before extern/entry instruction");
+                }
                 add_label(*symbol_table, split_by_space, EXTERN_TYPE, EXTERN_DEFAULT_VALUE);
             }
         } else {
@@ -107,7 +109,7 @@ int run_assembler_phase_1(char* file_name, LinkedCommandList_t action_names_list
                 add_label(*symbol_table, split_by_label, CODE_TYPE, ic);
             }
 
-            command = get_node_value(get_head(split_by_space));
+            command = GetHeadValue(split_by_space);
             if(search_command_list(action_names_list, command) == NULL)
                 handle_error("Illegal command");
 
@@ -171,7 +173,7 @@ int run_assembler_phase_2(char* file_name, LinkedCommandList_t action_names_list
 
         if (is(starts_with_label(split_by_label))) {
             /* TODO: ERROR HANDLING - Ensure not entry!!! */
-            relevant_line_bit = get_stripped_string(get_node_value(get_tail(split_by_label)));
+            relevant_line_bit = get_stripped_string(GetTailValue(split_by_label));
         }
 
         if (is(is_data_storage(relevant_line_bit)) || is(is_extern(relevant_line_bit))) {
@@ -179,14 +181,16 @@ int run_assembler_phase_2(char* file_name, LinkedCommandList_t action_names_list
         }
 
         if (is(is_entry(relevant_line_bit))) {
-            /* TODO: ERROR HANDLING - Ensure there aren't too many stuff */
-            /* TODO: WARNING HANDLING - in case of label */
-            mark_label_as_entry(*symbol_table, get_node_value(get_tail(split_string(relevant_line_bit, SPACE)))); /* Step 6 */
+            split_by_space = split_string(relevant_line_bit, SPACE);
+            if (get_list_length(split_by_space) > 1) {
+                handle_error("Too many parameters after .entry instruction");
+            }
+            mark_label_as_entry(*symbol_table, GetTailValue(split_by_space)); /* Step 6 */
         }
 
         else {
             split_by_space = split_string(relevant_line_bit, SPACE);
-            command = get_node_value(get_head(split_by_space));
+            command = GetHeadValue(split_by_space);
             l = handle_all_but_first_words(search_command_list(action_names_list, command), relevant_line_bit, extern_memory_table, symbol_table, memory_array, ic); /* Step 7 */
             ic += l;
         }
