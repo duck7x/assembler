@@ -92,11 +92,17 @@ int is_direct_register_type (char *str);
 */
 int is_jump_address_type(char *str);
 
-/*
-    INPUT:
-    OUTPUT:
+/*  Gets a string representing an operand.
+    Returns an int value representing the address type of that operand.
+    INPUT:  str - a string representing an operand.
+    OUTPUT: An int between 0 and 3 representing the address type of the given operand:
+            IMMEDIATE   0
+            DIRECT      1
+            JUMP        2
+            REGISTER    3
+            If the given operand doesn't match any of the 4 address types, the function returns -1.
 */
-int get_address_type(char *operand); /* TODO: Add documentation */
+int get_address_type(char *operand);
 
 /*
     INPUT:

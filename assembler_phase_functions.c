@@ -518,11 +518,25 @@ int is_direct_register_type (char *str) {
     return FALSE;
 }
 
-/* write this */
-/* TODO: Add documentation */
+/*  Gets a string representing an operand and runs the following checks:
+        Checks if the given string ends with a right bracket.
+        Splits the given string with the left bracket delimiter:
+            Checks if the split list has exactly two items.
+            Checks if the first item of the list could be a label (using is_legal_label_name function)
+            Splits the second item of the list by comma:
+                Checks if the new split list has exactly two items.
+                For each of the items in the new split list,
+                Checks if it's one of the other address types (immediate, direct register or direct address).
+    If any of those checks fail, the given operand is not of jump address type.
+    If all checks pass, then the operand is of jump address type.
+*/
 int is_jump_address_type (char *str) {
     char *curr_operand;
     LinkedList_t split;
+
+    if (str[strlen(str) - 1] != RIGHT_BRACKET) {
+        return FALSE;
+    }
 
     split = split_string(str, LEFT_BRACKET);
     if (get_list_length(split) != 2) {
@@ -533,12 +547,9 @@ int is_jump_address_type (char *str) {
         return FALSE;
     }
 
-    if (str[strlen(str) - 1] != RIGHT_BRACKET) {
-        return FALSE;
-    }
-
     curr_operand = GetTailValue(split);
     split = split_string(copy_substring(curr_operand, 0, strlen(curr_operand)-1), COMMA);
+
     if(get_list_length(split) != 2) {
         return FALSE;
     }
@@ -552,23 +563,31 @@ int is_jump_address_type (char *str) {
     if (!(is(is_immediate_address_type(curr_operand)) || is(is_direct_register_type(curr_operand)) || is(is_direct_address_type(curr_operand)))) {
         return FALSE;
     }
+
     return TRUE;
 }
 
-/* TODO: Add documentation */
+/*  Gets a string representing an operand.
+    Using the functions is_immediate_address_type, is_direct_register_type, is_direct_address_type, is_jump_address_type
+    Checks the type of the operand.
+    Returns the relevant type.
+    If no type is found, the function notifies and marks the error using handle_error and returns -1.
+*/
 int get_address_type(char *operand) {
-    int type = -1;
+    int type = -1;  /* TODO: Maybe change to ERROR rather than -1 */
+
     if (is(is_immediate_address_type(operand))) {
         type = IMMEDIATE;
     } else if (is(is_direct_register_type(operand))) {
         type = REGISTER;
     } else if (is(is_direct_address_type(operand))) {
         type = DIRECT;
-    } else if (is_jump_address_type(operand)) {
+    } else if (is(is_jump_address_type(operand))) {
         type = JUMP;
     } else {
         handle_error("Illegal operand");
     }
+
     return type;
 }
 
@@ -630,6 +649,7 @@ void set_register_type_code(char *memory_bit, char *operand, int start) {
     set_binary_string_from_string(copy_substring(operand, 1, 2), memory_bit, start);
 }
 
+/* If the operand is illegal, the get_address_type function will handle the error */
 /* TODO: Add documentation */
 void set_operand_code(char *operand_string, int source_or_dest, Table_t *extern_memory_table, LabelsLinkedList_t *symbol_table, char *memory_array[], int ic) {
     int operand_type;
