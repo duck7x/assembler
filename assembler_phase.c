@@ -104,10 +104,10 @@ int run_assembler_phase_1(char* file_name, LinkedCommandList_t action_names_list
             }
 
         } else if (is_extern_or_entry(relevant_line_bit)) {
+            if(is(label_definition_flag)) {
+                handle_warning("Label before extern/entry instruction");
+            }
             if (is_extern(relevant_line_bit)) {
-                if(is(label_definition_flag)) {
-                    handle_warning("Label before extern/entry instruction");
-                }
                 add_label(*symbol_table, split_by_space, EXTERN_TYPE, EXTERN_DEFAULT_VALUE);
             }
         } else {
@@ -189,6 +189,7 @@ int run_assembler_phase_2(char* file_name, LinkedCommandList_t action_names_list
             split_by_space = split_string(relevant_line_bit, SPACE);
             if (get_list_length(split_by_space) > 2) {
                 handle_error("Too many parameters after .entry instruction");
+                continue;
             }
             mark_label_as_entry(*symbol_table, GetTailValue(split_by_space)); /* Step 6 */
         }
