@@ -36,6 +36,7 @@ int run_pre_assembler_on_file(char* file_name) {
 
     macro_table = create_table();
 
+    printf("INFO: Running pre-assemble on %s%s!\n",file_name, INPUT_SUFFIX); /* TODO: delete this */
 
     while (ReadLine(source_file, line) != EOF) {
         line = get_clean_and_stripped_string(line);

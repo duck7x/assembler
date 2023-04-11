@@ -57,7 +57,7 @@ void add_macro(FILE *file, char* line, Table_t mcr_table) {
     }
 
     mcr_string_content = get_list_as_string(mcr_content);
-    mcr_string_content[strlen(mcr_string_content) - 2] = END_OF_STRING; /* TODO: Ensure this works! */ /* Remove \n at the end of the macro */
+    mcr_string_content[strlen(mcr_string_content) - 1] = END_OF_STRING; /* TODO: Ensure this works! */ /* Remove \n at the end of the macro */
     add_to_table_if_not_exists(mcr_table, mcr_name, mcr_string_content);
 }
 

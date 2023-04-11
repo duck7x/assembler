@@ -29,6 +29,7 @@ int assembler_phase(char** files_list, int files_count) {
         has_errors = FALSE;  /* Ensures that errors in previous files will not affect the following ones */
 
         current_file = files_list[i];
+        printf("INFO: Running assembler phase on %s%s!\n",current_file, POST_PRE_ASSEMBLER_SUFFIX); /* TODO: delete this */
         run_assembler_phase_1(current_file, actions_names_list, &data_memory_list, &symbol_table, memory_array);
         run_assembler_phase_2(current_file, actions_names_list, &extern_memory_table, &symbol_table, memory_array);
 
@@ -39,6 +40,7 @@ int assembler_phase(char** files_list, int files_count) {
             delete_created_files(current_file);
             return -1;
         }
+        free_all(); /* Frees redundant memory that was allocated during this for loop iteration */
     }
 
     return 0;
@@ -119,7 +121,6 @@ int run_assembler_phase_1(char* file_name, LinkedCommandList_t action_names_list
             command_node = search_command_list(action_names_list, command);
 
             handle_first_word(command_node, relevant_line_bit, memory_array[ic]);
-            /* TODO: Handle this mess of l and calculate words thingie */
             ic += calculate_words_for_line(command_node, relevant_line_bit); /* Step 14 */
         }
 
