@@ -140,6 +140,14 @@ LinkedList_t create_linked_list();
 */
 void add_node_to_list(Node_t node, LinkedList_t list);
 
+/*  Gets a linked list, and a string.
+    Adds a new node with that string as its value to the list.
+    INPUT:  value    - a string to be added to the list.
+            list    - the list to add the node to.
+    OUTPUT: This function doesn't return anything.
+*/
+void add_value_to_list(char *value, LinkedList_t list);
+
 /*  Gets a linked list object and returns that list's current length.
     INPUT:  list - a linked list object.
     OUTPUT: An int representing the length of that list.

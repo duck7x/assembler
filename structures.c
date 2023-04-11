@@ -303,6 +303,15 @@ void add_node_to_list(Node_t node, LinkedList_t list) {
     list->list_length++;
 }
 
+/*  Gets a linked list object, and a string representing a value.
+    Creates a node from the given string and adds the newly created node
+    To the given list, using the add_node_to_list function.
+*/
+void add_value_to_list(char *value, LinkedList_t list) {
+    Node_t node = create_node(value);
+    add_node_to_list(node, list);
+}
+
 /*  Gets a linked list object.
     Returns the current list length.
 */

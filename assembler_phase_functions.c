@@ -1,5 +1,7 @@
 #include "assembler_phase_functions.h"
 
+/* UNSORTED */
+
 /* TODO: Add documentation */
 LinkedCommandList_t create_action_names_list() {
     LinkedCommandList_t actions_names_list;
@@ -183,7 +185,7 @@ int handle_data_type(char *line, LinkedList_t memory_list) {
         }
         binary_string = copy_string(DEFAULT_EMPTY_WORD);
         set_binary_string_from_string(curr_string, binary_string, 13);
-        add_node_to_list(create_node(binary_string), memory_list); /* TODO: Might separate to function? */
+        add_value_to_list(binary_string, memory_list); /* TODO: Might separate to function? */
         curr_node = get_next_node(curr_node);
     }
 
@@ -212,10 +214,10 @@ int handle_string_type(char *line, LinkedList_t memory_list) {
     for (i = 1; i < strlen(data) - 1; i++) {
         binary_string = copy_string(DEFAULT_EMPTY_WORD);
         set_binary_string_from_num(data[i], binary_string, 13);
-        add_node_to_list(create_node(binary_string), memory_list); /* TODO: Might separate to function? */
+        add_value_to_list(binary_string, memory_list); /* TODO: Might separate to function? */
     }
 
-    add_node_to_list(create_node(DEFAULT_EMPTY_WORD), memory_list); /* TODO: Might separate to function? */ /* Adding \0 at the end */
+    add_value_to_list(DEFAULT_EMPTY_WORD, memory_list); /* TODO: Might separate to function? */ /* Adding \0 at the end */
 
     return strlen(data) - 1;
 }
@@ -241,111 +243,7 @@ int is_legal_label_name(char *str) {
     return TRUE;
 }
 
-/* TODO: Add documentation */
-int is_immediate_address_type (char *str) {
-    if (is(starts_with(str, "#"))) {
-        return TRUE;
-    }
-    return FALSE;
-}
 
-int is_direct_address_type (char *str) {
-    if (is(is_legal_label_name(str))) {
-        return TRUE;
-    }
-    return FALSE;
-}
-
-int is_direct_register_type (char *str) {
-    if (IsRegister(str)) {
-        return TRUE;
-    }
-    return FALSE;
-}
-
-/* write this */
-/* TODO: Add documentation */
-int is_jump_address_type (char *str) {
-    char *curr_operand;
-    LinkedList_t split;
-
-    split = split_string(str, LEFT_BRACKET);
-    if (get_list_length(split) != 2) {
-        return FALSE;
-    }
-
-    if (!is_legal_label_name(GetHeadValue(split))) {
-        return FALSE;
-    }
-
-    if (str[strlen(str) - 1] != RIGHT_BRACKET) {
-        return FALSE;
-    }
-
-    curr_operand = GetTailValue(split);
-    split = split_string(copy_substring(curr_operand, 0, strlen(curr_operand)-1), COMMA);
-    if(get_list_length(split) != 2) {
-        return FALSE;
-    }
-
-    curr_operand = GetHeadValue(split);
-    if (!(is(is_immediate_address_type(curr_operand)) || is(is_direct_register_type(curr_operand)) || is(is_direct_address_type(curr_operand)))) {
-        return FALSE;
-    }
-
-    curr_operand = GetTailValue(split);
-    if (!(is(is_immediate_address_type(curr_operand)) || is(is_direct_register_type(curr_operand)) || is(is_direct_address_type(curr_operand)))) {
-        return FALSE;
-    }
-    return TRUE;
-}
-
-/* TODO: Add documentation */
-int get_address_type(char *operand) {
-    int type = -1;
-    if (is(is_immediate_address_type(operand))) {
-        type = IMMEDIATE;
-    } else if (is(is_direct_register_type(operand))) {
-        type = REGISTER;
-    } else if (is(is_direct_address_type(operand))) {
-        type = DIRECT;
-    } else if (is_jump_address_type(operand)) {
-        type = JUMP;
-    } else {
-        handle_error("Illegal operand");
-    }
-    return type;
-}
-
-/* TODO: Add documentation */
-LinkedList_t get_split_operands(char *operands_string) {
-    int i;
-    LinkedList_t split_operands;
-
-    if (strlen(operands_string) == 0)
-        return create_linked_list();
-    /* TODO: split operands differently because this way doesn't work well with jump thingies :( */
-    /* TODO: This is a quick fix, need to separate to function or redesign */
-    for (i = 0; i < strlen(operands_string); i ++) {
-        if (operands_string[i] == LEFT_BRACKET)
-            break;
-    }
-    if (i != strlen(operands_string)) {
-        split_operands = create_linked_list();
-        add_node_to_list(create_node(operands_string), split_operands);
-    } else
-        split_operands = split_string(operands_string, COMMA);
-
-    return split_operands;
-}
-
-/* Assumes a pair of operands in a split thingie */
-/* TODO: Add documentation */
-int has_non_register_operands(LinkedList_t split_operands) {
-    if (get_address_type(GetHeadValue(split_operands)) != REGISTER || get_address_type(GetTailValue(split_operands)) != REGISTER)
-        return TRUE;
-    return FALSE;
-}
 
 /* Assuming line is alright (will be checked separately) */
 /* TODO: Add documentation */
@@ -378,71 +276,7 @@ int calculate_words_for_line(CommandNode_t command_node, char *relevant_line_bit
     return l;
 }
 
-/* TODO: Add documentation */
-void set_immediate_type_code(char *memory_bit, char *operand) {
-    set_binary_string_from_string(copy_substring(operand, 1, strlen(operand)), memory_bit, 11);
-}
 
-/* TODO: Add documentation */
-void set_direct_type_code(char *memory_bit, char *operand, Table_t *extern_memory_table ,LabelsLinkedList_t *symbol_table, int ic) {
-    LabelNode_t label;
-    char temp[5];
-    /* Find label in label table */
-    label = search_labels_list(*symbol_table, operand);
-    if (label == NULL) {
-        handle_error("Label doesn't exist for direct type operand");
-    }
-    if (StringsEqual(get_label_node_type(label), EXTERN_TYPE)) {
-        memory_bit[13] = '1';
-        sprintf(temp, "%04d", ic + FIRST_AVAILABLE_ADDRESS);
-        add_to_table(*extern_memory_table, temp, get_label_node_name(label));
-        /* TODO: Add to extern label list */
-    }
-    else {
-        memory_bit[12] = '1';
-        set_binary_string_from_num(get_label_node_value(label), memory_bit, 11);
-    }
-}
-
-/* TODO: Add documentation */
-void set_jump_type_code(char *memory_array[], int ic, char *operand, Table_t *extern_memory_table, LabelsLinkedList_t *symbol_table) {
-    LinkedList_t split_operands;
-    char *temp, *first, *second;
-    split_operands = split_string(operand, LEFT_BRACKET);
-    ic ++;
-    temp = GetHeadValue(split_operands);
-    set_direct_type_code(memory_array[ic], temp, extern_memory_table, symbol_table, ic);
-    /* TODO: This repeats (when two operands)*/
-    split_operands = split_string(get_string_without_whitespaces(copy_substring(GetTailValue(split_operands), 0, strlen(operand) -
-            strlen(temp) - 2)), COMMA);
-    first = GetHeadValue(split_operands);
-    second = GetTailValue(split_operands);
-    set_operand_code(first, SOURCE, extern_memory_table, symbol_table, memory_array, ic);
-    if (get_address_type(first) != REGISTER || get_address_type(second) != REGISTER) /* TODO: Make this better and not here */
-        ic ++;
-    set_operand_code(second, DESTINATION, extern_memory_table, symbol_table, memory_array, ic);
-}
-
-/* TODO: Add documentation */
-void set_register_type_code(char *memory_bit, char *operand, int start) {
-    set_binary_string_from_string(copy_substring(operand, 1, 2), memory_bit, start);
-}
-
-/* TODO: Add documentation */
-void set_operand_code(char *operand_string, int source_or_dest, Table_t *extern_memory_table, LabelsLinkedList_t *symbol_table, char *memory_array[], int ic) {
-    int operand_type;
-    operand_type = get_address_type(operand_string);
-    /* TODO: Change to switch */
-    if (operand_type == IMMEDIATE)
-        set_immediate_type_code(memory_array[ic + 1], operand_string);
-    else if (operand_type == DIRECT) {
-        set_direct_type_code(memory_array[ic + 1], operand_string, extern_memory_table ,symbol_table, ic);
-    }
-    else if (operand_type == JUMP)
-        set_jump_type_code(memory_array, ic, operand_string, extern_memory_table, symbol_table);
-    else if (operand_type == REGISTER)
-        set_register_type_code(memory_array[ic + 1], operand_string, source_or_dest);
-}
 
 /* TODO: Add documentation */
 int handle_first_word(CommandNode_t command_node, char *relevant_line_bit, char memory_slot[]) {
@@ -621,3 +455,196 @@ void create_entries_file(char* file_name, LabelsLinkedList_t symbol_table) {
         curr_label = get_next_label_node(curr_label);
     }
 }
+
+/* SORTED */
+
+/* Address type functions */
+
+/* TODO: Add documentation */
+LinkedList_t get_split_operands(char *operands_string) {
+    int i;
+    LinkedList_t split_operands;
+
+    if (strlen(operands_string) == 0)
+        return create_linked_list();
+    /* TODO: split operands differently because this way doesn't work well with jump thingies :( */
+    /* TODO: This is a quick fix, need to separate to function or redesign */
+    for (i = 0; i < strlen(operands_string); i ++) {
+        if (operands_string[i] == LEFT_BRACKET)
+            break;
+    }
+    if (i != strlen(operands_string)) {
+        split_operands = create_linked_list();
+        add_value_to_list(operands_string, split_operands);
+    } else
+        split_operands = split_string(operands_string, COMMA);
+
+    return split_operands;
+}
+
+/*  Gets a string representing an operand.
+    Using the starts_with function, checks if the given string starts with #.
+    If so, it's immediate address type and so the function returns TRUE,
+    If it doesn't, the operand is not an immediate address type and so function returns FALSE.
+*/
+int is_immediate_address_type (char *str) {
+    if (is(starts_with(str, POUND_SIGN))) {
+        return TRUE;
+    }
+    return FALSE;
+}
+
+/*  Gets a string representing an operand.
+    Using the is_legal_label_name function, checks if the given string could be a label.
+    If so, it's direct address type and so the function returns TRUE,
+    If it couldn't, the operand is not a direct address type and so function returns FALSE.
+*/
+int is_direct_address_type (char *str) {
+    if (is(is_legal_label_name(str))) {
+        return TRUE;
+    }
+    return FALSE;
+}
+
+/*  Gets a string representing an operand.
+    Using the IsRegister macro, checks if the given string is a register name.
+    If so, it's direct register address type and so the function returns TRUE,
+    If it isn't, the operand is not a direct register address type and so function returns FALSE.
+*/
+int is_direct_register_type (char *str) {
+    if (IsRegister(str)) {
+        return TRUE;
+    }
+    return FALSE;
+}
+
+/* write this */
+/* TODO: Add documentation */
+int is_jump_address_type (char *str) {
+    char *curr_operand;
+    LinkedList_t split;
+
+    split = split_string(str, LEFT_BRACKET);
+    if (get_list_length(split) != 2) {
+        return FALSE;
+    }
+
+    if (!is_legal_label_name(GetHeadValue(split))) {
+        return FALSE;
+    }
+
+    if (str[strlen(str) - 1] != RIGHT_BRACKET) {
+        return FALSE;
+    }
+
+    curr_operand = GetTailValue(split);
+    split = split_string(copy_substring(curr_operand, 0, strlen(curr_operand)-1), COMMA);
+    if(get_list_length(split) != 2) {
+        return FALSE;
+    }
+
+    curr_operand = GetHeadValue(split);
+    if (!(is(is_immediate_address_type(curr_operand)) || is(is_direct_register_type(curr_operand)) || is(is_direct_address_type(curr_operand)))) {
+        return FALSE;
+    }
+
+    curr_operand = GetTailValue(split);
+    if (!(is(is_immediate_address_type(curr_operand)) || is(is_direct_register_type(curr_operand)) || is(is_direct_address_type(curr_operand)))) {
+        return FALSE;
+    }
+    return TRUE;
+}
+
+/* TODO: Add documentation */
+int get_address_type(char *operand) {
+    int type = -1;
+    if (is(is_immediate_address_type(operand))) {
+        type = IMMEDIATE;
+    } else if (is(is_direct_register_type(operand))) {
+        type = REGISTER;
+    } else if (is(is_direct_address_type(operand))) {
+        type = DIRECT;
+    } else if (is_jump_address_type(operand)) {
+        type = JUMP;
+    } else {
+        handle_error("Illegal operand");
+    }
+    return type;
+}
+
+/* Assumes a pair of operands in a split thingie */
+/* TODO: Add documentation */
+int has_non_register_operands(LinkedList_t split_operands) {
+    if (get_address_type(GetHeadValue(split_operands)) != REGISTER || get_address_type(GetTailValue(split_operands)) != REGISTER)
+        return TRUE;
+    return FALSE;
+}
+
+/* TODO: Add documentation */
+void set_immediate_type_code(char *memory_bit, char *operand) {
+    set_binary_string_from_string(copy_substring(operand, 1, strlen(operand)), memory_bit, 11);
+}
+
+/* TODO: Add documentation */
+void set_direct_type_code(char *memory_bit, char *operand, Table_t *extern_memory_table ,LabelsLinkedList_t *symbol_table, int ic) {
+    LabelNode_t label;
+    char temp[5];
+    /* Find label in label table */
+    label = search_labels_list(*symbol_table, operand);
+    if (label == NULL) {
+        handle_error("Label doesn't exist for direct type operand");
+    }
+    if (StringsEqual(get_label_node_type(label), EXTERN_TYPE)) {
+        memory_bit[13] = '1';
+        sprintf(temp, "%04d", ic + FIRST_AVAILABLE_ADDRESS);
+        add_to_table(*extern_memory_table, temp, get_label_node_name(label));
+        /* TODO: Add to extern label list */
+    }
+    else {
+        memory_bit[12] = '1';
+        set_binary_string_from_num(get_label_node_value(label), memory_bit, 11);
+    }
+}
+
+/* TODO: Add documentation */
+void set_jump_type_code(char *memory_array[], int ic, char *operand, Table_t *extern_memory_table, LabelsLinkedList_t *symbol_table) {
+    LinkedList_t split_operands;
+    char *temp, *first, *second;
+    split_operands = split_string(operand, LEFT_BRACKET);
+    ic ++;
+    temp = GetHeadValue(split_operands);
+    set_direct_type_code(memory_array[ic], temp, extern_memory_table, symbol_table, ic);
+    /* TODO: This repeats (when two operands)*/
+    split_operands = split_string(get_string_without_whitespaces(copy_substring(GetTailValue(split_operands), 0, strlen(operand) -
+                                                                                                                 strlen(temp) - 2)), COMMA);
+    first = GetHeadValue(split_operands);
+    second = GetTailValue(split_operands);
+    set_operand_code(first, SOURCE, extern_memory_table, symbol_table, memory_array, ic);
+    if (get_address_type(first) != REGISTER || get_address_type(second) != REGISTER) /* TODO: Make this better and not here */
+        ic ++;
+    set_operand_code(second, DESTINATION, extern_memory_table, symbol_table, memory_array, ic);
+}
+
+/* TODO: Add documentation */
+void set_register_type_code(char *memory_bit, char *operand, int start) {
+    set_binary_string_from_string(copy_substring(operand, 1, 2), memory_bit, start);
+}
+
+/* TODO: Add documentation */
+void set_operand_code(char *operand_string, int source_or_dest, Table_t *extern_memory_table, LabelsLinkedList_t *symbol_table, char *memory_array[], int ic) {
+    int operand_type;
+    operand_type = get_address_type(operand_string);
+    /* TODO: Change to switch */
+    if (operand_type == IMMEDIATE)
+        set_immediate_type_code(memory_array[ic + 1], operand_string);
+    else if (operand_type == DIRECT) {
+        set_direct_type_code(memory_array[ic + 1], operand_string, extern_memory_table ,symbol_table, ic);
+    }
+    else if (operand_type == JUMP)
+        set_jump_type_code(memory_array, ic, operand_string, extern_memory_table, symbol_table);
+    else if (operand_type == REGISTER)
+        set_register_type_code(memory_array[ic + 1], operand_string, source_or_dest);
+}
+
+/* Files related functions */
+
