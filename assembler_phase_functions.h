@@ -14,9 +14,6 @@
 #define EXTERN_TYPE "extern" /* TODO: Add documentation */
 #define EXTERN_DEFAULT_VALUE 0 /* TODO: Add documentation */
 #define CODE_TYPE "code" /* TODO: Add documentation */
-#define MINUS '-' /* TODO: Add documentation */
-#define PLUS '+' /* TODO: Add documentation */
-#define POUND_SIGN "#" /* TODO: Add documentation */
 #define MEMORY_SIZE 256 /* TODO: Add documentation */
 #define FIRST_AVAILABLE_ADDRESS 100 /* TODO: Add documentation */
 #define IMMEDIATE 0 /* TODO: Add documentation */
@@ -27,9 +24,15 @@
 #define ENTRY_TYPE "entry" /* TODO: Add documentation */
 #define SOURCE 5 /* TODO: Add documentation */
 #define DESTINATION 11 /* TODO: Add documentation */
-#define OBJECT_FILE_SUFFIX ".ob" /* TODO: Add documentation */
-#define EXTERNALS_FILE_SUFFIX ".ext" /* TODO: Add documentation */
-#define ENTRIES_FILE_SUFFIX ".ent" /* TODO: Add documentation */
+
+/* Files suffixes */
+#define OBJECT_FILE_SUFFIX ".ob"
+#define EXTERNALS_FILE_SUFFIX ".ext"
+#define ENTRIES_FILE_SUFFIX ".ent"
+
+/* Machine code translation */
+#define ZERO '.' /* TODO: Add documentation */
+#define ONE '/' /* TODO: Add documentation */
 
 #define IsRegister(STRING) (strlen(STRING) == 2 && STRING[0] == 'r' && STRING[1] <= '7' && STRING[1] >= '0') /* TODO: Add documentation */
 
@@ -104,45 +107,42 @@ int is_jump_address_type(char *str);
 */
 int get_address_type(char *operand);
 
-/*
-    INPUT:
-    OUTPUT:
+/*  Gets a linked list, which should contain exactly 2 operands as its content.
+    Checks if any of them has non-register type.
+    INPUT:  split_operands - a linked list of the 2 operands to check.
+    OUTPUT: FALSE if both operands are of direct register address type,
+            TRUE if any of the operands is not of direct register address type.
 */
+int has_non_register_operands(LinkedList_t split_operands);
+
 void set_immediate_type_code(char *memory_bit, char *operand); /* TODO: Add documentation */
-
-/*
-    INPUT:
-    OUTPUT:
-*/
 void set_direct_type_code(char *memory_bit, char *operand, Table_t *extern_memory_table ,LabelsLinkedList_t *symbol_table, int ic); /* TODO: Add documentation */
-
-/*
-    INPUT:
-    OUTPUT:
-*/
 void set_jump_type_code(char *memory_array[], int ic, char *operand, Table_t *extern_memory_table, LabelsLinkedList_t *symbol_table); /* TODO: Add documentation */
-
-/*
-    INPUT:
-    OUTPUT:
-*/
 void set_register_type_code(char *memory_bit, char *operand, int start); /* TODO: Add documentation */
-
-/*
-    INPUT:
-    OUTPUT:
-*/
 void set_operand_code(char *operand_string, int source_or_dest, Table_t *extern_memory_table, LabelsLinkedList_t *symbol_table, char *memory_array[], int ic); /* TODO: Add documentation */
 
+/* Files related functions */
+
+/*  Gets a string representing a file name
+    And an array, representing the assembler memory image.
+    Writes the machine code, according to the given memory array, to the given file name with .ob suffix.
+    INPUT:  file_name       - the name of the output file (not including the suffix).
+            memory_array    - the array representing the memory image. Contains all the binary words
+                              that needs to be translated and added to the destination file.
+    OUTPUT: This function doesn't return anything.
+*/
+void write_object_file(char* file_name, char *memory_array[]);
+
 /*
     INPUT:
-    OUTPUT:
+    OUTPUT: This function doesn't return anything.
 */
-int has_non_register_operands(LinkedList_t split_operands); /* TODO: Add documentation */
-
-/* Files related functions */
-void write_object_file(char* file_name, char *memory_array[]); /* TODO: Add documentation */
 void create_externals_file(char* file_name, Table_t external_memory_table); /* TODO: Add documentation */
+
+/*
+    INPUT:
+    OUTPUT: This function doesn't return anything.
+*/
 void create_entries_file(char* file_name, LabelsLinkedList_t symbol_table); /* TODO: Add documentation */
 
 #endif

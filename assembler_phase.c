@@ -19,6 +19,11 @@ int assembler_phase(char** files_list, int files_count) {
 
     has_errors = FALSE;
 
+    if (actions_names_list == NULL) {
+        printf("CRITICAL: Failed to generate actions names list during assembler phase, stopping assembler!\n");
+        return -1;
+    }
+
     for (i = 1; i < files_count; i++) {
 
         has_errors = FALSE;  /* Ensures that errors in previous files will not affect the following ones */
@@ -46,6 +51,7 @@ int run_assembler_phase_1(char* file_name, LinkedCommandList_t action_names_list
     char *relevant_line_bit;
     LinkedList_t split_by_label, split_by_space;
     FILE *source_file, *dest_file;
+    CommandNode_t command_node;
 
     line_count = 0;
     *data_memory_list = create_linked_list();
@@ -71,8 +77,8 @@ int run_assembler_phase_1(char* file_name, LinkedCommandList_t action_names_list
             continue;
         }
 
-        line = clean_multiple_whitespaces(line);
-        split_by_label = split_string(line, COLON);
+        relevant_line_bit = clean_multiple_whitespaces(line);
+        split_by_label = split_string(relevant_line_bit, COLON);
 
         if (get_list_length(split_by_label) > 2) {
             /* TODO: Not necessarily true, .string "::::" is a legit line! */
@@ -110,12 +116,11 @@ int run_assembler_phase_1(char* file_name, LinkedCommandList_t action_names_list
             }
 
             command = GetHeadValue(split_by_space);
-            if(search_command_list(action_names_list, command) == NULL)
-                handle_error("Illegal command");
+            command_node = search_command_list(action_names_list, command);
 
-            handle_first_word(search_command_list(action_names_list, command), relevant_line_bit, memory_array[ic]);
+            handle_first_word(command_node, relevant_line_bit, memory_array[ic]);
             /* TODO: Handle this mess of l and calculate words thingie */
-            ic += calculate_words_for_line(search_command_list(action_names_list, command), relevant_line_bit); /* Step 14 */
+            ic += calculate_words_for_line(command_node, relevant_line_bit); /* Step 14 */
         }
 
         label_definition_flag = FALSE;
@@ -182,7 +187,7 @@ int run_assembler_phase_2(char* file_name, LinkedCommandList_t action_names_list
 
         if (is(is_entry(relevant_line_bit))) {
             split_by_space = split_string(relevant_line_bit, SPACE);
-            if (get_list_length(split_by_space) > 1) {
+            if (get_list_length(split_by_space) > 2) {
                 handle_error("Too many parameters after .entry instruction");
             }
             mark_label_as_entry(*symbol_table, GetTailValue(split_by_space)); /* Step 6 */

@@ -68,7 +68,7 @@ void write_line_to_expanded_file(FILE *dest_file, char* line, Table_t macro_tabl
 
     while(current_node != NULL) {
         current_word = get_node_value(current_node);
-        if (current_word != first_word && get_next_node(current_node) != NULL) /* Adds a space between all words */
+        if (StringsNotEqual(current_word, first_word)) /* Adds a space between all words */
             fputc(SPACE, dest_file);
         if (is_an_existing_macro(current_word, macro_table))
             write_existing_macro_to_file(current_word, dest_file, macro_table);

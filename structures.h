@@ -7,8 +7,8 @@
 #define LAST_ALLOCATION_INDEX 1999 /* TODO: Add documentation */
 #define CURRENT_MAX_TABLE_SIZE 1000 /* TODO: Add documentation */
 
-#define GetTailValue(LIST) get_node_value(get_tail(LIST)) /* TODO: Add documentation */
-#define GetHeadValue(LIST) get_node_value(get_head(LIST)) /* TODO: Add documentation */
+#define GetHeadValue(LIST) get_node_value(get_head(LIST))  /* Returns the value of the first node in the list */
+#define GetTailValue(LIST) get_node_value(get_tail(LIST))  /* Returns the value of the last node in the list */
 
 typedef struct Allocator *Allocator_t; /* TODO: Add documentation */
 typedef struct Pair *Pair_t; /* Structure containing key-value pairs */

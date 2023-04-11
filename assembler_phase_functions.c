@@ -252,6 +252,10 @@ int calculate_words_for_line(CommandNode_t command_node, char *relevant_line_bit
     int operands_num, l = 1, operand_type;
     LinkedList_t split_operands;
 
+    if(command_node == NULL) {
+        return -1;  /* An error should have already been thrown when handled the first word */
+    }
+
     operands_string = get_clean_and_stripped_string(copy_substring(relevant_line_bit, strlen(get_command_node_command(command_node)), strlen(relevant_line_bit)));
     operands_num = get_command_node_operands(command_node);
 
@@ -365,6 +369,10 @@ int handle_all_but_first_words(CommandNode_t command_node, char *relevant_line_b
     char *operands_string, *first, *second;
     LinkedList_t split_operands;
 
+    if(command_node == NULL) {
+        return -1;  /* An error should have already been thrown when handled the first word */
+    }
+
     l = calculate_words_for_line(command_node, relevant_line_bit);
 
     if (operands_num == 0)
@@ -397,64 +405,6 @@ int is_valid_line(char *line) {
     return TRUE;
 }
 
-/* TODO: Add documentation */
-void write_object_file(char* file_name, char *memory_array[]) {
-    int i, j;
-    FILE *dest_file;
-
-    dest_file = fopen(concatenate_strings(file_name, OBJECT_FILE_SUFFIX), APPEND);
-    for (i = 0; !(StringsEqual(memory_array[i], "\0")); i++) { /* TODO: delete this */
-        fprintf(dest_file, "%04d\t", i + FIRST_AVAILABLE_ADDRESS);
-        for (j = 0; j < 14 ; j++) {
-            if(memory_array[i][j] == '0')
-                putc('.', dest_file); /* TODO: Change to constant */
-            else
-                putc('/', dest_file); /* TODO: Change to constant */
-        }
-        putc(NEWLINE, dest_file);
-    }
-
-    fclose(dest_file);
-}
-
-/* TODO: Add documentation */
-void create_externals_file(char* file_name, Table_t external_memory_table) {
-    int i, externals_amount;
-    FILE *dest_file;
-    Pair_t *pairs_array;
-
-    externals_amount = get_number_of_pairs(external_memory_table);
-
-    if (externals_amount == 0)
-        return;
-
-    dest_file = fopen(concatenate_strings(file_name, EXTERNALS_FILE_SUFFIX), WRITE);
-    pairs_array = get_pair_array(external_memory_table);
-
-    for (i = 0; i < externals_amount; i++) {
-        fprintf(dest_file, "%s\t%s\n", get_pair_value(pairs_array[i]), get_pair_key(pairs_array[i]));
-    }
-
-    fclose(dest_file);
-}
-
-/* TODO: Add documentation */
-void create_entries_file(char* file_name, LabelsLinkedList_t symbol_table) {
-    int has_entries = FALSE;
-    FILE *dest_file;
-
-    LabelNode_t curr_label = get_labels_list_head(symbol_table);
-    while (curr_label != NULL) {
-        if (StringsEqual(get_label_node_type(curr_label), ENTRY_TYPE)) { /* TODO: Maybe make into a function */
-            if (is_not(has_entries)) {
-                dest_file = fopen(concatenate_strings(file_name, ENTRIES_FILE_SUFFIX), WRITE);
-                has_entries = TRUE;
-            }
-            fprintf(dest_file, "%s\t%04d\n", get_label_node_name(curr_label), get_label_node_value(curr_label));
-        }
-        curr_label = get_next_label_node(curr_label);
-    }
-}
 
 /* SORTED */
 
@@ -591,12 +541,16 @@ int get_address_type(char *operand) {
     return type;
 }
 
-/* Assumes a pair of operands in a split thingie */
-/* TODO: Add documentation */
+/*  Gets a linked list object.
+    The function assumes the list has exactly 2 items, each containing an operand.
+    Using the has_non_register_operands, checks if both of them is of direct register address type.
+    If so, returns FALSE.
+    Otherwise, returns TRUE.
+*/
 int has_non_register_operands(LinkedList_t split_operands) {
-    if (get_address_type(GetHeadValue(split_operands)) != REGISTER || get_address_type(GetTailValue(split_operands)) != REGISTER)
-        return TRUE;
-    return FALSE;
+    if (is(is_direct_register_type(GetHeadValue(split_operands))) && is(is_direct_register_type(GetTailValue(split_operands))))
+        return FALSE;
+    return TRUE;
 }
 
 /* TODO: Add documentation */
@@ -668,3 +622,71 @@ void set_operand_code(char *operand_string, int source_or_dest, Table_t *extern_
 
 /* Files related functions */
 
+/*  Gets a string representing a file name and an array representing the assembler memory image.
+    Sets the destination file to be the given file name with .ob suffix.
+    Using a while loop, goes through the array until reaching "\0" string which represents the end of the array.
+    Goes through all characters of each word
+        If the character is 0, adds . to the destination file.
+        If the character is 1, adds / to the destination file.
+    At the end of each word, adds \n to the destination file.
+
+    The function assumes that the first line of the file has already been written in function called earlier in the code.
+*/
+void write_object_file(char* file_name, char *memory_array[]) {
+    int j, i = 0;
+    FILE *dest_file;
+
+    dest_file = fopen(concatenate_strings(file_name, OBJECT_FILE_SUFFIX), APPEND);
+    while (StringsNotEqual(memory_array[i], "\0")) {
+        fprintf(dest_file, "%04d\t", i + FIRST_AVAILABLE_ADDRESS);
+        for (j = 0; j < 14 ; j++) {
+            if(memory_array[i][j] == '0')
+                putc(ZERO, dest_file);
+            else
+                putc(ONE, dest_file);
+        }
+        putc(NEWLINE, dest_file);
+        i++;
+    }
+
+    fclose(dest_file);
+}
+
+/* TODO: Add documentation */
+void create_externals_file(char* file_name, Table_t external_memory_table) {
+    int i, externals_amount;
+    FILE *dest_file;
+    Pair_t *pairs_array;
+
+    externals_amount = get_number_of_pairs(external_memory_table);
+
+    if (externals_amount == 0)
+        return;
+
+    dest_file = fopen(concatenate_strings(file_name, EXTERNALS_FILE_SUFFIX), WRITE);
+    pairs_array = get_pair_array(external_memory_table);
+
+    for (i = 0; i < externals_amount; i++) {
+        fprintf(dest_file, "%s\t%s\n", get_pair_value(pairs_array[i]), get_pair_key(pairs_array[i]));
+    }
+
+    fclose(dest_file);
+}
+
+/* TODO: Add documentation */
+void create_entries_file(char* file_name, LabelsLinkedList_t symbol_table) {
+    int has_entries = FALSE;
+    FILE *dest_file;
+
+    LabelNode_t curr_label = get_labels_list_head(symbol_table);
+    while (curr_label != NULL) {
+        if (StringsEqual(get_label_node_type(curr_label), ENTRY_TYPE)) { /* TODO: Maybe make into a function */
+            if (is_not(has_entries)) {
+                dest_file = fopen(concatenate_strings(file_name, ENTRIES_FILE_SUFFIX), WRITE);
+                has_entries = TRUE;
+            }
+            fprintf(dest_file, "%s\t%04d\n", get_label_node_name(curr_label), get_label_node_value(curr_label));
+        }
+        curr_label = get_next_label_node(curr_label);
+    }
+}

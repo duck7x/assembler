@@ -128,12 +128,13 @@ void free_all() {
         free(global_allocator->ptr_list[i]);
         global_allocator->ptr_list[i] = NULL;
     }
+    printf("INFO: Freeing %d stuff\n", global_allocator->number_of_allocated_elements); /* TODO: delete this */
+    global_allocator->number_of_allocated_elements = 0;
 }
 
 /* TODO: Add documentation */
 void free_all_and_allocator() {
     void* temp;
-    printf("Allocated %d stuff\n", global_allocator->number_of_allocated_elements); /* TODO: delete this */
     temp = global_allocator->ptr_list[LAST_ALLOCATION_INDEX];
     free_all();
     global_allocator->ptr_list[LAST_ALLOCATION_INDEX] = NULL;

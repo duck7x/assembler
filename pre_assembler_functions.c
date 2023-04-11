@@ -78,7 +78,10 @@ int is_an_existing_macro(char* mcr_name, Table_t macro_table) {
     Gets the value of that macro from that table, and writes that value to the destination file.
 */
 void write_existing_macro_to_file(char* macro, FILE *file, Table_t macro_table) {
-    write_string_to_file(file, get_value_from_table(macro_table, macro));
+    char *macro_content = get_value_from_table(macro_table, macro);
+    if (macro_content == NULL)
+        handle_error("Macro not found");
+    write_string_to_file(file, macro_content);
 }
 
 /* TODO: Write this */

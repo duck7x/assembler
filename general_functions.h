@@ -4,12 +4,15 @@
 #include "utils.h"
 
 /* Characters in common use*/
-#define NEWLINE '\n'
-#define SPACE ' '
-#define COMMA ','
 #define COLON ':'
-#define RIGHT_BRACKET ')'
+#define COMMA ','
 #define LEFT_BRACKET '('
+#define MINUS '-'
+#define NEWLINE '\n'
+#define PLUS '+'
+#define POUND_SIGN "#"
+#define RIGHT_BRACKET ')'
+#define SPACE ' '
 
 /* File modes */
 #define READ "r"
@@ -20,7 +23,8 @@
 #define POST_PRE_ASSEMBLER_SUFFIX ".am" /* Suffix of the files created by pre-assembler */
 #define MAX_LINE_LENGTH 80 /* maximum allowed characters in a line */
 #define ReadLine(FILE, LINE) fscanf(FILE, "%[^\n] ", LINE) /* Reading a line from file */
-#define StringsEqual(FIRST, SECOND) strcmp(FIRST, SECOND) == 0 /* Check if wo strings are equal */
+#define StringsEqual(FIRST, SECOND) strcmp(FIRST, SECOND) == 0 /* Check if two strings are equal */
+#define StringsNotEqual(FIRST, SECOND) strcmp(FIRST, SECOND) != 0 /* Check if two strings are not equal */
 
 /*  Function to handle error messages throughout the assembler phases.
     Gets an error message, prints it and the line number.
