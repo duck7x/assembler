@@ -6,26 +6,37 @@
 #include "general_functions.h"
 
 #define DEFAULT_EMPTY_WORD "00000000000000" /* TODO: Add documentation */
-#define DATA_PREFIX ".data" /* TODO: Add documentation */
-#define STRING_PREFIX ".string" /* TODO: Add documentation */
-#define EXTERN_PREFIX ".extern" /* TODO: Add documentation */
-#define ENTRY_PREFIX ".entry" /* TODO: Add documentation */
-#define DATA_TYPE "data" /* TODO: Add documentation */
-#define EXTERN_TYPE "extern" /* TODO: Add documentation */
+
+
 #define EXTERN_DEFAULT_VALUE 0 /* TODO: Add documentation */
-#define CODE_TYPE "code" /* TODO: Add documentation */
+
 #define MEMORY_SIZE 256 /* TODO: Add documentation */
 #define FIRST_AVAILABLE_ADDRESS 100 /* TODO: Add documentation */
-#define IMMEDIATE 0 /* TODO: Add documentation */
-#define DIRECT 1 /* TODO: Add documentation */
-#define JUMP 2 /* TODO: Add documentation */
-#define REGISTER 3 /* TODO: Add documentation */
+
 #define COMMENT_PREFIX ";" /* TODO: Add documentation */
-#define ENTRY_TYPE "entry" /* TODO: Add documentation */
+
 #define SOURCE 5 /* TODO: Add documentation */
 #define DESTINATION 11 /* TODO: Add documentation */
 
-/* Files suffixes */
+/* Instructions */
+#define DATA_PREFIX ".data"
+#define STRING_PREFIX ".string"
+#define EXTERN_PREFIX ".extern"
+#define ENTRY_PREFIX ".entry"
+
+/* Label types */
+#define DATA_TYPE "data"
+#define EXTERN_TYPE "extern"
+#define CODE_TYPE "code"
+#define ENTRY_TYPE "entry"
+
+/* Address types */
+#define IMMEDIATE 0
+#define DIRECT 1
+#define JUMP 2
+#define REGISTER 3
+
+/* File suffixes */
 #define OBJECT_FILE_SUFFIX ".ob"
 #define EXTERNALS_FILE_SUFFIX ".ext"
 #define ENTRIES_FILE_SUFFIX ".ent"
