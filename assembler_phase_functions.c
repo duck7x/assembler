@@ -350,7 +350,24 @@ int is_legal_label_name(char *str) {
     return TRUE;
 }
 
-/* Address type functions */
+/* Address type / operands related functions */
+
+/*  Gets a command node and a relevant line bit and returns a string representing the operands part of the given line.
+    The function assumes that the command node is not NULL.
+*/
+char* get_operands_string(CommandNode_t command_node, char *relevant_line_bit) {
+    return get_clean_and_stripped_string(copy_substring(relevant_line_bit, (int)strlen(get_command_node_command(command_node)), (int)strlen(relevant_line_bit)));
+}
+
+/*  Gets an int representing operand type and a string representing the allowed operands.
+    If the given operand type is in the string, returns TRUE.
+    Otherwise, returns FALSE.
+*/
+int is_allowed_operand_type(int operand_type, char *allowed_operand_types) {
+    if (strchr(allowed_operand_types, '0' + operand_type) == NULL)
+        return FALSE;
+    return TRUE;
+}
 
 /*  Gets a string representing the operands bit of a code line
     Returns a list representing all operands in the given string where each member of the list is a single operand.
@@ -679,58 +696,68 @@ void create_entries_file(char* file_name, LabelsLinkedList_t symbol_table) {
 
 /* Words related functions */
 
-/* Assuming line is alright (will be checked separately) */
-/* TODO: Add documentation */
+/*  Gets a command node and a string representing a valid code line.
+    The function assumes the line is valid (as this is checked earlier in the code).
+    Calculates the amount of words in the code image this line requires according to:
+        Every line requires takes at least one word.
+        If the line has no operands, it doesn't take any more words.
+        If the line has two operands,
+            It would take one additional word if both or them are of direct register address type,
+            And two additional words it at least one of those operands is not of register address type.
+        If the line has a single operand which isn't of jump type, it takes one additional word.
+            If the single operand is indeed of jump type, it would take at least two additional words.
+            Whether it takes a third word or not, depends on whether both the jump operands are register or not.
+    In case the given command is NULL, stops the function and assumes this handled elsewhere in the code.
+    In such case, the function would return ERROR.
+    Otherwise, it would return the calculated amounts of words the given line takes.
+*/
 int calculate_words_for_line(CommandNode_t command_node, char *relevant_line_bit) {
     char *operands_string;
-    int operands_num, l = 1, operand_type;
+    int operands_num, l = 1;
     LinkedList_t split_operands;
 
     if(command_node == NULL) {
         return ERROR;  /* An error should have already been thrown when handled the first word */
     }
 
-    operands_string = get_clean_and_stripped_string(copy_substring(relevant_line_bit, (int)strlen(get_command_node_command(command_node)), (int)strlen(relevant_line_bit)));
+    operands_string = get_operands_string(command_node, relevant_line_bit);
     operands_num = get_command_node_operands(command_node);
 
     split_operands = get_split_operands(operands_string);
 
     if (operands_num == 1) {
-        operand_type = get_address_type(operands_string);
-        if (operand_type == JUMP) {
-            /* Jump handling */
+        if (get_address_type(operands_string) == JUMP) {
             l += 2;
-            split_operands = split_string(GetTailValue(split_string(copy_substring(operands_string, 0,
-                                                                                   strlen(operands_string)-1), LEFT_BRACKET)), COMMA);
+            split_operands = get_split_operands(GetTailValue(split_string(copy_substring(operands_string, 0,strlen(operands_string)-1), LEFT_BRACKET)));
             l += has_non_register_operands(split_operands);
         } else {
             l += 1;
         }
     } else if (operands_num == 2) {
-        split_operands = split_string(get_string_without_whitespaces(operands_string), COMMA);
         l += 1 + has_non_register_operands(split_operands);
     }
 
     return l;
 }
 
-
-
-/* TODO: Add documentation */
+/*  Gets a command node, a string representing a valid code line,
+    And a string representing the word in the code image where the given line should be coded to.
+    Codes the first word to the given memory slot according to the command and its operands.
+    Returns the amount of words the given line takes in the code image.
+*/
 int handle_first_word(CommandNode_t command_node, char *relevant_line_bit, char memory_slot[]) {
     char *operands_string, *opcode;
-    int operands_num, i, l = 1, operand_type, non_register_operands = FALSE;
+    int operands_num, i, operand_type;
     LinkedList_t split_operands;
 
-    if(command_node == NULL) {  /* Step 12 */
+    if(command_node == NULL) {
         handle_error("Illegal command");
-        return -ERROR;
+        return ERROR;
     }
 
-    operands_string = get_clean_and_stripped_string(copy_substring(relevant_line_bit, (int)strlen(get_command_node_command(command_node)), strlen(relevant_line_bit)));
+    operands_string = get_operands_string(command_node, relevant_line_bit);
     operands_num = get_command_node_operands(command_node);
     opcode = get_command_node_code(command_node);
-
     split_operands = get_split_operands(operands_string);
 
     if (get_list_length(split_operands) != operands_num) {
@@ -738,66 +765,76 @@ int handle_first_word(CommandNode_t command_node, char *relevant_line_bit, char 
         return ERROR;
     }
 
-    /* Encode and add first word to memory array */
+    /* Sets bits 6 to 9 according to the command */
     for (i = 6; i <= 9 ; i++) {
         memory_slot[13-i] = opcode[9-i];
     }
 
     if (operands_num == 1) {
         operand_type = get_address_type(operands_string);
-        /* TODO: split to functions */
-        /* TODO: ensure type fits command */
+
+        if (is_not(is_allowed_operand_type(operand_type, get_command_node_destination_operand_types(command_node)))) {
+            handle_error("Operand type and command mismatch");
+            return ERROR;
+        }
+
         if (operand_type == JUMP) {
-            memory_slot[13-3] = '1'; /* TODO: change to 13 - something */
-            l += 2; /* TODO: Ensure! */
-            /* handle 10-13 by jump params */
+            /* Sets bits 2-3 according to the operand type (jump) */
+            memory_slot[13-3] = '1';
+
+            /* handle bits 10-13 by jump params */
             split_operands = split_string(GetTailValue(split_string(copy_substring(operands_string, 0,
                                                                                    strlen(operands_string)-1), LEFT_BRACKET)), COMMA);
-            /* TODO: switch to for loop to reduce code redundancy */
-            operand_type = get_address_type(GetHeadValue(split_operands));
-            if (operand_type != REGISTER)
-                non_register_operands = TRUE;
-            memory_slot[13-13] = '0' + (operand_type / 2); /* TODO: change to 13 - something */
-            memory_slot[13-12] = '0' + (operand_type % 2); /* TODO: change to 13 - something */
-            operand_type = get_address_type(GetTailValue(split_operands));
-            if (operand_type != REGISTER)
-                non_register_operands = TRUE;
-            memory_slot[13-11] = '0' + (operand_type / 2); /* TODO: change to 13 - something */
-            memory_slot[13-10] = '0' + (operand_type % 2); /* TODO: change to 13 - something */
 
-            l += non_register_operands;
+            /* Sets bits 12-13 according to the first jump parameter */
+            operand_type = get_address_type(GetHeadValue(split_operands));
+            memory_slot[13-13] = '0' + (operand_type / 2);
+            memory_slot[13-12] = '0' + (operand_type % 2);
+
+            /* Sets bits 10-11 according to the first jump parameter */
+            operand_type = get_address_type(GetTailValue(split_operands));
+            memory_slot[13-11] = '0' + (operand_type / 2);
+            memory_slot[13-10] = '0' + (operand_type % 2);
+
         } else {
-            l += 1;
-            /* handle 2-3 by params */
-            memory_slot[13-3] = '0' + (operand_type / 2); /* TODO: change to 13 - something */
-            memory_slot[13-2] = '0' + (operand_type % 2); /* TODO: change to 13 - something */
+            /* Sets bits 2-3 according to the operand type */
+            memory_slot[13-3] = '0' + (operand_type / 2);
+            memory_slot[13-2] = '0' + (operand_type % 2);
         }
     } else if (operands_num == 2) {
-        l += 1;
-        for (i = 0; i <= 3; i++) {
-            memory_slot[i] = '0';
-        }
-        split_operands = split_string(get_string_without_whitespaces(operands_string), COMMA);
-        /* TODO: switch to for loop to reduce code redundancy */
-        /* 4,5 bits according to first operand */
         operand_type = get_address_type(GetHeadValue(split_operands));
-        if (operand_type != REGISTER)
-            non_register_operands = TRUE;
+
+        if (is_not(is_allowed_operand_type(operand_type, get_command_node_source_operand_types(command_node)))) {
+            handle_error("Operand type and command mismatch");
+            return ERROR;
+        }
+
+        /* Sets bits 4-5 according to first operand */
         memory_slot[13-5] = '0' + (operand_type / 2);
         memory_slot[13-4] = '0' + (operand_type % 2);
-        /* 2,3 bits according to second operand */
+
         operand_type = get_address_type(GetTailValue(split_operands));
-        if (operand_type != REGISTER)
-            non_register_operands = TRUE;
+
+        if (is_not(is_allowed_operand_type(operand_type, get_command_node_destination_operand_types(command_node)))) {
+            handle_error("Operand type and command mismatch");
+            return ERROR;
+        }
+
+        /* Sets bits 2-3 according to second operand */
         memory_slot[13-3] = '0' + (operand_type / 2);
         memory_slot[13-2] = '0' + (operand_type % 2);
-        l += non_register_operands;
     }
 
-    return l;
+    return calculate_words_for_line(command_node, relevant_line_bit);
 }
 
-/* TODO: Add documentation */
+/*  Gets a command node, a string representing a valid code line,
+    A table representing all extern labels that have been used in the code so far, a labels list,
+    An array representing the code image and an int representing the instructions counter.
+    Codes all the words for the given line, except for the first word, to the relevant places in the code image
+    Using the given ic and the set_operand_code function.
+    Returns the amount of words the given line takes in the code image.
+*/
 int handle_all_but_first_words(CommandNode_t command_node, char *relevant_line_bit, Table_t *extern_memory_table, LabelsLinkedList_t *symbol_table, char *memory_array[], int ic) {
     int l, operands_num = get_command_node_operands(command_node);
     char *operands_string, *first, *second;
@@ -812,15 +849,16 @@ int handle_all_but_first_words(CommandNode_t command_node, char *relevant_line_b
     if (operands_num == 0)
         return l;
 
-    operands_string = get_clean_and_stripped_string(copy_substring(relevant_line_bit, (int)strlen(get_command_node_command(command_node)), (int)strlen(relevant_line_bit)));
+    operands_string = get_operands_string(command_node, relevant_line_bit);
 
     if (operands_num == 1) {
         set_operand_code(operands_string, DESTINATION, extern_memory_table, symbol_table, memory_array, ic);
     } else if (operands_num == 2) {
-        /* TODO: This repeats (jump) */
         split_operands = split_string(get_string_without_whitespaces(operands_string), COMMA);
+
         first = GetHeadValue(split_operands);
         second = GetTailValue(split_operands);
+
         set_operand_code(first, SOURCE, extern_memory_table, symbol_table, memory_array, ic);
         if (is(has_non_register_operands(split_operands)))
             ic ++;

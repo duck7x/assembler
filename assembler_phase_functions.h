@@ -202,6 +202,21 @@ int is_legal_label_name(char *str);
 
 /* Address type / operands related functions */
 
+/*  Gets a command node and a relevant line bit and returns a string representing the operands part of the given line.
+    INPUT:  command_node        - the command used in the given line bit.
+            relevant_line_bit   - the given line bit.
+    OUTPUT: A string  representing the operands part of the given line bit.
+*/
+char* get_operands_string(CommandNode_t command_node, char *relevant_line_bit);
+
+/*  Gets an int representing an operand type and a string representing the allowed operand types.
+    Checks if the operand type is allowed according to the given string.
+    INPUT:  operand_type            - an int representing an operand type.
+            allowed_operand_types   - a string representing the allowed operand types.
+    OUTPUT: TRUE if the given operand is allowed, FALSE if it isn't.
+*/
+int is_allowed_operand_type(int operand_type, char *allowed_operand_types);
+
 /*  Gets a string representing the operands bit of a code line.
     Returns a list in which each member represents a single operand from the given string.
     INPUT:  operands_string - a string representing the operands bit of a code line.
@@ -300,9 +315,9 @@ void set_register_type_code(char *memory_bit, char *operand, int start);
     a table with all externals used in the code so far,
     and a labels list with all labels defined in the code.
     Adjust relevant words in the memory array to match the given operand with jump address.
-    INPUT:  memory_array  - an array of strings representing the code image.
+    INPUT:  memory_array        - an array of strings representing the code image.
             ic                  - an int representing the current instruction counter.
-            operand     - a string representing a jump address type operand.
+            operand             - a string representing a jump address type operand.
             extern_memory_table - a table containing all externals used in the code so far.
             symbol_table        - a linked labels list representing all labels that had been defined in the code.
     OUTPUT: This function doesn't return anything.
@@ -357,8 +372,41 @@ void create_externals_file(char* file_name, Table_t external_memory_table);
 void create_entries_file(char* file_name, LabelsLinkedList_t symbol_table);
 
 /* Words related functions */
-int calculate_words_for_line(CommandNode_t command_node, char *relevant_line_bit); /* TODO: Add documentation */
-int handle_first_word(CommandNode_t command_node, char *relevant_line_bit, char memory_slot[]); /* TODO: Add documentation */
-int handle_all_but_first_words(CommandNode_t command_node, char *relevant_line_bit, Table_t *extern_memory_table, LabelsLinkedList_t *symbol_table, char *memory_array[], int ic); /* TODO: Add documentation */
+
+/*  Gets a command node and a string representing a valid code line.
+    Calculates the amount of words in the code image this line requires.
+    INPUT:  command_node        - the command used in the given line.
+            relevant_line_bit   - the given line.
+    OUTPUT: An int representing the amount of words the given line should take in the code image.
+*/
+int calculate_words_for_line(CommandNode_t command_node, char *relevant_line_bit);
+
+/*  Gets a command node, a string representing a valid code line,
+    And a string representing the word in the code image where the given line should be coded to.
+    Codes the first word to the given memory slot.
+    Returns the amount of words the given line takes in the code image.
+    INPUT:  command_node        - the command used in the given line.
+            relevant_line_bit   - the given line.
+            memory_slot         - a string representing the word in the code image.
+    OUTPUT: Returns ERROR if an error occurred during the function,
+            If all went well, returns an int representing the amount of words the given line takes in the code image.
+*/
+int handle_first_word(CommandNode_t command_node, char *relevant_line_bit, char memory_slot[]);
+
+/*  Gets a command node, a string representing a valid code line,
+    A table representing all extern labels that have been used in the code so far, a labels list,
+    An array representing the code image and an int representing the instructions counter.
+    Codes all the words for the given line, except for the first word, to the relevant places in the code image.
+    Returns the amount of words the given line takes in the code image.
+    INPUT:  command_node        - the command used in the given line.
+            relevant_line_bit   - the given line.
+            extern_memory_table - a table containing all externals used in the code so far.
+            symbol_table        - linked labels list representing all labels that had been defined in the code.
+            memory_array        - an array of strings representing the code image.
+            ic                  - an int representing the current instruction counter.
+    OUTPUT: Returns ERROR if an error occurred during the function,
+            If all went well, returns an int representing the amount of words the given line takes in the code image.
+*/
+int handle_all_but_first_words(CommandNode_t command_node, char *relevant_line_bit, Table_t *extern_memory_table, LabelsLinkedList_t *symbol_table, char *memory_array[], int ic);
 
 #endif

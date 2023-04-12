@@ -120,8 +120,7 @@ int run_assembler_phase_1(char* file_name, LinkedCommandList_t action_names_list
             command = GetHeadValue(split_by_space);
             command_node = search_command_list(action_names_list, command);
 
-            handle_first_word(command_node, relevant_line_bit, memory_array[ic]);
-            ic += calculate_words_for_line(command_node, relevant_line_bit); /* Step 14 */
+            ic += handle_first_word(command_node, relevant_line_bit, memory_array[ic]);
         }
 
         label_definition_flag = FALSE;

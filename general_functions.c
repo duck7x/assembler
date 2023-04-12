@@ -60,7 +60,7 @@ LinkedList_t split_string(char* str, char delimiter) {
     while (curr_index > -1) {
         node = create_node(copy_substring(temp, 0, curr_index));
         add_node_to_list(node, list);
-        temp = copy_substring(temp, curr_index + 1, strlen(temp));
+        temp = copy_substring(temp, curr_index + 1, (int)strlen(temp));
         curr_index = get_index_till_delimiter(temp, delimiter);
     }
     node = create_node(temp);
@@ -128,7 +128,7 @@ char* clean_multiple_whitespaces(char* str) {
 */
 char* get_string_without_whitespaces(char* str) {
     int i;
-    int str_len = strlen(str);
+    int str_len = (int)strlen(str);
     char* cleaned_str;
     int cleaned_str_index = 0;
 
@@ -147,7 +147,7 @@ char* get_string_without_whitespaces(char* str) {
     Cleans it up by removing any trailing whitespaces at the end and start of it.
 */
 char* get_stripped_string(char* str) {
-    int first_char = 0, last_char = strlen(str);
+    int first_char = 0, last_char = (int)strlen(str);
 
     if (strlen(str) == 0) {
         return "\0";
