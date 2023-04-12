@@ -72,7 +72,6 @@ LinkedList_t split_string(char* str, char delimiter) {
     Cleans it up by removing any trailing whitespaces at the end and start of it
     And combining all consecutive whitespaces to a single space character.
 */
-/* TODO: Ensure that works! */
 char* get_clean_and_stripped_string(char* str) {
     int i = 0, cleaned_str_index = 0;
     int following_space = TRUE;  /* Handles any trailing whitespaces at the start of the string */

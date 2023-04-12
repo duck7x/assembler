@@ -46,11 +46,17 @@ int assembler_phase(char** files_list, int files_count) {
     return 0;
 }
 
-/* TODO: Add documentation */
-int run_assembler_phase_1(char* file_name, LinkedCommandList_t action_names_list, LinkedList_t *data_memory_list, LabelsLinkedList_t *symbol_table, char *memory_array[]) {
+/*  Gets a string representing a file name, a command list representing all allowed assembly commands,
+    A list representing the data image of the assembler, a labels list representing the symbol table
+    And a strings array representing the code image.
+    Runs phase 1 of the assembler phase on the given file with .am suffix, while handling all errors encountered.
+    Counts lines using global variable line_count along the way for better error handling.
+    During this phase all data storage instructions are handled, all labels are added to the symbol table
+    And the first word of all code instructions is coded to the code image.
+*/
+void run_assembler_phase_1(char* file_name, LinkedCommandList_t action_names_list, LinkedList_t *data_memory_list, LabelsLinkedList_t *symbol_table, char *memory_array[]) {
     int i, ic = 0, dc = 0, label_definition_flag = FALSE;
-    char *line, *command;
-    char *relevant_line_bit;
+    char *line, *command, *relevant_line_bit;
     LinkedList_t split_by_label, split_by_space;
     FILE *source_file, *dest_file;
     CommandNode_t command_node;
@@ -64,7 +70,7 @@ int run_assembler_phase_1(char* file_name, LinkedCommandList_t action_names_list
     if (source_file == NULL) {
         printf("ERROR: File %s%s doesn't exist! Skipping it...\n", file_name, POST_PRE_ASSEMBLER_SUFFIX);
         has_errors = TRUE;
-        return ERROR;
+        return;
     }
 
     for (i = 0; i < MEMORY_SIZE; i++) {
@@ -75,6 +81,7 @@ int run_assembler_phase_1(char* file_name, LinkedCommandList_t action_names_list
 
         line_count ++;
 
+        /* Ignore comments and empty lines */
         if (is_not(is_valid_line(line))) {
             continue;
         }
@@ -82,9 +89,10 @@ int run_assembler_phase_1(char* file_name, LinkedCommandList_t action_names_list
         relevant_line_bit = clean_multiple_whitespaces(line);
         split_by_label = split_string(relevant_line_bit, COLON);
 
-        if (get_list_length(split_by_label) > 2) {
-            /* TODO: Not necessarily true, .string "::::" is a legit line! */
-            handle_error("Invalid usage of ':'"); /* TODO: rewrite error */
+        if (get_list_length(split_by_label) > 2 && is_not(starts_with(GetHeadValue(split_by_label), STRING_PREFIX)) && is_not(starts_with(get_node_value(
+                get_next_node(get_head(split_by_label))), STRING_PREFIX))) {
+            handle_error("Invalid usage of ':'");
+            continue;
         }
 
         relevant_line_bit = get_stripped_string(GetTailValue(split_by_label));
@@ -131,7 +139,7 @@ int run_assembler_phase_1(char* file_name, LinkedCommandList_t action_names_list
 
     if (is(has_errors)) {
         printf("ERROR: Found errors in file, stopping assembler phase 1\n");
-        return ERROR;
+        return;
     }
 
     dest_file = fopen(concatenate_strings(file_name, OBJECT_FILE_SUFFIX), WRITE);
@@ -143,14 +151,17 @@ int run_assembler_phase_1(char* file_name, LinkedCommandList_t action_names_list
     ic = add_data_symbols_to_memory(*data_memory_list, ic, memory_array);
 
     memory_array[ic] = "\0";
-
-    return has_errors;
-
 }
 
-/* TODO: Add documentation */
-int run_assembler_phase_2(char* file_name, LinkedCommandList_t action_names_list, Table_t *extern_memory_table, LabelsLinkedList_t *symbol_table, char *memory_array[]) {
-    int l, ic = 0;
+/*  Gets a string representing a file name, a command list representing all allowed assembly commands,
+    A table representing all externals used in the code, a labels list representing the symbol table
+    And a strings array representing the code image.
+    Counts lines using global variable line_count along the way for better error handling.
+    Runs phase 2 of the assembler phase on the given file with .am suffix, while handling all errors encountered.
+    During this phase all entry instructions are handled, as well as all further words of the code instructions.
+*/
+void run_assembler_phase_2(char* file_name, LinkedCommandList_t action_names_list, Table_t *extern_memory_table, LabelsLinkedList_t *symbol_table, char *memory_array[]) {
+    int ic = 0;
     char *line, *command, *relevant_line_bit;
     FILE *source_file;
     LinkedList_t split_by_label, split_by_space;
@@ -162,12 +173,13 @@ int run_assembler_phase_2(char* file_name, LinkedCommandList_t action_names_list
     if (source_file == NULL) {
         printf("ERROR: File %s%s doesn't exist! Skipping it...\n", file_name, POST_PRE_ASSEMBLER_SUFFIX);
         has_errors = TRUE;
-        return ERROR;
+        return;
     }
 
     while (ReadLine(source_file, line) != EOF) {
         line_count ++;
 
+        /* Ignore comments and empty lines */
         if (is_not(is_valid_line(line))) {
             continue;
         }
@@ -177,7 +189,6 @@ int run_assembler_phase_2(char* file_name, LinkedCommandList_t action_names_list
         relevant_line_bit = get_stripped_string(line);
 
         if (is(starts_with_label(split_by_label))) {
-            /* TODO: ERROR HANDLING - Ensure not entry!!! */
             relevant_line_bit = get_stripped_string(GetTailValue(split_by_label));
         }
 
@@ -191,20 +202,17 @@ int run_assembler_phase_2(char* file_name, LinkedCommandList_t action_names_list
                 handle_error("Too many parameters after .entry instruction");
                 continue;
             }
-            mark_label_as_entry(*symbol_table, GetTailValue(split_by_space)); /* Step 6 */
+            mark_label_as_entry(*symbol_table, GetTailValue(split_by_space));
         }
 
         else {
             split_by_space = split_string(relevant_line_bit, SPACE);
             command = GetHeadValue(split_by_space);
-            l = handle_all_but_first_words(search_command_list(action_names_list, command), relevant_line_bit, extern_memory_table, symbol_table, memory_array, ic); /* Step 7 */
-            ic += l;
+            ic += handle_all_but_first_words(search_command_list(action_names_list, command), relevant_line_bit, extern_memory_table, symbol_table, memory_array, ic);
         }
     }
 
     fclose(source_file);
-
-    return is(has_errors) ? 0 : ERROR;
 }
 
 /*  Gets a file name, a memory array, a symbol table and an externals memory table.

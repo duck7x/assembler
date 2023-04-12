@@ -236,8 +236,7 @@ int handle_string_type(char *line, LinkedList_t data_memory_list) {
     If it has more or less items, the function returns FALSE.
 */
 int starts_with_label(LinkedList_t split_line) {
-    /* TODO: Ensure really a label and not just string thingie with : in it */
-    if (get_list_length(split_line) > 1) {
+    if (get_list_length(split_line) > 1 && is_not(starts_with(GetHeadValue(split_line), STRING_PREFIX))) {
         return TRUE;
     }
     return FALSE;
@@ -267,6 +266,7 @@ void add_label(LabelsLinkedList_t labels_list, LinkedList_t split_line, char *ty
 
     if(search_labels_list(labels_list, label_name)) {
         handle_error("Duplicate label");
+        return;
     }
 
     if (is_not(is_legal_label_name(label_name))) {

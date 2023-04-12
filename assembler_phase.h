@@ -15,17 +15,34 @@
 */
 int assembler_phase(char** files_list, int files_count);
 
-/*
-    INPUT:
-    OUTPUT:
+/*  Gets a string representing a file name, a command list representing all allowed assembly commands,
+    A list representing the data image of the assembler, a labels list representing the symbol table
+    And a strings array representing the code image.
+    Runs phase 1 of the assembler phase on the given file with .am suffix, while handling all errors encountered.
+    During this phase all data storage instructions are handled, all labels are added to the symbol table
+    And the first word of all code instructions is coded to the code image.
+    INPUT:  file_name           - a string representing the file to run the assembler phase 1 on.
+            action_names_list   - a command list representing all allowed assembly commands.
+            data_memory_list    - a list representing the data image of the assembler.
+            symbol_table        - a labels list representing the symbol table.
+            memory_array        - a strings array representing the code image.
+    OUTPUT: This function doesn't return anything.
 */
-int run_assembler_phase_1(char* file_name, LinkedCommandList_t action_names_list, LinkedList_t *data_memory_list, LabelsLinkedList_t *symbol_table, char *memory_array[]); /* TODO: Add documentation */
+void run_assembler_phase_1(char* file_name, LinkedCommandList_t action_names_list, LinkedList_t *data_memory_list, LabelsLinkedList_t *symbol_table, char *memory_array[]);
 
-/*
-    INPUT:
-    OUTPUT:
+/*  Gets a string representing a file name, a command list representing all allowed assembly commands,
+    A table representing all externals used in the code, a labels list representing the symbol table
+    And a strings array representing the code image.
+    Runs phase 2 of the assembler phase on the given file with .am suffix, while handling all errors encountered.
+    During this phase all entry instructions are handled, as well as all further words of the code instructions.
+    INPUT:  file_name           - a string representing the file to run the assembler phase 1 on.
+            action_names_list   - a command list representing all allowed assembly commands.
+            extern_memory_table - a table representing all externals used in the code.
+            symbol_table        - a labels list representing the symbol table.
+            memory_array        - a strings array representing the code image.
+    OUTPUT: This function doesn't return anything.
 */
-int run_assembler_phase_2(char* file_name, LinkedCommandList_t action_names_list, Table_t *extern_memory_table, LabelsLinkedList_t *symbol_table, char *memory_array[]); /* TODO: Add documentation */
+void run_assembler_phase_2(char* file_name, LinkedCommandList_t action_names_list, Table_t *extern_memory_table, LabelsLinkedList_t *symbol_table, char *memory_array[]);
 
 /*  Gets a file name, a memory array, a symbol table and an externals memory table.
     Generates files based on the given data with the given file name and relevant suffix:
