@@ -39,7 +39,7 @@ int get_index_till_delimiter(char* str, char delimiter) {
     if (delimiter_address) {
         return (int)(delimiter_address - str);
     }
-    return -1;
+    return ERROR;
 }
 
 /*  Gets a string and a character delimiter.

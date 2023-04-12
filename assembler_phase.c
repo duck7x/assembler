@@ -21,7 +21,7 @@ int assembler_phase(char** files_list, int files_count) {
 
     if (actions_names_list == NULL) {
         printf("CRITICAL: Failed to generate actions names list during assembler phase, stopping assembler!\n");
-        return -1;
+        return ERROR;
     }
 
     for (i = 1; i < files_count; i++) {
@@ -38,7 +38,7 @@ int assembler_phase(char** files_list, int files_count) {
         else {  /* Some files are created during the process. If there has been any errors, those files needs to be deleted */
             printf("CRITICAL: Not creating files for %s due to previous errors\n", current_file);
             delete_created_files(current_file);
-            return -1;
+            return ERROR;
         }
         free_all(); /* Frees redundant memory that was allocated during this for loop iteration */
     }
@@ -64,7 +64,7 @@ int run_assembler_phase_1(char* file_name, LinkedCommandList_t action_names_list
     if (source_file == NULL) {
         printf("ERROR: File %s%s doesn't exist! Skipping it...\n", file_name, POST_PRE_ASSEMBLER_SUFFIX);
         has_errors = TRUE;
-        return -1;
+        return ERROR;
     }
 
     for (i = 0; i < MEMORY_SIZE; i++) {
@@ -132,7 +132,7 @@ int run_assembler_phase_1(char* file_name, LinkedCommandList_t action_names_list
 
     if (is(has_errors)) {
         printf("ERROR: Found errors in file, stopping assembler phase 1\n");
-        return -1;
+        return ERROR;
     }
 
     dest_file = fopen(concatenate_strings(file_name, OBJECT_FILE_SUFFIX), WRITE);
@@ -163,7 +163,7 @@ int run_assembler_phase_2(char* file_name, LinkedCommandList_t action_names_list
     if (source_file == NULL) {
         printf("ERROR: File %s%s doesn't exist! Skipping it...\n", file_name, POST_PRE_ASSEMBLER_SUFFIX);
         has_errors = TRUE;
-        return -1;
+        return ERROR;
     }
 
     while (ReadLine(source_file, line) != EOF) {
@@ -205,7 +205,7 @@ int run_assembler_phase_2(char* file_name, LinkedCommandList_t action_names_list
 
     fclose(source_file);
 
-    return is(has_errors) ? 0 : -1;
+    return is(has_errors) ? 0 : ERROR;
 }
 
 /*  Gets a file name, a memory array, a symbol table and an externals memory table.

@@ -30,7 +30,7 @@ int run_pre_assembler_on_file(char* file_name) {
 
     if (source_file == NULL) {
         printf("ERROR: File %s%s doesn't exist! Skipping it...\n", file_name, INPUT_SUFFIX);
-        return -1;
+        return ERROR;
     }
 
     dest_file = fopen(concatenate_strings(file_name, POST_PRE_ASSEMBLER_SUFFIX), WRITE);

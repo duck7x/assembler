@@ -73,9 +73,9 @@ void set_binary_string_from_string(char *str, char *binary_string, int start) {
     int num, negative = FALSE;
     if (str[0] == MINUS) {
         negative = TRUE;
-        num = atoi(copy_substring(str, 1, strlen(str)));
+        num = atoi(copy_substring(str, 1, (int)strlen(str)));
     } else if (str[0] == PLUS) {
-        num = atoi(copy_substring(str, 1, strlen(str)));
+        num = atoi(copy_substring(str, 1, (int)strlen(str)));
     } else {
         num = atoi(str);
     }
@@ -92,7 +92,7 @@ int handle_data_type(char *line, LinkedList_t memory_list) {
     Node_t curr_node;
     LinkedList_t split_data;
 
-    data = copy_substring(line, 5, strlen(line));
+    data = copy_substring(line, 5, (int)strlen(line));
 
     if (!isSpace(data[0])) {
         /* TODO: ERROR HANDLING - this is an error! */
@@ -123,7 +123,7 @@ int handle_string_type(char *line, LinkedList_t memory_list) {
     char *data, *binary_string;
     int i;
 
-    data = copy_substring(line, 7, strlen(line));
+    data = copy_substring(line, 7, (int)strlen(line));
 
     if (!isSpace(data[0])) {
         /* TODO: ERROR HANDLING - this is an error! */
@@ -145,7 +145,7 @@ int handle_string_type(char *line, LinkedList_t memory_list) {
 
     add_value_to_list(DEFAULT_EMPTY_WORD, memory_list); /* TODO: Might separate to function? */ /* Adding \0 at the end */
 
-    return strlen(data) - 1;
+    return (int)strlen(data) - 1;
 }
 
 /* Assuming line is alright (will be checked separately) */
@@ -156,10 +156,10 @@ int calculate_words_for_line(CommandNode_t command_node, char *relevant_line_bit
     LinkedList_t split_operands;
 
     if(command_node == NULL) {
-        return -1;  /* An error should have already been thrown when handled the first word */
+        return ERROR;  /* An error should have already been thrown when handled the first word */
     }
 
-    operands_string = get_clean_and_stripped_string(copy_substring(relevant_line_bit, strlen(get_command_node_command(command_node)), strlen(relevant_line_bit)));
+    operands_string = get_clean_and_stripped_string(copy_substring(relevant_line_bit, (int)strlen(get_command_node_command(command_node)), (int)strlen(relevant_line_bit)));
     operands_num = get_command_node_operands(command_node);
 
     split_operands = get_split_operands(operands_string);
@@ -193,10 +193,10 @@ int handle_first_word(CommandNode_t command_node, char *relevant_line_bit, char 
 
     if(command_node == NULL) {  /* Step 12 */
         handle_error("Illegal command");
-        return -1;
+        return -ERROR;
     }
 
-    operands_string = get_clean_and_stripped_string(copy_substring(relevant_line_bit, strlen(get_command_node_command(command_node)), strlen(relevant_line_bit)));
+    operands_string = get_clean_and_stripped_string(copy_substring(relevant_line_bit, (int)strlen(get_command_node_command(command_node)), strlen(relevant_line_bit)));
     operands_num = get_command_node_operands(command_node);
     opcode = get_command_node_code(command_node);
 
@@ -204,7 +204,7 @@ int handle_first_word(CommandNode_t command_node, char *relevant_line_bit, char 
 
     if (get_list_length(split_operands) != operands_num) {
         handle_error("Wrong amount of operands specified");
-        return -1;
+        return ERROR;
     }
 
     /* Encode and add first word to memory array */
@@ -273,7 +273,7 @@ int handle_all_but_first_words(CommandNode_t command_node, char *relevant_line_b
     LinkedList_t split_operands;
 
     if(command_node == NULL) {
-        return -1;  /* An error should have already been thrown when handled the first word */
+        return ERROR;  /* An error should have already been thrown when handled the first word */
     }
 
     l = calculate_words_for_line(command_node, relevant_line_bit);
@@ -281,7 +281,7 @@ int handle_all_but_first_words(CommandNode_t command_node, char *relevant_line_b
     if (operands_num == 0)
         return l;
 
-    operands_string = get_clean_and_stripped_string(copy_substring(relevant_line_bit, strlen(get_command_node_command(command_node)), strlen(relevant_line_bit)));
+    operands_string = get_clean_and_stripped_string(copy_substring(relevant_line_bit, (int)strlen(get_command_node_command(command_node)), (int)strlen(relevant_line_bit)));
 
     if (operands_num == 1) {
         set_operand_code(operands_string, DESTINATION, extern_memory_table, symbol_table, memory_array, ic);
@@ -413,7 +413,7 @@ int add_data_symbols_to_memory(LinkedList_t data_memory_list, int ic, char *memo
     If all checks pass, then the string is a legal label name.
 */
 int is_legal_label_name(char *str) {
-    int i, len = strlen(str);
+    int i, len = (int)strlen(str);
 
     if (len > 30) {
         return FALSE;
@@ -522,7 +522,7 @@ int is_jump_address_type (char *str) {
     }
 
     curr_operand = GetTailValue(split);
-    split = split_string(copy_substring(curr_operand, 0, strlen(curr_operand)-1), COMMA);
+    split = split_string(copy_substring(curr_operand, 0, (int)strlen(curr_operand)-1), COMMA);
 
     if(get_list_length(split) != 2) {
         return FALSE;
@@ -548,7 +548,7 @@ int is_jump_address_type (char *str) {
     If no type is found, the function notifies and marks the error using handle_error and returns -1.
 */
 int get_address_type(char *operand) {
-    int type = -1;  /* TODO: Maybe change to ERROR rather than -1 */
+    int type = ERROR;
 
     if (is(is_immediate_address_type(operand))) {
         type = IMMEDIATE;
@@ -577,25 +577,40 @@ int has_non_register_operands(LinkedList_t split_operands) {
     return TRUE;
 }
 
-/* TODO: Add documentation */
+/*  Gets a string representing a word in the code image and a string representing an immediate address type operand.
+    Adjusts the memory bit string to match the given operand with immediate address,
+    Using the set_binary_string_from_string, encodes the binary representation of the number to the 12 relevant bits.
+*/
 void set_immediate_type_code(char *memory_bit, char *operand) {
-    set_binary_string_from_string(copy_substring(operand, 1, strlen(operand)), memory_bit, 11);
+    set_binary_string_from_string(copy_substring(operand, 1, (int)strlen(operand)), memory_bit, 11);
 }
 
-/* TODO: Add documentation */
+/*  Gets a string representing a word in the code image, a string representing a direct address type operands,
+    a table representing all externals used in the code, a labels list representing all labels defined in the code
+    and an int representing the instruction counter.
+    The operand should be a label, so the function searches it in the labels list.
+    If the label is not found, the function handles the error and exits.
+    Bits 0 and 1 of the memory bit are set according to the label type.
+    If the found label is an extern label, adds this usage of the label to the externals table.
+        Also, in such case, the rest of the bits are left untouched.
+    If the label found is not an extern label, using the set_binary_string_from_num encodes the binary representation
+    of the number to the 12 relevant bits.
+*/
 void set_direct_type_code(char *memory_bit, char *operand, Table_t *extern_memory_table ,LabelsLinkedList_t *symbol_table, int ic) {
     LabelNode_t label;
     char temp[5];
-    /* Find label in label table */
+
     label = search_labels_list(*symbol_table, operand);
+
     if (label == NULL) {
         handle_error("Label doesn't exist for direct type operand");
+        return;
     }
+
     if (StringsEqual(get_label_node_type(label), EXTERN_TYPE)) {
         memory_bit[13] = '1';
         sprintf(temp, "%04d", ic + FIRST_AVAILABLE_ADDRESS);
         add_to_table(*extern_memory_table, temp, get_label_node_name(label));
-        /* TODO: Add to extern label list */
     }
     else {
         memory_bit[12] = '1';
@@ -603,42 +618,63 @@ void set_direct_type_code(char *memory_bit, char *operand, Table_t *extern_memor
     }
 }
 
-/* TODO: Add documentation */
-void set_jump_type_code(char *memory_array[], int ic, char *operand, Table_t *extern_memory_table, LabelsLinkedList_t *symbol_table) {
-    LinkedList_t split_operands;
-    char *temp, *first, *second;
-    split_operands = split_string(operand, LEFT_BRACKET);
-    ic ++;
-    temp = GetHeadValue(split_operands);
-    set_direct_type_code(memory_array[ic], temp, extern_memory_table, symbol_table, ic);
-    /* TODO: This repeats (when two operands)*/
-    split_operands = split_string(get_string_without_whitespaces(copy_substring(GetTailValue(split_operands), 0, strlen(operand) -
-                                                                                                                 strlen(temp) - 2)), COMMA);
-    first = GetHeadValue(split_operands);
-    second = GetTailValue(split_operands);
-    set_operand_code(first, SOURCE, extern_memory_table, symbol_table, memory_array, ic);
-    if (get_address_type(first) != REGISTER || get_address_type(second) != REGISTER) /* TODO: Make this better and not here */
-        ic ++;
-    set_operand_code(second, DESTINATION, extern_memory_table, symbol_table, memory_array, ic);
-}
-
-/* TODO: Add documentation */
+/*  Gets a string representing a word in the code image and a string representing a direct register address type operand
+    and an int representing the relevant bits (based on the operand being source or destination).
+    Adjusts the memory bit string to match the given operand with direct register address,
+    Using the set_binary_string_from_string, encodes the binary representation of the number to the relevant bits,
+    which are determined by the start parameter.
+*/
 void set_register_type_code(char *memory_bit, char *operand, int start) {
     set_binary_string_from_string(copy_substring(operand, 1, 2), memory_bit, start);
 }
 
-/* If the operand is illegal, the get_address_type function will handle the error */
-/* TODO: Add documentation */
+/*  Gets an array representing the code image, an int representing the instructions counter,
+    a string representing a jump address type operand,
+    a table with all externals used in the code so far,
+    and a labels list with all labels defined in the code.
+    Sets the next 2 or 3 words in the memory array according to the jump type encoding.
+    The first word should be a label, so it is encoded using the set_direct_type_code functions.
+    The second (and possibly third) words should be of different address types, and are encoded using set_operand_code function.
+    If both of them are of Register type, they're combined to one word. Otherwise, they would be two separate words.
+*/
+void set_jump_type_code(char *memory_array[], int ic, char *operand, Table_t *extern_memory_table, LabelsLinkedList_t *symbol_table) {
+    char *temp, *first, *second;
+    LinkedList_t split_operands = split_string(operand, LEFT_BRACKET);
+
+    ic ++;
+    temp = GetHeadValue(split_operands);
+    set_direct_type_code(memory_array[ic], temp, extern_memory_table, symbol_table, ic);
+
+    split_operands = split_string(get_string_without_whitespaces(copy_substring(GetTailValue(split_operands), 0, (int)strlen(operand) -
+            (int)strlen(temp) - 2)), COMMA);
+    first = GetHeadValue(split_operands);
+    second = GetTailValue(split_operands);
+
+    set_operand_code(first, SOURCE, extern_memory_table, symbol_table, memory_array, ic);
+    if (is(has_non_register_operands(split_operands)))
+        ic ++;
+    set_operand_code(second, DESTINATION, extern_memory_table, symbol_table, memory_array, ic);
+}
+
+/*  Gets a string representing an operand, an int representing that operand type (source or destination),
+    a table with all externals used in the code so far, a labels list with all labels defined in the code,
+    an array representing the code image and an int representing the instructions counter.
+    Adjust relevant word(s) in the memory array to match the given operand with its address type,
+    using the get_address_type to get the operand's address type and then, according to that, using the
+    set_immediate_type_code, set_direct_type_code, set_jump_type_code or set_register_type_code functions, sets the
+    relevant words.
+    The function assumes that if the given operand is illegal, get_address_type function will handle the error.
+*/
 void set_operand_code(char *operand_string, int source_or_dest, Table_t *extern_memory_table, LabelsLinkedList_t *symbol_table, char *memory_array[], int ic) {
     int operand_type;
+
     operand_type = get_address_type(operand_string);
-    /* TODO: Change to switch */
+
     if (operand_type == IMMEDIATE)
         set_immediate_type_code(memory_array[ic + 1], operand_string);
     else if (operand_type == DIRECT) {
         set_direct_type_code(memory_array[ic + 1], operand_string, extern_memory_table ,symbol_table, ic);
-    }
-    else if (operand_type == JUMP)
+    } else if (operand_type == JUMP)
         set_jump_type_code(memory_array, ic, operand_string, extern_memory_table, symbol_table);
     else if (operand_type == REGISTER)
         set_register_type_code(memory_array[ic + 1], operand_string, source_or_dest);

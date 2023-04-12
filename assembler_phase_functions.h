@@ -177,11 +177,67 @@ int get_address_type(char *operand);
 */
 int has_non_register_operands(LinkedList_t split_operands);
 
-void set_immediate_type_code(char *memory_bit, char *operand); /* TODO: Add documentation */
-void set_direct_type_code(char *memory_bit, char *operand, Table_t *extern_memory_table ,LabelsLinkedList_t *symbol_table, int ic); /* TODO: Add documentation */
-void set_jump_type_code(char *memory_array[], int ic, char *operand, Table_t *extern_memory_table, LabelsLinkedList_t *symbol_table); /* TODO: Add documentation */
-void set_register_type_code(char *memory_bit, char *operand, int start); /* TODO: Add documentation */
-void set_operand_code(char *operand_string, int source_or_dest, Table_t *extern_memory_table, LabelsLinkedList_t *symbol_table, char *memory_array[], int ic); /* TODO: Add documentation */
+/*  Gets a string representing memory bit,
+    a string representing an immediate address type operand.
+    Adjust that memory bit to match the given operand with immediate address.
+    INPUT:  memory_bit  - a string representing a word in the code image.
+            operand     - a string representing an immediate address type operand.
+    OUTPUT: This function doesn't return anything.
+*/
+void set_immediate_type_code(char *memory_bit, char *operand);
+
+/*  Gets a string representing memory bit,
+    a string representing a direct address type operand,
+    a table with all externals used in the code so far,
+    a labels list with all labels defined in the code
+    and an instruction counter.
+    Adjust that memory bit to match the given operand with direct address.
+    INPUT:  memory_bit          - a string representing a word in the code image.
+            operand             - a string representing a direct address type operand.
+            extern_memory_table - a table containing all externals used in the code so far.
+            symbol_table        - a linked labels list representing all labels that had been defined in the code.
+            ic                  - an int representing the current instruction counter.
+    OUTPUT: This function doesn't return anything.
+*/
+void set_direct_type_code(char *memory_bit, char *operand, Table_t *extern_memory_table ,LabelsLinkedList_t *symbol_table, int ic);
+
+/*  Gets a string representing memory bit,
+    a string representing a direct register address type operand.
+    Adjust that memory bit to match the given operand with direct register address.
+    INPUT:  memory_bit  - a string representing a word in the code image.
+            operand     - a string representing a direct register address type operand.
+            start       - an int representing the relevant bits in the memory big.
+    OUTPUT: This function doesn't return anything.
+*/
+void set_register_type_code(char *memory_bit, char *operand, int start);
+
+/*  Gets an array representing the code image, an int representing the instructions counter,
+    a string representing a jump address type operand,
+    a table with all externals used in the code so far,
+    and a labels list with all labels defined in the code.
+    Adjust relevant words in the memory array to match the given operand with jump address.
+    INPUT:  memory_array  - an array of strings representing the code image.
+            ic                  - an int representing the current instruction counter.
+            operand     - a string representing a jump address type operand.
+            extern_memory_table - a table containing all externals used in the code so far.
+            symbol_table        - a linked labels list representing all labels that had been defined in the code.
+    OUTPUT: This function doesn't return anything.
+*/
+void set_jump_type_code(char *memory_array[], int ic, char *operand, Table_t *extern_memory_table, LabelsLinkedList_t *symbol_table);
+
+/*  Gets a string representing an operand, an int representing that operand type (source or destination),
+    a table with all externals used in the code so far, a labels list with all labels defined in the code,
+    an array representing the code image and an int representing the instructions counter.
+    Adjust relevant word(s) in the memory array to match the given operand with its address type.
+    INPUT:  operand_string      - a string representing a jump address type operand.
+            source_or_dest      - an int representing whether the operand is of source or of destination type.
+            extern_memory_table - a table containing all externals used in the code so far.
+            symbol_table        - a linked labels list representing all labels that had been defined in the code.
+            memory_array        - an array of strings representing the code image.
+            ic                  - an int representing the current instruction counter.
+    OUTPUT: This function doesn't return anything.
+*/
+void set_operand_code(char *operand_string, int source_or_dest, Table_t *extern_memory_table, LabelsLinkedList_t *symbol_table, char *memory_array[], int ic);
 
 /* Files related functions */
 

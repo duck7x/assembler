@@ -25,6 +25,7 @@
 #define ReadLine(FILE, LINE) fscanf(FILE, "%[^\n] ", LINE) /* Reading a line from file */
 #define StringsEqual(FIRST, SECOND) strcmp(FIRST, SECOND) == 0 /* Check if two strings are equal */
 #define StringsNotEqual(FIRST, SECOND) strcmp(FIRST, SECOND) != 0 /* Check if two strings are not equal */
+#define ERROR (-1) /* A number representing an error */
 
 /*  Function to handle error messages throughout the assembler phases.
     Gets an error message, prints it and the line number.
