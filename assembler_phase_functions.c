@@ -29,18 +29,6 @@ LinkedCommandList_t create_action_names_list() {
     return actions_names_list;
 }
 
-
-
-/* TODO: Add documentation */
-int starts_with_label(LinkedList_t split_line) {
-    /* TODO: Ensure really a label and not just string thingie with : in it */
-    /* TODO: Ensure no space between label and :!! */
-    if (get_list_length(split_line) > 1) {
-        return TRUE;
-    }
-    return FALSE;
-}
-
 /* TODO: Add documentation */
 int is_data_storage(char *line){
     if (starts_with(line, DATA_PREFIX) || starts_with(line, STRING_PREFIX))  /* TODO: Maybe improve this */
@@ -67,68 +55,6 @@ int is_entry(char *line) {
     if (starts_with(line, ENTRY_PREFIX))   /* TODO: Maybe improve this */
         return TRUE;
     return FALSE;
-}
-
-/* TODO: Add documentation */
-void add_label(LabelsLinkedList_t labels_list, LinkedList_t split_line, char *type, int value) {
-    char *label_name = ""; /* TODO: Fix this */
-
-    /* TODO: if there's time - change to switch case */
-    if (StringsEqual(type, DATA_TYPE) || StringsEqual(type, CODE_TYPE)) {
-        label_name = GetHeadValue(split_line);
-    } else if (StringsEqual(type,EXTERN_TYPE)) {
-        if (get_list_length(split_line) > 2) {
-            handle_error("Too many words after label"); /* Needs rephrase */
-        }
-        label_name = GetTailValue(split_line);
-    }
-
-    if(search_labels_list(labels_list, label_name)) {
-        handle_error("Duplicate label");
-    }
-
-    if (is_not(is_legal_label_name(label_name))) {
-        handle_error("Illegal label name");
-        return;
-    }
-
-    add_to_labels_list(create_label_node(label_name, type, FIRST_AVAILABLE_ADDRESS + value), labels_list);
-}
-
-/* TODO: Add documentation */
-void mark_label_as_entry(LabelsLinkedList_t symbol_table, char* label_name) {
-    LabelNode_t curr_label = get_labels_list_head(symbol_table);
-    while (curr_label != NULL) {
-        if (StringsEqual(get_label_node_name(curr_label), label_name)) {
-            set_label_node_type(curr_label, ENTRY_TYPE);
-            return;
-        }
-        curr_label = get_next_label_node(curr_label);
-    }
-    handle_error("Entry label doesn't exist");
-}
-
-/* TODO: Rename this */
-/* TODO: Add documentation */
-void update_symbol_table(LabelsLinkedList_t symbol_table, int ic) {
-    LabelNode_t current_label = get_labels_list_head(symbol_table);
-
-    while ((current_label = get_next_label_node(current_label)) != NULL) {
-        if (StringsEqual(get_label_node_type(current_label), DATA_TYPE)) {
-            set_label_node_value(current_label, get_label_node_value(current_label) + ic);
-        }
-    }
-}
-
-/* TODO: Add documentation */
-int add_data_symbols_to_memory(LinkedList_t data_memory_list, int ic, char *memory_array[]) {
-    Node_t curr = get_head(data_memory_list);
-    while (curr != NULL) {
-        memory_array[ic++] = get_node_value(curr);
-        curr = get_next_node(curr);
-    }
-
-    return ic;
 }
 
 /* 2’s complement */
@@ -221,29 +147,6 @@ int handle_string_type(char *line, LinkedList_t memory_list) {
 
     return strlen(data) - 1;
 }
-
-/* TODO: Add documentation */
-int is_legal_label_name(char *str) {
-    int i, len = strlen(str);
-
-    if (len > 30) {
-        return FALSE;
-    }
-
-    if (!isalpha(str[0])) {
-        return FALSE;
-    }
-
-    for (i = 1; i < len; i++) {
-        if ((!isalpha(str[i])) && (!isdigit(str[i]))) {
-            return FALSE;
-        }
-    }
-
-    return TRUE;
-}
-
-
 
 /* Assuming line is alright (will be checked separately) */
 /* TODO: Add documentation */
@@ -407,6 +310,109 @@ int is_valid_line(char *line) {
 
 
 /* SORTED */
+
+/* Labels related functions */
+
+/*  Gets a LinkedList_t object which represents a line split by the colon delimiter.
+    If the list contains more than 1 item, it means the line attempts to start with a label and so the functions returns TRUE.
+    If it has more or less items, the function returns FALSE.
+*/
+int starts_with_label(LinkedList_t split_line) {
+    /* TODO: Ensure really a label and not just string thingie with : in it */
+    if (get_list_length(split_line) > 1) {
+        return TRUE;
+    }
+    return FALSE;
+}
+
+/* TODO: Add documentation */
+void add_label(LabelsLinkedList_t labels_list, LinkedList_t split_line, char *type, int value) {
+    char *label_name = ""; /* TODO: Fix this */
+
+    /* TODO: if there's time - change to switch case */
+    if (StringsEqual(type, DATA_TYPE) || StringsEqual(type, CODE_TYPE)) {
+        label_name = GetHeadValue(split_line);
+    } else if (StringsEqual(type,EXTERN_TYPE)) {
+        if (get_list_length(split_line) > 2) {
+            handle_error("Too many words after label"); /* Needs rephrase */
+        }
+        label_name = GetTailValue(split_line);
+    }
+
+    if(search_labels_list(labels_list, label_name)) {
+        handle_error("Duplicate label");
+    }
+
+    if (is_not(is_legal_label_name(label_name))) {
+        handle_error("Illegal label name");
+        return;
+    }
+
+    add_to_labels_list(create_label_node(label_name, type, FIRST_AVAILABLE_ADDRESS + value), labels_list);
+}
+
+/* TODO: Add documentation */
+void mark_label_as_entry(LabelsLinkedList_t symbol_table, char* label_name) {
+    LabelNode_t curr_label = get_labels_list_head(symbol_table);
+    while (curr_label != NULL) {
+        if (StringsEqual(get_label_node_name(curr_label), label_name)) {
+            set_label_node_type(curr_label, ENTRY_TYPE);
+            return;
+        }
+        curr_label = get_next_label_node(curr_label);
+    }
+    handle_error("Entry label doesn't exist");
+}
+
+/* TODO: Rename this */
+/* TODO: Add documentation */
+void update_symbol_table(LabelsLinkedList_t symbol_table, int ic) {
+    LabelNode_t current_label = get_labels_list_head(symbol_table);
+
+    while ((current_label = get_next_label_node(current_label)) != NULL) {
+        if (StringsEqual(get_label_node_type(current_label), DATA_TYPE)) {
+            set_label_node_value(current_label, get_label_node_value(current_label) + ic);
+        }
+    }
+}
+
+/* TODO: Add documentation */
+int add_data_symbols_to_memory(LinkedList_t data_memory_list, int ic, char *memory_array[]) {
+    Node_t curr = get_head(data_memory_list);
+    while (curr != NULL) {
+        memory_array[ic++] = get_node_value(curr);
+        curr = get_next_node(curr);
+    }
+
+    return ic;
+}
+
+/*  Gets a string representing a label name and runs the following checks:
+        Ensures the string doesn't have more than 30 characters.
+        Ensures the string starts with an alpha character.
+        Ensures all characters in the string are of either alpha pr digit.
+    If any of those checks fail, the given string is not a legal label name.
+    If all checks pass, then the string is a legal label name.
+*/
+int is_legal_label_name(char *str) {
+    int i, len = strlen(str);
+
+    if (len > 30) {
+        return FALSE;
+    }
+
+    if (!isalpha(str[0])) {
+        return FALSE;
+    }
+
+    for (i = 1; i < len; i++) {
+        if ((!isalpha(str[i])) && (!isdigit(str[i]))) {
+            return FALSE;
+        }
+    }
+
+    return TRUE;
+}
 
 /* Address type functions */
 

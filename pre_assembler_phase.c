@@ -6,6 +6,7 @@ void pre_assembler(char** files_array, int files_count) {
     int i;
 
     for (i = 1; i < files_count; i++) {
+        printf("INFO: Running pre-assembler phase on %s%s!\n",files_array[i], INPUT_SUFFIX); /* TODO: delete this */
         run_pre_assembler_on_file(files_array[i]);
         free_all(); /* Frees redundant memory that was allocated during this for loop iteration */
     }

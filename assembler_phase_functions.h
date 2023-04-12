@@ -49,20 +49,15 @@
 
 /* UNSORTED */
 LinkedCommandList_t create_action_names_list(); /* TODO: Add documentation */
-int starts_with_label(LinkedList_t split_line); /* TODO: Add documentation */
+
 int is_data_storage(char *line); /* TODO: Add documentation */
 int is_extern_or_entry(char *line); /* TODO: Add documentation */
 int is_extern(char *line); /* TODO: Add documentation */
 int is_entry(char *line); /* TODO: Add documentation */
-void add_label(LabelsLinkedList_t labels_list, LinkedList_t split_line, char *type, int value); /* TODO: Add documentation */
-void mark_label_as_entry(LabelsLinkedList_t symbol_table, char* label_name); /* TODO: Add documentation */
-void update_symbol_table(LabelsLinkedList_t symbol_table, int ic); /* TODO: Add documentation */
-int add_data_symbols_to_memory(LinkedList_t data_memory_list, int ic, char *memory_array[]); /* TODO: Add documentation */
 void set_binary_string_from_num(unsigned int num, char *binary_string, int start); /* TODO: Add documentation */
 void set_binary_string_from_string(char *str, char *binary_string, int start); /* TODO: Add documentation */
 int handle_data_type(char *line, LinkedList_t memory_list); /* TODO: Add documentation */
 int handle_string_type(char *line, LinkedList_t memory_list); /* TODO: Add documentation */
-int is_legal_label_name(char *str); /* TODO: Add documentation */
 int calculate_words_for_line(CommandNode_t command_node, char *relevant_line_bit); /* TODO: Add documentation */
 int handle_first_word(CommandNode_t command_node, char *relevant_line_bit, char memory_slot[]); /* TODO: Add documentation */
 int handle_all_but_first_words(CommandNode_t command_node, char *relevant_line_bit, Table_t *extern_memory_table, LabelsLinkedList_t *symbol_table, char *memory_array[], int ic); /* TODO: Add documentation */
@@ -70,6 +65,47 @@ int is_valid_line(char *line); /* TODO: Add documentation */
 
 
 /* SORTED */
+
+/* Labels related functions */
+
+/*  Gets a linked list, representing a line split by colons
+    Checks if the linked list represents a line that starts with a label
+    INPUT:  split_line - a line split by a colon delimiter.
+    OUTPUT: TRUE if the given list represent a line starting with a label
+            FALSE if the given list does not represent a line starting with a label
+*/
+int starts_with_label(LinkedList_t split_line);
+
+/*
+    INPUT:
+    OUTPUT:
+*/
+void add_label(LabelsLinkedList_t labels_list, LinkedList_t split_line, char *type, int value); /* TODO: Add documentation */
+
+/*
+    INPUT:
+    OUTPUT:
+*/
+void mark_label_as_entry(LabelsLinkedList_t symbol_table, char* label_name); /* TODO: Add documentation */
+
+/*
+    INPUT:
+    OUTPUT:
+*/
+void update_symbol_table(LabelsLinkedList_t symbol_table, int ic); /* TODO: Add documentation */
+
+/*
+    INPUT:
+    OUTPUT:
+*/
+int add_data_symbols_to_memory(LinkedList_t data_memory_list, int ic, char *memory_array[]); /* TODO: Add documentation */
+
+/*  Gets a string representing a label name, and checks if it's a legal label name.
+    INPUT:  str - the label name that needs to be checked.
+    OUTPUT: TRUE if the given string is a legal label name,
+            FALSE if the given string is not a legal label name.
+*/
+int is_legal_label_name(char *str);
 
 /* Address type / operands related functions */ /* TODO: Rewrite doc title */
 LinkedList_t get_split_operands(char *operands_string); /* TODO: Add documentation */
