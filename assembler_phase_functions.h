@@ -6,15 +6,10 @@
 #include "general_functions.h"
 
 #define DEFAULT_EMPTY_WORD "00000000000000" /* TODO: Add documentation */
-
-
 #define EXTERN_DEFAULT_VALUE 0 /* TODO: Add documentation */
-
 #define MEMORY_SIZE 256 /* TODO: Add documentation */
 #define FIRST_AVAILABLE_ADDRESS 100 /* TODO: Add documentation */
-
 #define COMMENT_PREFIX ";" /* TODO: Add documentation */
-
 #define SOURCE 5 /* TODO: Add documentation */
 #define DESTINATION 11 /* TODO: Add documentation */
 
@@ -49,7 +44,6 @@
 
 /* UNSORTED */
 LinkedCommandList_t create_action_names_list(); /* TODO: Add documentation */
-
 int is_data_storage(char *line); /* TODO: Add documentation */
 int is_extern_or_entry(char *line); /* TODO: Add documentation */
 int is_extern(char *line); /* TODO: Add documentation */
@@ -201,16 +195,25 @@ void set_operand_code(char *operand_string, int source_or_dest, Table_t *extern_
 */
 void write_object_file(char* file_name, char *memory_array[]);
 
-/*
-    INPUT:
+/*  Gets a string representing a file name
+    And a table representing all external used in the code.
+    If the table is empty, no file will be created.
+    If it isn't, writes to the given file (with .ext suffix) all usages of external in the code according to the given table.
+    Each line will contain the label and the line number it was used.
+    Labels might appear more than once, if they were used in the code more than once.
+    INPUT:  file_name               - the name of the output file (not including the suffix).
+            external_memory_table   - a table containing all externals used in the code.
     OUTPUT: This function doesn't return anything.
 */
-void create_externals_file(char* file_name, Table_t external_memory_table); /* TODO: Add documentation */
+void create_externals_file(char* file_name, Table_t external_memory_table);
 
-/*
-    INPUT:
+/*  Gets a string representing a fle name and a labels list.
+    The function creates a file (with .ent suffix), containing all the entry type labels in the given list and their value.
+    If there are no entry labels in that list, no file will be created.
+    INPUT:  file_name       - the name of the output file (not including the suffix).
+            symbol_table    - linked labels list representing all labels that had been defined in the code.
     OUTPUT: This function doesn't return anything.
 */
-void create_entries_file(char* file_name, LabelsLinkedList_t symbol_table); /* TODO: Add documentation */
+void create_entries_file(char* file_name, LabelsLinkedList_t symbol_table);
 
 #endif

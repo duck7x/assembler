@@ -676,7 +676,10 @@ void write_object_file(char* file_name, char *memory_array[]) {
     fclose(dest_file);
 }
 
-/* TODO: Add documentation */
+/*  Gets a string representing a file name a table representing all externals used in the code.
+    If the table is empty, the function stops without creating any files.
+    If it isn't, the function goes through all items in the given table and adds them to the destination file.
+*/
 void create_externals_file(char* file_name, Table_t external_memory_table) {
     int i, externals_amount;
     FILE *dest_file;
@@ -697,14 +700,19 @@ void create_externals_file(char* file_name, Table_t external_memory_table) {
     fclose(dest_file);
 }
 
-/* TODO: Add documentation */
+/*  Gets a string representing a file name and a labels list representing all labels that had been defined in the code.
+    Goes through the given list and searches for all entry labels.
+    Whenever encountered an entry label - checks if it's the first one.
+        If so, creates the destination file and adjusts the has_entries flag.
+        Either way, adds the entry label to the destination file along with its value.
+*/
 void create_entries_file(char* file_name, LabelsLinkedList_t symbol_table) {
     int has_entries = FALSE;
     FILE *dest_file;
 
     LabelNode_t curr_label = get_labels_list_head(symbol_table);
     while (curr_label != NULL) {
-        if (StringsEqual(get_label_node_type(curr_label), ENTRY_TYPE)) { /* TODO: Maybe make into a function */
+        if (StringsEqual(get_label_node_type(curr_label), ENTRY_TYPE)) {
             if (is_not(has_entries)) {
                 dest_file = fopen(concatenate_strings(file_name, ENTRIES_FILE_SUFFIX), WRITE);
                 has_entries = TRUE;
