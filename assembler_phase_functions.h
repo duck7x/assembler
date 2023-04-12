@@ -40,18 +40,7 @@
 #define ZERO '.'
 #define ONE '/'
 
-#define IsRegister(STRING) (strlen(STRING) == 2 && STRING[0] == 'r' && STRING[1] <= '7' && STRING[1] >= '0') /* Checks if a string is a register */
-
 /* General functions */
-
-/*  Generates a linked command list representing all legal commands in assembly.
-    The list includes the following info regarding each command:
-        Command name, command code, amount of operands it takes, allowed source operands
-        and allowed destination operands.
-    INPUT:  This function doesn't have an input.
-    OUTPUT: A linked command list representing all legal commands in assembly.
-*/
-LinkedCommandList_t create_action_names_list();
 
 /*  Gets a string representing a line, checks if the line is a valid code line.
     This is used for the assembler to know if this line should be coded or ignores.

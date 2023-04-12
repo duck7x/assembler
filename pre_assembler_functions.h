@@ -50,6 +50,11 @@ int is_an_existing_macro(char* mcr_name, Table_t macro_table);
 */
 void write_existing_macro_to_file(char* macro, FILE *file, Table_t macro_table);
 
-int is_legal_macro_name(char* name);/* TODO: Add documentation */
+/*  Gets a string representing a macro name and ensures it's a legal macro name.
+    INPUT:  name - a string representing a macro name.
+    OUTPUT: TRUE if the given name is a legal macro name,
+            FALSE if the given name isn't a legal macro name.
+*/
+int is_legal_macro_name(char* name);
 
 #endif

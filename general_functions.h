@@ -27,6 +27,8 @@
 #define StringsNotEqual(FIRST, SECOND) strcmp(FIRST, SECOND) != 0 /* Check if two strings are not equal */
 #define ERROR (-1) /* A number representing an error */
 
+#define IsRegister(STRING) (strlen(STRING) == 2 && STRING[0] == 'r' && STRING[1] <= '7' && STRING[1] >= '0') /* Checks if a string is a register */
+
 /*  Function to handle error messages throughout the assembler phases.
     Gets an error message, prints it and the line number.
     Also sets the global variable has_errors to TRUE.
@@ -102,5 +104,14 @@ char* get_stripped_string(char* str);
     OUTPUT: This function doesn't return anything.
 */
 void write_string_to_file(FILE* file, char* string);
+
+/*  Generates a linked command list representing all legal commands in assembly.
+    The list includes the following info regarding each command:
+        Command name, command code, amount of operands it takes, allowed source operands
+        and allowed destination operands.
+    INPUT:  This function doesn't have an input.
+    OUTPUT: A linked command list representing all legal commands in assembly.
+*/
+LinkedCommandList_t create_action_names_list();
 
 #endif

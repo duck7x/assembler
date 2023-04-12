@@ -86,12 +86,21 @@ void run_assembler_phase_1(char* file_name, LinkedCommandList_t action_names_lis
             continue;
         }
 
+        if(strlen(line) > MAX_LINE_LENGTH) {
+            handle_error("Line's too long");
+        }
+
         relevant_line_bit = clean_multiple_whitespaces(line);
         split_by_label = split_string(relevant_line_bit, COLON);
 
         if (get_list_length(split_by_label) > 2 && is_not(starts_with(GetHeadValue(split_by_label), STRING_PREFIX)) && is_not(starts_with(get_node_value(
                 get_next_node(get_head(split_by_label))), STRING_PREFIX))) {
             handle_error("Invalid usage of ':'");
+            continue;
+        }
+
+        if(line[strlen(line) - 1] == COLON) {
+            handle_error("Label definition without content");
             continue;
         }
 

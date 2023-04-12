@@ -2,36 +2,6 @@
 
 /* General functions */
 
-/*  Generates a linked command list representing all legal commands in assembly.
-    The list includes the following info regarding each command:
-        Command name, command code, amount of operands it takes, allowed source operands
-        and allowed destination operands.
-*/
-LinkedCommandList_t create_action_names_list() {
-    LinkedCommandList_t actions_names_list;
-
-    actions_names_list = create_linked_command_list();
-
-    add_to_commands_list(create_command_node("mov", "0000", 2, "0,1,3", "1,3"), actions_names_list);
-    add_to_commands_list(create_command_node("cmp", "0001", 2, "0,1,3", "0,1,3"), actions_names_list);
-    add_to_commands_list(create_command_node("add", "0010", 2, "0,1,3", "1,3"), actions_names_list);
-    add_to_commands_list(create_command_node("sub", "0011", 2, "0,1,3", "1,3"), actions_names_list);
-    add_to_commands_list(create_command_node("not", "0100", 1, "", "1,3"), actions_names_list);
-    add_to_commands_list(create_command_node("clr", "0101", 1, "", "1,3"), actions_names_list);
-    add_to_commands_list(create_command_node("lea", "0110", 2, "1", "1,3"), actions_names_list);
-    add_to_commands_list(create_command_node("inc", "0111", 1, "", "1,3"), actions_names_list);
-    add_to_commands_list(create_command_node("dec", "1000", 1, "", "1,3"), actions_names_list);
-    add_to_commands_list(create_command_node("jmp", "1001", 1, "", "1,2,3"), actions_names_list);
-    add_to_commands_list(create_command_node("bne", "1010", 1, "", "1,2,3"), actions_names_list);
-    add_to_commands_list(create_command_node("red", "1011", 1, "", "1,3"), actions_names_list);
-    add_to_commands_list(create_command_node("prn", "1100", 1, "", "0,1,3"), actions_names_list);
-    add_to_commands_list(create_command_node("jsr", "1101", 1, "", "1,2,3"), actions_names_list);
-    add_to_commands_list(create_command_node("rts", "1110", 0, "", ""), actions_names_list);
-    add_to_commands_list(create_command_node("stop", "1111", 0, "", ""), actions_names_list);
-
-    return actions_names_list;
-}
-
 /*  Gets a string representing a line, checks if the line is a valid code line.
     If the line starts with the comment prefix, or contains only whitespaces - the function returns FALSE.
     Otherwise, it returns TRUE.
@@ -326,6 +296,8 @@ int add_data_symbols_to_memory(LinkedList_t data_memory_list, int ic, char *memo
 /*  Gets a string representing a label name and runs the following checks:
         Ensures the string doesn't have more than 30 characters.
         Ensures the string starts with an alpha character.
+        Ensure the string is not a register name.
+        Ensures the string is not a command name.
         Ensures all characters in the string are of either alpha pr digit.
     If any of those checks fail, the given string is not a legal label name.
     If all checks pass, then the string is a legal label name.
@@ -333,13 +305,17 @@ int add_data_symbols_to_memory(LinkedList_t data_memory_list, int ic, char *memo
 int is_legal_label_name(char *str) {
     int i, len = (int)strlen(str);
 
-    if (len > 30) {
+    if (len > 30)
         return FALSE;
-    }
 
-    if (!isalpha(str[0])) {
+    if (!isalpha(str[0]))
         return FALSE;
-    }
+
+    if (IsRegister(str))
+        return FALSE;
+
+    if (search_command_list(create_action_names_list(), str) != NULL)
+        return FALSE;
 
     for (i = 1; i < len; i++) {
         if ((!isalpha(str[i])) && (!isdigit(str[i]))) {

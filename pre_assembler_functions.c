@@ -84,8 +84,19 @@ void write_existing_macro_to_file(char* macro, FILE *file, Table_t macro_table) 
     write_string_to_file(file, macro_content);
 }
 
-/* TODO: Write this */
-/* TODO: Add documentation */
+/*  Gets a string representing a macro name.
+    Checks:
+        Ensures the given name is not a command name.
+        Ensures the given name is not a register.
+    If any of the checks fails, the function returns FALSE.
+    Otherwise, it returns TRUE.
+*/
 int is_legal_macro_name(char* name) {
+    if (search_command_list(create_action_names_list(), name) != NULL)
+        return FALSE;
+
+    if(IsRegister(name))
+        return FALSE;
+
     return TRUE;
 }
