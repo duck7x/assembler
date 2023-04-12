@@ -5,13 +5,13 @@
 #include <ctype.h>
 #include "general_functions.h"
 
-#define DEFAULT_EMPTY_WORD "00000000000000" /* TODO: Add documentation */
-#define EXTERN_DEFAULT_VALUE 0 /* TODO: Add documentation */
-#define MEMORY_SIZE 256 /* TODO: Add documentation */
-#define FIRST_AVAILABLE_ADDRESS 100 /* TODO: Add documentation */
-#define COMMENT_PREFIX ";" /* TODO: Add documentation */
-#define SOURCE 5 /* TODO: Add documentation */
-#define DESTINATION 11 /* TODO: Add documentation */
+#define DEFAULT_EMPTY_WORD "00000000000000" /* A word containing 14 zeros, used as default empty word */
+#define MEMORY_SIZE 256 /* The assembler's memory size */
+#define EXTERN_DEFAULT_VALUE 0 /* Defaultive value for extern type labels */
+#define FIRST_AVAILABLE_ADDRESS 100 /* First available address in the memory */
+#define COMMENT_PREFIX ";" /* Prefix to recognize comments in the code */
+#define SOURCE 5 /* Represents source operand */
+#define DESTINATION 11 /* Represents destination operand */
 
 /* Instructions */
 #define DATA_PREFIX ".data"
@@ -37,28 +37,97 @@
 #define ENTRIES_FILE_SUFFIX ".ent"
 
 /* Machine code translation */
-#define ZERO '.' /* TODO: Add documentation */
-#define ONE '/' /* TODO: Add documentation */
+#define ZERO '.'
+#define ONE '/'
 
 #define IsRegister(STRING) (strlen(STRING) == 2 && STRING[0] == 'r' && STRING[1] <= '7' && STRING[1] >= '0') /* TODO: Add documentation */
 
-/* UNSORTED */
+/* General functions */
+
+/*
+    INPUT:
+    OUTPUT:
+*/
 LinkedCommandList_t create_action_names_list(); /* TODO: Add documentation */
-int is_data_storage(char *line); /* TODO: Add documentation */
-int is_extern_or_entry(char *line); /* TODO: Add documentation */
-int is_extern(char *line); /* TODO: Add documentation */
-int is_entry(char *line); /* TODO: Add documentation */
-void set_binary_string_from_num(unsigned int num, char *binary_string, int start); /* TODO: Add documentation */
-void set_binary_string_from_string(char *str, char *binary_string, int start); /* TODO: Add documentation */
-int handle_data_type(char *line, LinkedList_t memory_list); /* TODO: Add documentation */
-int handle_string_type(char *line, LinkedList_t memory_list); /* TODO: Add documentation */
-int calculate_words_for_line(CommandNode_t command_node, char *relevant_line_bit); /* TODO: Add documentation */
-int handle_first_word(CommandNode_t command_node, char *relevant_line_bit, char memory_slot[]); /* TODO: Add documentation */
-int handle_all_but_first_words(CommandNode_t command_node, char *relevant_line_bit, Table_t *extern_memory_table, LabelsLinkedList_t *symbol_table, char *memory_array[], int ic); /* TODO: Add documentation */
+
+/*
+    INPUT:  line - a string representing a line
+    OUTPUT:
+*/
 int is_valid_line(char *line); /* TODO: Add documentation */
 
+/*
+    INPUT:
+    OUTPUT:
+*/
+int is_legal_number(char *str); /* TODO: Add documentation */
 
-/* SORTED */
+/*
+    INPUT:
+    OUTPUT:
+*/
+void set_binary_string_from_num(unsigned int num, char *binary_string, int start); /* TODO: Add documentation */
+
+/*
+    INPUT:
+    OUTPUT:
+*/
+void set_binary_string_from_string(char *str, char *binary_string, int start); /* TODO: Add documentation */
+
+/* Instruction related functions */
+
+/*  Gets a string representing a line and checks if it's a data storage instruction.
+    INPUT:  line - a string representing a line
+    OUTPUT: TRUE if the line is a data storage instruction,
+            FALSE if the line isn't a data storage instruction.
+*/
+int is_data_storage(char *line);
+
+/*  Gets a string representing a line and checks if it's an extern instruction.
+    INPUT:  line - a string representing a line
+    OUTPUT: TRUE if the line is an extern instruction,
+            FALSE if the line isn't an extern instruction.
+*/
+int is_extern(char *line);
+
+/*  Gets a string representing a line and checks if it's an entry instruction.
+    INPUT:  line - a string representing a line
+    OUTPUT: TRUE if the line is an entry instruction,
+            FALSE if the line isn't an entry instruction.
+*/
+int is_entry(char *line);
+
+/*  Gets a string representing a line and checks if it's an extern or entry instruction.
+    INPUT:  line - a string representing a line
+    OUTPUT: TRUE if the line is an extern or entry instruction,
+            FALSE if the line isn't an extern or entry instruction.
+*/
+int is_extern_or_entry(char *line);
+
+/*  Gets a string representing a line and a linked list representing the data image of the assembler.
+    Handles the data instruction by
+        Ensuring the syntax is correct and if not, handle the error.
+        If the syntax is indeed correct, adds all the given data (numbers) to the given data image.
+    Returns ERROR if there was an error during the handling, otherwise, returns the amount of data defined in the line.
+    INPUT:  line                - a string representing a line.
+            data_memory_list    - A linked list representing the data image of the assembler.
+    OUTPUT: Returns ERROR in case of any errors in the lines,
+            Otherwise, returns the amount of data defined in the line.
+*/
+int handle_data_type(char *line, LinkedList_t data_memory_list);
+
+/*  Gets a string representing a line and a linked list representing the data image of the assembler.
+    Handles the string instruction by
+        Ensuring the syntax is correct and if not, handle the error.
+        If the syntax is indeed correct, adds all the given string characters to the given data image.
+    Returns ERROR if there was an error during the handling,
+    Otherwise, returns the length of the string defined in the line.
+    INPUT:  line - a string representing a line.
+            data_memory_list    - A linked list representing the data image of the assembler.
+    OUTPUT: Returns ERROR in case of any errors in the lines,
+            Otherwise, returns length of the string defined in the line.
+*/
+int handle_string_type(char *line, LinkedList_t data_memory_list);
 
 /* Labels related functions */
 
@@ -271,5 +340,10 @@ void create_externals_file(char* file_name, Table_t external_memory_table);
     OUTPUT: This function doesn't return anything.
 */
 void create_entries_file(char* file_name, LabelsLinkedList_t symbol_table);
+
+/* Words related functions */
+int calculate_words_for_line(CommandNode_t command_node, char *relevant_line_bit); /* TODO: Add documentation */
+int handle_first_word(CommandNode_t command_node, char *relevant_line_bit, char memory_slot[]); /* TODO: Add documentation */
+int handle_all_but_first_words(CommandNode_t command_node, char *relevant_line_bit, Table_t *extern_memory_table, LabelsLinkedList_t *symbol_table, char *memory_array[], int ic); /* TODO: Add documentation */
 
 #endif

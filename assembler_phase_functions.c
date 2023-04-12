@@ -1,6 +1,6 @@
 #include "assembler_phase_functions.h"
 
-/* UNSORTED */
+/* General functions */
 
 /* TODO: Add documentation */
 LinkedCommandList_t create_action_names_list() {
@@ -8,7 +8,6 @@ LinkedCommandList_t create_action_names_list() {
 
     actions_names_list = create_linked_command_list();
 
-    /* TODO: Instead of setting numbers, generate them */
     add_to_commands_list(create_command_node("mov", "0000", 2, "0,1,3", "1,3"), actions_names_list);
     add_to_commands_list(create_command_node("cmp", "0001", 2, "0,1,3", "0,1,3"), actions_names_list);
     add_to_commands_list(create_command_node("add", "0010", 2, "0,1,3", "1,3"), actions_names_list);
@@ -30,31 +29,26 @@ LinkedCommandList_t create_action_names_list() {
 }
 
 /* TODO: Add documentation */
-int is_data_storage(char *line){
-    if (starts_with(line, DATA_PREFIX) || starts_with(line, STRING_PREFIX))  /* TODO: Maybe improve this */
-        return TRUE;
-    return FALSE;
+int is_valid_line(char *line) {
+    if (is(starts_with(line, COMMENT_PREFIX)))
+        return FALSE;
+    if (strlen(get_string_without_whitespaces(line)) == 0)
+        return FALSE;
+    return TRUE;
 }
 
 /* TODO: Add documentation */
-int is_extern_or_entry(char *line) {
-    if (starts_with(line, EXTERN_PREFIX) || starts_with(line, ENTRY_PREFIX))   /* TODO: Maybe improve this */
-        return TRUE;
-    return FALSE;
-}
+int is_legal_number(char *str) {
+    int i;
 
-/* TODO: Add documentation */
-int is_extern(char *line) {
-    if (starts_with(line, EXTERN_PREFIX))   /* TODO: Maybe improve this */
-        return TRUE;
-    return FALSE;
-}
+    if(!isdigit(str[0]) && str[0] != MINUS && str[0] != PLUS)
+        return FALSE;
 
-/* TODO: Add documentation */
-int is_entry(char *line) {
-    if (starts_with(line, ENTRY_PREFIX))   /* TODO: Maybe improve this */
-        return TRUE;
-    return FALSE;
+    for (i = 1; i < strlen(str); i++) {
+        if(!isdigit(str[i]))
+            return FALSE;
+    }
+    return TRUE;
 }
 
 /* 2’s complement */
@@ -86,8 +80,56 @@ void set_binary_string_from_string(char *str, char *binary_string, int start) {
     set_binary_string_from_num(num, binary_string, start);
 }
 
-/* TODO: Add documentation */
-int handle_data_type(char *line, LinkedList_t memory_list) {
+/* Labels related functions */
+
+/*  Gets a string representing a line.
+    Checks if it's a data storage instruction by using the starts_with function to check if the line starts with
+    Either DATA_PREFIX or STRING_PREFIX.
+*/
+int is_data_storage(char *line){
+    if (starts_with(line, DATA_PREFIX) || starts_with(line, STRING_PREFIX))
+        return TRUE;
+    return FALSE;
+}
+
+/*  Gets a string representing a line.
+    Checks if it's an extern instruction by using the starts_with function to check if the line starts with EXTERN_PREFIX.
+*/
+int is_extern(char *line) {
+    if (starts_with(line, EXTERN_PREFIX))
+        return TRUE;
+    return FALSE;
+}
+
+/*  Gets a string representing a line.
+    Checks if it's an entry instruction by using the starts_with function to check if the line starts with ENTRY_PREFIX.
+*/
+int is_entry(char *line) {
+    if (starts_with(line, ENTRY_PREFIX))
+        return TRUE;
+    return FALSE;
+}
+
+/*  Gets a string representing a line.
+    Checks if it's an extern or entry instruction by using the is_extern and is_entry functions.
+*/
+int is_extern_or_entry(char *line) {
+    if (is(is_extern(line)) || is(is_entry(line)))
+        return TRUE;
+    return FALSE;
+}
+
+/*  Gets a string representing a line and a linked list representing the data image of the assembler.
+    Ensures the syntax is correct according to:
+        No space after the .data instruction prefix.
+        All given data are legal numbers.
+        Correct amount placement of commas.
+    If syntax is not right, returns ERROR.
+    Otherwise, goes through all numbers in the instruction (by splitting the line by comma delimiter)
+    And adds its binary representation to the given data image list.
+    Returns the amount of data that was added by returning the length of the list of the split line.
+*/
+int handle_data_type(char *line, LinkedList_t data_memory_list) {
     char *data, *curr_string, *binary_string;
     Node_t curr_node;
     LinkedList_t split_data;
@@ -95,8 +137,8 @@ int handle_data_type(char *line, LinkedList_t memory_list) {
     data = copy_substring(line, 5, (int)strlen(line));
 
     if (!isSpace(data[0])) {
-        /* TODO: ERROR HANDLING - this is an error! */
-        return 0;
+        handle_error("Illegal instruction");
+        return ERROR;
     }
 
     data = get_string_without_whitespaces(data);
@@ -105,213 +147,64 @@ int handle_data_type(char *line, LinkedList_t memory_list) {
 
     while (curr_node != NULL) {
         curr_string = get_node_value(curr_node);
+
         if (strlen(curr_string) == 0) {
             handle_error("Incorrect commas in data");
-            return 0;
+            return ERROR;
         }
+
+        if (is_not(is_legal_number(curr_string))) {
+            handle_error("Illegal number in .data instruction");
+            return ERROR;
+        }
+
         binary_string = copy_string(DEFAULT_EMPTY_WORD);
         set_binary_string_from_string(curr_string, binary_string, 13);
-        add_value_to_list(binary_string, memory_list); /* TODO: Might separate to function? */
+        add_value_to_list(binary_string, data_memory_list);
         curr_node = get_next_node(curr_node);
     }
 
     return get_list_length(split_data);
 }
 
-/* TODO: Add documentation */
-int handle_string_type(char *line, LinkedList_t memory_list) {
+/*  Gets a string representing a line and a linked list representing the data image of the assembler.
+    Ensures the syntax is correct according to:
+        No space after the .data instruction prefix.
+        String is wrapped in quotation marks.
+    If syntax is not right, returns ERROR.
+    Otherwise, goes through all characters in the instruction (other than the quotation marks) using a for loop
+    And adds its binary representation to the given data image list.
+    Also adds \0 binary representation to the data image to represent the end of the string.
+    Returns the length of the string that was added.
+*/
+int handle_string_type(char *line, LinkedList_t data_memory_list) {
     char *data, *binary_string;
     int i;
 
     data = copy_substring(line, 7, (int)strlen(line));
 
     if (!isSpace(data[0])) {
-        /* TODO: ERROR HANDLING - this is an error! */
-        return 0;
+        handle_error("Illegal instruction");
+        return ERROR;
     }
 
     data = get_string_without_whitespaces(data);
 
     if (data[0] != '"' || data[strlen(data) - 1] != '"') {
         handle_error("Missing quotation marks at the edge of string definition");
-        return 0;
+        return ERROR;
     }
 
     for (i = 1; i < strlen(data) - 1; i++) {
         binary_string = copy_string(DEFAULT_EMPTY_WORD);
         set_binary_string_from_num(data[i], binary_string, 13);
-        add_value_to_list(binary_string, memory_list); /* TODO: Might separate to function? */
+        add_value_to_list(binary_string, data_memory_list);
     }
 
-    add_value_to_list(DEFAULT_EMPTY_WORD, memory_list); /* TODO: Might separate to function? */ /* Adding \0 at the end */
+    add_value_to_list(DEFAULT_EMPTY_WORD, data_memory_list); /* Adding \0 at the end */
 
     return (int)strlen(data) - 1;
 }
-
-/* Assuming line is alright (will be checked separately) */
-/* TODO: Add documentation */
-int calculate_words_for_line(CommandNode_t command_node, char *relevant_line_bit) {
-    char *operands_string;
-    int operands_num, l = 1, operand_type;
-    LinkedList_t split_operands;
-
-    if(command_node == NULL) {
-        return ERROR;  /* An error should have already been thrown when handled the first word */
-    }
-
-    operands_string = get_clean_and_stripped_string(copy_substring(relevant_line_bit, (int)strlen(get_command_node_command(command_node)), (int)strlen(relevant_line_bit)));
-    operands_num = get_command_node_operands(command_node);
-
-    split_operands = get_split_operands(operands_string);
-
-    if (operands_num == 1) {
-        operand_type = get_address_type(operands_string);
-        if (operand_type == JUMP) {
-            /* Jump handling */
-            l += 2; /* TODO: Ensure! */
-            split_operands = split_string(GetTailValue(split_string(copy_substring(operands_string, 0,
-                                                                                              strlen(operands_string)-1), LEFT_BRACKET)), COMMA);
-            l += has_non_register_operands(split_operands);
-        } else {
-            l += 1;
-        }
-    } else if (operands_num == 2) {
-        split_operands = split_string(get_string_without_whitespaces(operands_string), COMMA);
-        l += 1 + has_non_register_operands(split_operands);
-    }
-
-    return l;
-}
-
-
-
-/* TODO: Add documentation */
-int handle_first_word(CommandNode_t command_node, char *relevant_line_bit, char memory_slot[]) {
-    char *operands_string, *opcode;
-    int operands_num, i, l = 1, operand_type, non_register_operands = FALSE;
-    LinkedList_t split_operands;
-
-    if(command_node == NULL) {  /* Step 12 */
-        handle_error("Illegal command");
-        return -ERROR;
-    }
-
-    operands_string = get_clean_and_stripped_string(copy_substring(relevant_line_bit, (int)strlen(get_command_node_command(command_node)), strlen(relevant_line_bit)));
-    operands_num = get_command_node_operands(command_node);
-    opcode = get_command_node_code(command_node);
-
-    split_operands = get_split_operands(operands_string);
-
-    if (get_list_length(split_operands) != operands_num) {
-        handle_error("Wrong amount of operands specified");
-        return ERROR;
-    }
-
-    /* Encode and add first word to memory array */
-    for (i = 6; i <= 9 ; i++) {
-        memory_slot[13-i] = opcode[9-i];
-    }
-
-    if (operands_num == 1) {
-        operand_type = get_address_type(operands_string);
-        /* TODO: split to functions */
-        /* TODO: ensure type fits command */
-        if (operand_type == JUMP) {
-            memory_slot[13-3] = '1'; /* TODO: change to 13 - something */
-            l += 2; /* TODO: Ensure! */
-            /* handle 10-13 by jump params */
-            split_operands = split_string(GetTailValue(split_string(copy_substring(operands_string, 0,
-                                                                                              strlen(operands_string)-1), LEFT_BRACKET)), COMMA);
-            /* TODO: switch to for loop to reduce code redundancy */
-            operand_type = get_address_type(GetHeadValue(split_operands));
-            if (operand_type != REGISTER)
-                non_register_operands = TRUE;
-            memory_slot[13-13] = '0' + (operand_type / 2); /* TODO: change to 13 - something */
-            memory_slot[13-12] = '0' + (operand_type % 2); /* TODO: change to 13 - something */
-            operand_type = get_address_type(GetTailValue(split_operands));
-            if (operand_type != REGISTER)
-                non_register_operands = TRUE;
-            memory_slot[13-11] = '0' + (operand_type / 2); /* TODO: change to 13 - something */
-            memory_slot[13-10] = '0' + (operand_type % 2); /* TODO: change to 13 - something */
-
-            l += non_register_operands;
-        } else {
-            l += 1;
-            /* handle 2-3 by params */
-            memory_slot[13-3] = '0' + (operand_type / 2); /* TODO: change to 13 - something */
-            memory_slot[13-2] = '0' + (operand_type % 2); /* TODO: change to 13 - something */
-        }
-    } else if (operands_num == 2) {
-        l += 1;
-        for (i = 0; i <= 3; i++) {
-            memory_slot[i] = '0';
-        }
-        split_operands = split_string(get_string_without_whitespaces(operands_string), COMMA);
-        /* TODO: switch to for loop to reduce code redundancy */
-        /* 4,5 bits according to first operand */
-        operand_type = get_address_type(GetHeadValue(split_operands));
-        if (operand_type != REGISTER)
-            non_register_operands = TRUE;
-        memory_slot[13-5] = '0' + (operand_type / 2);
-        memory_slot[13-4] = '0' + (operand_type % 2);
-        /* 2,3 bits according to second operand */
-        operand_type = get_address_type(GetTailValue(split_operands));
-        if (operand_type != REGISTER)
-            non_register_operands = TRUE;
-        memory_slot[13-3] = '0' + (operand_type / 2);
-        memory_slot[13-2] = '0' + (operand_type % 2);
-        l += non_register_operands;
-    }
-
-    return l;
-}
-
-/* TODO: Add documentation */
-int handle_all_but_first_words(CommandNode_t command_node, char *relevant_line_bit, Table_t *extern_memory_table, LabelsLinkedList_t *symbol_table, char *memory_array[], int ic) {
-    int l, operands_num = get_command_node_operands(command_node);
-    char *operands_string, *first, *second;
-    LinkedList_t split_operands;
-
-    if(command_node == NULL) {
-        return ERROR;  /* An error should have already been thrown when handled the first word */
-    }
-
-    l = calculate_words_for_line(command_node, relevant_line_bit);
-
-    if (operands_num == 0)
-        return l;
-
-    operands_string = get_clean_and_stripped_string(copy_substring(relevant_line_bit, (int)strlen(get_command_node_command(command_node)), (int)strlen(relevant_line_bit)));
-
-    if (operands_num == 1) {
-        set_operand_code(operands_string, DESTINATION, extern_memory_table, symbol_table, memory_array, ic);
-    } else if (operands_num == 2) {
-        /* TODO: This repeats (jump) */
-        split_operands = split_string(get_string_without_whitespaces(operands_string), COMMA);
-        first = GetHeadValue(split_operands);
-        second = GetTailValue(split_operands);
-        set_operand_code(first, SOURCE, extern_memory_table, symbol_table, memory_array, ic);
-        if (get_address_type(first) != REGISTER || get_address_type(second) != REGISTER) /* TODO: Make this better and not here */
-            ic ++;
-        set_operand_code(second, DESTINATION, extern_memory_table, symbol_table, memory_array, ic);
-    }
-
-    return l;
-}
-
-/* TODO: Add documentation */
-int is_valid_line(char *line) {
-    if (is(starts_with(line, COMMENT_PREFIX)))
-        return FALSE;
-    if (strlen(get_string_without_whitespaces(line)) == 0)
-        return FALSE;
-    return TRUE;
-}
-
-
-/* SORTED */
-
-/* Labels related functions */
 
 /*  Gets a LinkedList_t object which represents a line split by the colon delimiter.
     If the list contains more than 1 item, it means the line attempts to start with a label and so the functions returns TRUE.
@@ -757,4 +650,157 @@ void create_entries_file(char* file_name, LabelsLinkedList_t symbol_table) {
         }
         curr_label = get_next_label_node(curr_label);
     }
+}
+
+/* Words related functions */
+
+/* Assuming line is alright (will be checked separately) */
+/* TODO: Add documentation */
+int calculate_words_for_line(CommandNode_t command_node, char *relevant_line_bit) {
+    char *operands_string;
+    int operands_num, l = 1, operand_type;
+    LinkedList_t split_operands;
+
+    if(command_node == NULL) {
+        return ERROR;  /* An error should have already been thrown when handled the first word */
+    }
+
+    operands_string = get_clean_and_stripped_string(copy_substring(relevant_line_bit, (int)strlen(get_command_node_command(command_node)), (int)strlen(relevant_line_bit)));
+    operands_num = get_command_node_operands(command_node);
+
+    split_operands = get_split_operands(operands_string);
+
+    if (operands_num == 1) {
+        operand_type = get_address_type(operands_string);
+        if (operand_type == JUMP) {
+            /* Jump handling */
+            l += 2;
+            split_operands = split_string(GetTailValue(split_string(copy_substring(operands_string, 0,
+                                                                                   strlen(operands_string)-1), LEFT_BRACKET)), COMMA);
+            l += has_non_register_operands(split_operands);
+        } else {
+            l += 1;
+        }
+    } else if (operands_num == 2) {
+        split_operands = split_string(get_string_without_whitespaces(operands_string), COMMA);
+        l += 1 + has_non_register_operands(split_operands);
+    }
+
+    return l;
+}
+
+
+
+/* TODO: Add documentation */
+int handle_first_word(CommandNode_t command_node, char *relevant_line_bit, char memory_slot[]) {
+    char *operands_string, *opcode;
+    int operands_num, i, l = 1, operand_type, non_register_operands = FALSE;
+    LinkedList_t split_operands;
+
+    if(command_node == NULL) {  /* Step 12 */
+        handle_error("Illegal command");
+        return -ERROR;
+    }
+
+    operands_string = get_clean_and_stripped_string(copy_substring(relevant_line_bit, (int)strlen(get_command_node_command(command_node)), strlen(relevant_line_bit)));
+    operands_num = get_command_node_operands(command_node);
+    opcode = get_command_node_code(command_node);
+
+    split_operands = get_split_operands(operands_string);
+
+    if (get_list_length(split_operands) != operands_num) {
+        handle_error("Wrong amount of operands specified");
+        return ERROR;
+    }
+
+    /* Encode and add first word to memory array */
+    for (i = 6; i <= 9 ; i++) {
+        memory_slot[13-i] = opcode[9-i];
+    }
+
+    if (operands_num == 1) {
+        operand_type = get_address_type(operands_string);
+        /* TODO: split to functions */
+        /* TODO: ensure type fits command */
+        if (operand_type == JUMP) {
+            memory_slot[13-3] = '1'; /* TODO: change to 13 - something */
+            l += 2; /* TODO: Ensure! */
+            /* handle 10-13 by jump params */
+            split_operands = split_string(GetTailValue(split_string(copy_substring(operands_string, 0,
+                                                                                   strlen(operands_string)-1), LEFT_BRACKET)), COMMA);
+            /* TODO: switch to for loop to reduce code redundancy */
+            operand_type = get_address_type(GetHeadValue(split_operands));
+            if (operand_type != REGISTER)
+                non_register_operands = TRUE;
+            memory_slot[13-13] = '0' + (operand_type / 2); /* TODO: change to 13 - something */
+            memory_slot[13-12] = '0' + (operand_type % 2); /* TODO: change to 13 - something */
+            operand_type = get_address_type(GetTailValue(split_operands));
+            if (operand_type != REGISTER)
+                non_register_operands = TRUE;
+            memory_slot[13-11] = '0' + (operand_type / 2); /* TODO: change to 13 - something */
+            memory_slot[13-10] = '0' + (operand_type % 2); /* TODO: change to 13 - something */
+
+            l += non_register_operands;
+        } else {
+            l += 1;
+            /* handle 2-3 by params */
+            memory_slot[13-3] = '0' + (operand_type / 2); /* TODO: change to 13 - something */
+            memory_slot[13-2] = '0' + (operand_type % 2); /* TODO: change to 13 - something */
+        }
+    } else if (operands_num == 2) {
+        l += 1;
+        for (i = 0; i <= 3; i++) {
+            memory_slot[i] = '0';
+        }
+        split_operands = split_string(get_string_without_whitespaces(operands_string), COMMA);
+        /* TODO: switch to for loop to reduce code redundancy */
+        /* 4,5 bits according to first operand */
+        operand_type = get_address_type(GetHeadValue(split_operands));
+        if (operand_type != REGISTER)
+            non_register_operands = TRUE;
+        memory_slot[13-5] = '0' + (operand_type / 2);
+        memory_slot[13-4] = '0' + (operand_type % 2);
+        /* 2,3 bits according to second operand */
+        operand_type = get_address_type(GetTailValue(split_operands));
+        if (operand_type != REGISTER)
+            non_register_operands = TRUE;
+        memory_slot[13-3] = '0' + (operand_type / 2);
+        memory_slot[13-2] = '0' + (operand_type % 2);
+        l += non_register_operands;
+    }
+
+    return l;
+}
+
+/* TODO: Add documentation */
+int handle_all_but_first_words(CommandNode_t command_node, char *relevant_line_bit, Table_t *extern_memory_table, LabelsLinkedList_t *symbol_table, char *memory_array[], int ic) {
+    int l, operands_num = get_command_node_operands(command_node);
+    char *operands_string, *first, *second;
+    LinkedList_t split_operands;
+
+    if(command_node == NULL) {
+        return ERROR;  /* An error should have already been thrown when handled the first word */
+    }
+
+    l = calculate_words_for_line(command_node, relevant_line_bit);
+
+    if (operands_num == 0)
+        return l;
+
+    operands_string = get_clean_and_stripped_string(copy_substring(relevant_line_bit, (int)strlen(get_command_node_command(command_node)), (int)strlen(relevant_line_bit)));
+
+    if (operands_num == 1) {
+        set_operand_code(operands_string, DESTINATION, extern_memory_table, symbol_table, memory_array, ic);
+    } else if (operands_num == 2) {
+        /* TODO: This repeats (jump) */
+        split_operands = split_string(get_string_without_whitespaces(operands_string), COMMA);
+        first = GetHeadValue(split_operands);
+        second = GetTailValue(split_operands);
+        set_operand_code(first, SOURCE, extern_memory_table, symbol_table, memory_array, ic);
+        if (is(has_non_register_operands(split_operands)))
+            ic ++;
+        set_operand_code(second, DESTINATION, extern_memory_table, symbol_table, memory_array, ic);
+    }
+
+    return l;
 }
