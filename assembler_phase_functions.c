@@ -2,7 +2,11 @@
 
 /* General functions */
 
-/* TODO: Add documentation */
+/*  Generates a linked command list representing all legal commands in assembly.
+    The list includes the following info regarding each command:
+        Command name, command code, amount of operands it takes, allowed source operands
+        and allowed destination operands.
+*/
 LinkedCommandList_t create_action_names_list() {
     LinkedCommandList_t actions_names_list;
 
@@ -28,16 +32,26 @@ LinkedCommandList_t create_action_names_list() {
     return actions_names_list;
 }
 
-/* TODO: Add documentation */
+/*  Gets a string representing a line, checks if the line is a valid code line.
+    If the line starts with the comment prefix, or contains only whitespaces - the function returns FALSE.
+    Otherwise, it returns TRUE.
+*/
 int is_valid_line(char *line) {
     if (is(starts_with(line, COMMENT_PREFIX)))
         return FALSE;
+
     if (strlen(get_string_without_whitespaces(line)) == 0)
         return FALSE;
+
     return TRUE;
 }
 
-/* TODO: Add documentation */
+/*  Checks if a given string is a legal, possibly signed number.
+    Goes through all characters of the string,
+        For the first character, checks if it's a sign or a digit.
+        For the rest of the character, checks if it's a digit.
+    Returns TRUE if all tests pass and FALSE if any fail.
+*/
 int is_legal_number(char *str) {
     int i;
 
@@ -48,11 +62,16 @@ int is_legal_number(char *str) {
         if(!isdigit(str[i]))
             return FALSE;
     }
+
     return TRUE;
 }
 
-/* 2’s complement */
-/* TODO: Add documentation */
+/*  Gets an unsigned number, a string representing a binary number and a starting point.
+    Sets the string to be the binary representation of the given number,
+    Starting from the given starting point, by adding the reminder of the number and 2 to the relevant bit,
+    then dividing the number by 2 and moving the start index one step forwards.
+    The function keeps doing so until the number is 0, or it reaches the end of the string.
+*/
 void set_binary_string_from_num(unsigned int num, char *binary_string, int start) {
     int i;
     for (i = start; num > 0 && i >= 0; i--) {
@@ -62,14 +81,20 @@ void set_binary_string_from_num(unsigned int num, char *binary_string, int start
 }
 
 /* 2’s complement */
-/* TODO: Add documentation */
+/*  Gets a string representing a number or a character, another string representing a binary representation
+    and a starting index.
+    Using atoi to turn the string into an integer, the ~ operator in case the number is negative,
+    And the set_binary_string_from_num function, sets the binary representation according to the given string.
+    The function assume the string is a legal number or a character.
+*/
 void set_binary_string_from_string(char *str, char *binary_string, int start) {
-    int num, negative = FALSE;
-    if (str[0] == MINUS) {
+    int num, negative = FALSE, str_length = (int)strlen(str);
+
+    if (str[0] == MINUS && str_length > 1) {
         negative = TRUE;
-        num = atoi(copy_substring(str, 1, (int)strlen(str)));
-    } else if (str[0] == PLUS) {
-        num = atoi(copy_substring(str, 1, (int)strlen(str)));
+        num = atoi(copy_substring(str, 1, str_length));
+    } else if (str[0] == PLUS && str_length > 1) {
+        num = atoi(copy_substring(str, 1, str_length));
     } else {
         num = atoi(str);
     }

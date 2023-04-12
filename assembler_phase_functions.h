@@ -40,43 +40,58 @@
 #define ZERO '.'
 #define ONE '/'
 
-#define IsRegister(STRING) (strlen(STRING) == 2 && STRING[0] == 'r' && STRING[1] <= '7' && STRING[1] >= '0') /* TODO: Add documentation */
+#define IsRegister(STRING) (strlen(STRING) == 2 && STRING[0] == 'r' && STRING[1] <= '7' && STRING[1] >= '0') /* Checks if a string is a register */
 
 /* General functions */
 
-/*
-    INPUT:
-    OUTPUT:
+/*  Generates a linked command list representing all legal commands in assembly.
+    The list includes the following info regarding each command:
+        Command name, command code, amount of operands it takes, allowed source operands
+        and allowed destination operands.
+    INPUT:  This function doesn't have an input.
+    OUTPUT: A linked command list representing all legal commands in assembly.
 */
-LinkedCommandList_t create_action_names_list(); /* TODO: Add documentation */
+LinkedCommandList_t create_action_names_list();
 
-/*
+/*  Gets a string representing a line, checks if the line is a valid code line.
+    This is used for the assembler to know if this line should be coded or ignores.
     INPUT:  line - a string representing a line
-    OUTPUT:
+    OUTPUT: TRUE if the line is a valid code line,
+            FALSE if the line isn't a valid code line.
 */
-int is_valid_line(char *line); /* TODO: Add documentation */
+int is_valid_line(char *line);
 
-/*
-    INPUT:
-    OUTPUT:
+/*  Checks if a given string is a legal, possibly signed number.
+    INPUT:  str - a string to be checked.
+    OUTPUT: TRUE if the line is a legal number,
+            FALSE if the line isn't a legal number.
 */
-int is_legal_number(char *str); /* TODO: Add documentation */
+int is_legal_number(char *str);
 
-/*
-    INPUT:
-    OUTPUT:
+/*  Gets an unsigned number, a string representing a binary number and a starting point.
+    Sets the string to be the binary representation of the given number,
+    Starting from the given starting point.
+    INPUT:  num             - the number to be translated to binary.
+            binary_string   - the binary string to edit.
+            start           - the character in the binary string to start at.
+    OUTPUT: This function doesn't return anything.
 */
-void set_binary_string_from_num(unsigned int num, char *binary_string, int start); /* TODO: Add documentation */
+void set_binary_string_from_num(unsigned int num, char *binary_string, int start);
 
-/*
-    INPUT:
-    OUTPUT:
+/*  Gets a string representing a number or a character, another string representing a binary representation
+    and a starting index.
+    INPUT:  str             - a string representing a number or character to encode.
+            binary_string   - a string to encode the given str into.
+            start           - the index in the binary string to start at.
+    OUTPUT: This function doesn't return anything.
 */
-void set_binary_string_from_string(char *str, char *binary_string, int start); /* TODO: Add documentation */
+void set_binary_string_from_string(char *str, char *binary_string, int start);
 
 /* Instruction related functions */
 
 /*  Gets a string representing a line and checks if it's a data storage instruction.
+    Sets the binary string to be the binary representation of the given string,
+    Starting from the given starting point.
     INPUT:  line - a string representing a line
     OUTPUT: TRUE if the line is a data storage instruction,
             FALSE if the line isn't a data storage instruction.
