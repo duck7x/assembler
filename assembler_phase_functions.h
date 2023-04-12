@@ -76,29 +76,44 @@ int is_valid_line(char *line); /* TODO: Add documentation */
 */
 int starts_with_label(LinkedList_t split_line);
 
-/*
-    INPUT:
-    OUTPUT:
+/*  Gets a labels list, a line split, a string representing label type and an int representing label value.
+    Ensure the label defined by the line is valid.
+    If it is, adds its details to the given labels list.
+    If it isn't, handles the error.
+    INPUT:  labels_list - linked labels list representing all labels that had been defined in the file.
+            split_line  - a linked list representing the current line split by the colon delimiter.
+            type        - the new label's type.
+            value       - the new label's value.
+    OUTPUT: This function doesn't return anything.
 */
-void add_label(LabelsLinkedList_t labels_list, LinkedList_t split_line, char *type, int value); /* TODO: Add documentation */
+void add_label(LabelsLinkedList_t labels_list, LinkedList_t split_line, char *type, int value);
 
-/*
-    INPUT:
-    OUTPUT:
+/*  Gets a labels list and a string representing label name.
+    Marks the given label in the given list as entry type.
+    If the given label is not found in the given list, handles the error.
+    INPUT:  symbol_table    - linked labels list representing all labels that had been defined in the file.
+            label_name      - a string representing a label to be marked as entry
+    OUTPUT: This function doesn't return anything.
 */
-void mark_label_as_entry(LabelsLinkedList_t symbol_table, char* label_name); /* TODO: Add documentation */
+void mark_label_as_entry(LabelsLinkedList_t symbol_table, char* label_name);
 
-/*
-    INPUT:
-    OUTPUT:
+/*  Gets a labels list and an in counter.
+    Adds the given counter to the values of all data labels in the given list.
+    This is one of the last steps of phase 1 of the assembler.
+    INPUT:  symbol_table    - linked labels list representing all labels that had been defined in the file.
+            ic              - an int representing the instructions counter.
+    OUTPUT: This function doesn't return anything.
 */
-void update_symbol_table(LabelsLinkedList_t symbol_table, int ic); /* TODO: Add documentation */
+void update_symbol_table(LabelsLinkedList_t symbol_table, int ic);
 
-/*
-    INPUT:
-    OUTPUT:
+/*  Gets a data memory list, an instruction counter and a memory array.
+    Adds all items in the data memory list to the end of the given memory array and returns the updated ic value.
+    INPUT:  data_memory_list    - A linked list representing the data image of the assembler.
+            ic                  - An int representing the current instruction counter.
+            memory_array        - An array of strings, representing the code image of the assembler.
+    OUTPUT: Returns the updated ic value, after adding all the data image to the code image.
 */
-int add_data_symbols_to_memory(LinkedList_t data_memory_list, int ic, char *memory_array[]); /* TODO: Add documentation */
+int add_data_symbols_to_memory(LinkedList_t data_memory_list, int ic, char *memory_array[]);
 
 /*  Gets a string representing a label name, and checks if it's a legal label name.
     INPUT:  str - the label name that needs to be checked.
@@ -107,8 +122,14 @@ int add_data_symbols_to_memory(LinkedList_t data_memory_list, int ic, char *memo
 */
 int is_legal_label_name(char *str);
 
-/* Address type / operands related functions */ /* TODO: Rewrite doc title */
-LinkedList_t get_split_operands(char *operands_string); /* TODO: Add documentation */
+/* Address type / operands related functions */
+
+/*  Gets a string representing the operands bit of a code line.
+    Returns a list in which each member represents a single operand from the given string.
+    INPUT:  operands_string - a string representing the operands bit of a code line.
+    OUTPUT: A linked list of the split operands.
+*/
+LinkedList_t get_split_operands(char *operands_string);
 
 /*  Gets a string representing an operand,
     Checks if the address type of that operand is of immediate address type.

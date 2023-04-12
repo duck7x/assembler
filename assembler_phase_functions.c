@@ -325,16 +325,24 @@ int starts_with_label(LinkedList_t split_line) {
     return FALSE;
 }
 
-/* TODO: Add documentation */
+/*  Gets a labels list, a line split, a string representing label type
+    and an int representing label value.
+    According to the label type, extracts the label name from the split line.
+    Ensures that the label definition is valid:
+        If extern type, ensures it defines only a single value.
+        Ensures such label doesn't already exist.
+        Ensures the label name is valid.
+    If the label definition is valid, adds the new label and its content to the given labels list.
+    If there are errors in the label definition, handles them.
+*/
 void add_label(LabelsLinkedList_t labels_list, LinkedList_t split_line, char *type, int value) {
-    char *label_name = ""; /* TODO: Fix this */
+    char *label_name = "";
 
-    /* TODO: if there's time - change to switch case */
     if (StringsEqual(type, DATA_TYPE) || StringsEqual(type, CODE_TYPE)) {
         label_name = GetHeadValue(split_line);
     } else if (StringsEqual(type,EXTERN_TYPE)) {
         if (get_list_length(split_line) > 2) {
-            handle_error("Too many words after label"); /* Needs rephrase */
+            handle_error("Too many parameters after extern instruction");
         }
         label_name = GetTailValue(split_line);
     }
@@ -351,21 +359,25 @@ void add_label(LabelsLinkedList_t labels_list, LinkedList_t split_line, char *ty
     add_to_labels_list(create_label_node(label_name, type, FIRST_AVAILABLE_ADDRESS + value), labels_list);
 }
 
-/* TODO: Add documentation */
+/*  Gets a linked labels list representing all labels that had been defined in the file,
+    Gets a string representing a label name.
+    Using the search_labels_list function, looks for the given label in the labels list.
+    If found, marks that label as an entry type.
+    If not found, handles the error.
+*/
 void mark_label_as_entry(LabelsLinkedList_t symbol_table, char* label_name) {
-    LabelNode_t curr_label = get_labels_list_head(symbol_table);
-    while (curr_label != NULL) {
-        if (StringsEqual(get_label_node_name(curr_label), label_name)) {
-            set_label_node_type(curr_label, ENTRY_TYPE);
-            return;
-        }
-        curr_label = get_next_label_node(curr_label);
-    }
-    handle_error("Entry label doesn't exist");
+    LabelNode_t label = search_labels_list(symbol_table, label_name);
+
+    if (label == NULL)
+        handle_error("Entry label doesn't exist");
+    else
+        set_label_node_type(label, ENTRY_TYPE);
 }
 
-/* TODO: Rename this */
-/* TODO: Add documentation */
+/*  Gets a linked labels list representing all labels that had been defined in the file,
+    And an int representing the instructions counter at the end of phase 1 of the assembler.
+    Goes through the given list and adds the ic counter to all the data type labels values.
+*/
 void update_symbol_table(LabelsLinkedList_t symbol_table, int ic) {
     LabelNode_t current_label = get_labels_list_head(symbol_table);
 
@@ -376,9 +388,15 @@ void update_symbol_table(LabelsLinkedList_t symbol_table, int ic) {
     }
 }
 
-/* TODO: Add documentation */
+/*  Gets a linked list representing the data image of the assembler,
+    An int representing the current instruction counter,
+    And an array of string, representing the code image of the assembler.
+    Adds the data image to the end of the code image, while keeping track of the updated instruction counter.
+    Returns the updated instructions counter.
+*/
 int add_data_symbols_to_memory(LinkedList_t data_memory_list, int ic, char *memory_array[]) {
     Node_t curr = get_head(data_memory_list);
+
     while (curr != NULL) {
         memory_array[ic++] = get_node_value(curr);
         curr = get_next_node(curr);
@@ -416,20 +434,18 @@ int is_legal_label_name(char *str) {
 
 /* Address type functions */
 
-/* TODO: Add documentation */
+/*  Gets a string representing the operands bit of a code line
+    Returns a list representing all operands in the given string where each member of the list is a single operand.
+    The list is generated according to the following logic:
+        If there's ( char in the string, this is a jump type operand and the entire string is a single operand.
+            In such case, the function returns a list with a single item - the given string.
+        Otherwise, it's a regular operand string and can be split (using split_string) by the comma delimiter.
+            This should also handle a case where the operands string is empty.
+*/
 LinkedList_t get_split_operands(char *operands_string) {
-    int i;
     LinkedList_t split_operands;
 
-    if (strlen(operands_string) == 0)
-        return create_linked_list();
-    /* TODO: split operands differently because this way doesn't work well with jump thingies :( */
-    /* TODO: This is a quick fix, need to separate to function or redesign */
-    for (i = 0; i < strlen(operands_string); i ++) {
-        if (operands_string[i] == LEFT_BRACKET)
-            break;
-    }
-    if (i != strlen(operands_string)) {
+    if (strchr(operands_string, LEFT_BRACKET) != NULL) {
         split_operands = create_linked_list();
         add_value_to_list(operands_string, split_operands);
     } else
@@ -444,9 +460,11 @@ LinkedList_t get_split_operands(char *operands_string) {
     If it doesn't, the operand is not an immediate address type and so function returns FALSE.
 */
 int is_immediate_address_type (char *str) {
+
     if (is(starts_with(str, POUND_SIGN))) {
         return TRUE;
     }
+
     return FALSE;
 }
 
