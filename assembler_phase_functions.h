@@ -377,7 +377,7 @@ int calculate_words_for_line(CommandNode_t command_node, char *relevant_line_bit
     INPUT:  command_node        - the command used in the given line.
             relevant_line_bit   - the given line.
             memory_slot         - a string representing the word in the code image.
-    OUTPUT: Returns ERROR if an error occurred during the function,
+    OUTPUT: Returns 0 if an error occurred during the function,
             If all went well, returns an int representing the amount of words the given line takes in the code image.
 */
 int handle_first_word(CommandNode_t command_node, char *relevant_line_bit, char memory_slot[]);
@@ -393,7 +393,7 @@ int handle_first_word(CommandNode_t command_node, char *relevant_line_bit, char 
             symbol_table        - linked labels list representing all labels that had been defined in the code.
             memory_array        - an array of strings representing the code image.
             ic                  - an int representing the current instruction counter.
-    OUTPUT: Returns ERROR if an error occurred during the function,
+    OUTPUT: Returns 0 if an error occurred during the function,
             If all went well, returns an int representing the amount of words the given line takes in the code image.
 */
 int handle_all_but_first_words(CommandNode_t command_node, char *relevant_line_bit, Table_t *extern_memory_table, LabelsLinkedList_t *symbol_table, char *memory_array[], int ic);

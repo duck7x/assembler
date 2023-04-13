@@ -111,6 +111,8 @@ void run_assembler_phase_1(char* file_name, LinkedCommandList_t action_names_lis
             label_definition_flag = TRUE;
         }
 
+        /* TODO: Maybe ensure here there isn't a comma on the second item of the list */
+
         if (is_data_storage(relevant_line_bit)) {
             if (is(label_definition_flag)) {
                 add_label(*symbol_table, split_by_label, DATA_TYPE, dc);

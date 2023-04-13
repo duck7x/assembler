@@ -114,7 +114,7 @@ void* allocate(int size_of) {
     void* new_ptr = malloc(size_of);
     int current_free_allocation_index = global_allocator->number_of_allocated_elements++;
     if (current_free_allocation_index >= LAST_ALLOCATION_INDEX) {
-        printf("ERROR: No free allocation space!\n");
+        printf("ERROR: No free allocation space! (All %d are allocated)\n", current_free_allocation_index);
         exit(1);  /* TODO: Handle more gracefully */
     }
     global_allocator->ptr_list[current_free_allocation_index] = new_ptr;

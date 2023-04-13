@@ -21,6 +21,7 @@ void pre_assembler(char** files_array, int files_count) {
  */
 int run_pre_assembler_on_file(char* file_name) {
     char *line;  /* String to store the current line of the file we're reading */
+    char *clean_line;  /* String to store the cleaned up current line of the file we're reading */
     FILE *source_file, *dest_file;  /* The source and destination files */
     Table_t macro_table;  /* The table to contain all defined macros */
 
@@ -37,14 +38,12 @@ int run_pre_assembler_on_file(char* file_name) {
 
     macro_table = create_table();
 
-    printf("INFO: Running pre-assemble on %s%s!\n",file_name, INPUT_SUFFIX); /* TODO: delete this */
-
     while (ReadLine(source_file, line) != EOF) {
-        line = get_clean_and_stripped_string(line);
-        if (is_start_of_macro_definition(line))
-            add_macro(source_file, line, macro_table);
+        clean_line = get_clean_and_stripped_string(line);
+        if (is_start_of_macro_definition(clean_line))
+            add_macro(source_file, clean_line, macro_table);
         else
-            write_line_to_expanded_file(dest_file, line, macro_table);
+            write_line_to_expanded_file(dest_file, clean_line, macro_table);
     }
 
     fclose(source_file);

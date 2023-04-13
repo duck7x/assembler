@@ -33,7 +33,7 @@ char* copy_string(char* str);
             end     - the index where the desired substring ends.
     OUTPUT:
 */
-char* copy_substring(char* str, int start, int end);
+char* copy_substring(const char* str, int start, int end);
 
 /*  Gets two strings and concatenates them.
     INPUT:  first   - the first string

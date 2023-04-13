@@ -356,12 +356,15 @@ int is_allowed_operand_type(int operand_type, char *allowed_operand_types) {
 LinkedList_t get_split_operands(char *operands_string) {
     LinkedList_t split_operands;
 
-    if (strchr(operands_string, LEFT_BRACKET) != NULL) {
+    if (strlen(operands_string) == 0)
         split_operands = create_linked_list();
-        add_value_to_list(operands_string, split_operands);
-    } else
-        split_operands = split_string(operands_string, COMMA);
-
+    else {
+        if (strchr(operands_string, LEFT_BRACKET) != NULL) {
+            split_operands = create_linked_list();
+            add_value_to_list(operands_string, split_operands);
+        } else
+            split_operands = split_string(get_string_without_whitespaces(operands_string), COMMA);
+    }
     return split_operands;
 }
 
@@ -584,7 +587,7 @@ void set_operand_code(char *operand_string, int source_or_dest, Table_t *extern_
     if (operand_type == IMMEDIATE)
         set_immediate_type_code(memory_array[ic + 1], operand_string);
     else if (operand_type == DIRECT) {
-        set_direct_type_code(memory_array[ic + 1], operand_string, extern_memory_table ,symbol_table, ic);
+        set_direct_type_code(memory_array[ic + 1], operand_string, extern_memory_table ,symbol_table, ic + 1);
     } else if (operand_type == JUMP)
         set_jump_type_code(memory_array, ic, operand_string, extern_memory_table, symbol_table);
     else if (operand_type == REGISTER)
@@ -728,7 +731,7 @@ int handle_first_word(CommandNode_t command_node, char *relevant_line_bit, char 
 
     if(command_node == NULL) {
         handle_error("Illegal command");
-        return ERROR;
+        return 0;
     }
 
     operands_string = get_operands_string(command_node, relevant_line_bit);
@@ -738,7 +741,7 @@ int handle_first_word(CommandNode_t command_node, char *relevant_line_bit, char 
 
     if (get_list_length(split_operands) != operands_num) {
         handle_error("Wrong amount of operands specified");
-        return ERROR;
+        return 0;
     }
 
     /* Sets bits 6 to 9 according to the command */
@@ -751,7 +754,7 @@ int handle_first_word(CommandNode_t command_node, char *relevant_line_bit, char 
 
         if (is_not(is_allowed_operand_type(operand_type, get_command_node_destination_operand_types(command_node)))) {
             handle_error("Operand type and command mismatch");
-            return ERROR;
+            return 0;
         }
 
         if (operand_type == JUMP) {
@@ -782,7 +785,7 @@ int handle_first_word(CommandNode_t command_node, char *relevant_line_bit, char 
 
         if (is_not(is_allowed_operand_type(operand_type, get_command_node_source_operand_types(command_node)))) {
             handle_error("Operand type and command mismatch");
-            return ERROR;
+            return 0;
         }
 
         /* Sets bits 4-5 according to first operand */
@@ -793,7 +796,7 @@ int handle_first_word(CommandNode_t command_node, char *relevant_line_bit, char 
 
         if (is_not(is_allowed_operand_type(operand_type, get_command_node_destination_operand_types(command_node)))) {
             handle_error("Operand type and command mismatch");
-            return ERROR;
+            return 0;
         }
 
         /* Sets bits 2-3 according to second operand */
@@ -817,7 +820,7 @@ int handle_all_but_first_words(CommandNode_t command_node, char *relevant_line_b
     LinkedList_t split_operands;
 
     if(command_node == NULL) {
-        return ERROR;  /* An error should have already been thrown when handled the first word */
+        return 0;  /* An error should have already been thrown when handled the first word */
     }
 
     l = calculate_words_for_line(command_node, relevant_line_bit);

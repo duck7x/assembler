@@ -27,7 +27,7 @@
 #define StringsNotEqual(FIRST, SECOND) strcmp(FIRST, SECOND) != 0 /* Check if two strings are not equal */
 #define ERROR (-1) /* A number representing an error */
 
-#define IsRegister(STRING) (strlen(STRING) == 2 && STRING[0] == 'r' && STRING[1] <= '7' && STRING[1] >= '0') /* Checks if a string is a register */
+#define IsRegister(STRING) ((int)strlen(STRING) == 2 && STRING[0] == 'r' && STRING[1] <= '7' && STRING[1] >= '0') /* Checks if a string is a register */
 
 /*  Function to handle error messages throughout the assembler phases.
     Gets an error message, prints it and the line number.

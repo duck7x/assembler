@@ -4,7 +4,7 @@
 #include "stdio.h"
 #include "utils.h"
 
-#define LAST_ALLOCATION_INDEX 2999 /* TODO: Add documentation */
+#define LAST_ALLOCATION_INDEX 6999 /* TODO: Add documentation */
 #define CURRENT_MAX_TABLE_SIZE 1000 /* TODO: Add documentation */
 
 #define GetHeadValue(LIST) get_node_value(get_head(LIST))  /* Returns the value of the first node in the list */

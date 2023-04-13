@@ -5,7 +5,7 @@
     Gets a string and returns a copy of it using strcpy.
 */
 char* copy_string(char* str) {
-    char* copied_str = (char*)allocate(sizeof(char)*(strlen(str)+1));
+    char* copied_str = (char*)allocate((int)(sizeof(char)*(strlen(str)+1)));
     strcpy(copied_str, str);
     return copied_str;
 }
@@ -15,8 +15,8 @@ char* copy_string(char* str) {
     Copies the substring from the start index till the end index of the given string.
     This is done using a for loop.
 */
-char* copy_substring(char* str, int start, int end) {
-    char* copied_str = (char*)allocate(sizeof(char)*(end - start + 1));
+char* copy_substring(const char* str, int start, int end) {
+    char* copied_str = (char*)allocate((int)(sizeof(char)*(end - start + 1)));
     int i;
 
     for (i = 0; i < end - start; ++i) {
@@ -36,12 +36,12 @@ char* concatenate_strings(char* first, char* second) {
     int i, len, first_len, second_len;
     char* concatenated_str;
 
-    first_len = strlen(first);
-    second_len = strlen(second);
+    first_len = (int)strlen(first);
+    second_len = (int)strlen(second);
     len = first_len + second_len;
 
     /* the new string that would hold both strings */
-    concatenated_str = (char*) allocate(sizeof(char) * (len + 1));
+    concatenated_str = (char*) allocate((int)sizeof(char) * (len + 1));
 
     /* Adding the first string to the start of the new string */
     for (i = 0; i < first_len; i++) {
