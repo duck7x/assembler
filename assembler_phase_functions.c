@@ -523,7 +523,7 @@ void set_direct_type_code(char *memory_bit, char *operand, Table_t *extern_memor
 
     if (StringsEqual(get_label_node_type(label), EXTERN_TYPE)) {
         memory_bit[13] = '1';
-        sprintf(temp, "%04d", ic + FIRST_AVAILABLE_ADDRESS);
+        sprintf(temp, "%03d", ic + FIRST_AVAILABLE_ADDRESS);
         add_to_table(*extern_memory_table, temp, get_label_node_name(label));
     }
     else {
@@ -667,7 +667,7 @@ void create_entries_file(char* file_name, LabelsLinkedList_t symbol_table) {
                 dest_file = fopen(concatenate_strings(file_name, ENTRIES_FILE_SUFFIX), WRITE);
                 has_entries = TRUE;
             }
-            fprintf(dest_file, "%s\t%04d\n", get_label_node_name(curr_label), get_label_node_value(curr_label));
+            fprintf(dest_file, "%s\t%03d\n", get_label_node_name(curr_label), get_label_node_value(curr_label));
         }
         curr_label = get_next_label_node(curr_label);
     }

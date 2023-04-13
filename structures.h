@@ -74,8 +74,6 @@ char* get_pair_key(Pair_t p);
 */
 char* get_pair_value(Pair_t p);
 
-void print_pair(Pair_t p); /* TODO: delete this */
-
 /* Table methods */
 
 /*  Creates an empty table object.
@@ -124,8 +122,6 @@ int get_number_of_pairs(Table_t t);
     OUTPUT: An array of pairs representing all the pairs in the table.
 */
 Pair_t* get_pair_array(Table_t t);
-
-void print_table(Table_t t); /* TODO: delete this */
 
 /* Node methods */
 
@@ -196,8 +192,6 @@ Node_t get_head(LinkedList_t list);
     OUTPUT: The tail of that list.
 */
 Node_t get_tail(LinkedList_t list);
-
-void print_list(LinkedList_t list); /* TODO: delete this */
 
 /* LabelNode methods */
 
@@ -289,8 +283,6 @@ LabelNode_t get_labels_list_head(LabelsLinkedList_t list);
 */
 LabelNode_t search_labels_list(LabelsLinkedList_t list, char* label);
 
-void print_labels_list(LabelsLinkedList_t list); /* TODO: delete this */
-
 /* CommandNode methods */
 
 /*  Gets four strings representing a command name, code and allowed source and destination operand types.
@@ -341,8 +333,6 @@ char* get_command_node_destination_operand_types(CommandNode_t node);
 */
 CommandNode_t get_next_command_node(CommandNode_t node);
 
-void print_commands_node(CommandNode_t node); /* TODO: delete this */
-
 /* LinkedCommandList methods */
 
 /*  Creates an empty linked commands list object.
@@ -380,7 +370,5 @@ CommandNode_t get_commands_list_head(LinkedCommandList_t list);
             If there isn't a node in the list with that name, returns NULL.
 */
 CommandNode_t search_command_list(LinkedCommandList_t list, char* command);
-
-void print_commands_list(LinkedCommandList_t list); /* TODO: delete this */
 
 #endif

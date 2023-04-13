@@ -44,7 +44,6 @@ int assembler_phase(char** files_list, int files_count) {
         else {  /* Some files are created during the process. If there has been any errors, those files needs to be deleted */
             printf("CRITICAL: Not creating files for %s due to previous errors\n", current_file);
             delete_created_files(current_file);
-            return ERROR;
         }
 
         free_all(); /* Frees redundant memory that was allocated during this for loop iteration */
@@ -159,7 +158,7 @@ void run_assembler_phase_1(char* file_name, LinkedCommandList_t action_names_lis
     }
 
     dest_file = fopen(concatenate_strings(file_name, OBJECT_FILE_SUFFIX), WRITE);
-    fprintf(dest_file, "%d %d\n", ic, dc);
+    fprintf(dest_file, "\t%d %d\n", ic, dc);
     fclose(dest_file);
 
     update_symbol_table(*symbol_table, ic);

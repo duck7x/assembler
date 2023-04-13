@@ -142,7 +142,6 @@ void free_all() {
         free(global_allocator->ptr_list[i]);
         global_allocator->ptr_list[i] = NULL;
     }
-    printf("INFO: Freeing %d stuff\n", global_allocator->number_of_allocated_elements); /* TODO: delete this */
     global_allocator->number_of_allocated_elements = 0;
 }
 
@@ -184,11 +183,6 @@ char* get_pair_key(Pair_t p) {
 */
 char* get_pair_value(Pair_t p) {
     return p->value;
-}
-
-/* TODO: delete this */
-void print_pair(Pair_t p) {
-    printf("%s -> %s\n", p->key, p->value);
 }
 
 /* Table methods */
@@ -252,15 +246,6 @@ int get_number_of_pairs(Table_t t) {
 */
 Pair_t* get_pair_array(Table_t t) {
     return t->pair_table;
-}
-
-
-/* TODO: delete this */
-void print_table(Table_t t) {
-    int i;
-    for (i=0; i < t->number_of_pairs; i++) {
-        print_pair(t->pair_table[i]);
-    }
 }
 
 /* Node methods */
@@ -367,18 +352,6 @@ Node_t get_tail(LinkedList_t list) {
     return list->tail;
 }
 
-/* TODO: DELETE THIS */
-void print_list(LinkedList_t list) {
-    Node_t node;
-    node = list->head;
-    printf("List has %d items: ", list->list_length);
-    while(node != NULL) {
-        printf("%s -> ", node->value);
-        node = node->next;
-    }
-    printf("NULL\n");
-}
-
 /* LabelNode methods */
 
 /*  Gets two strings representing name and type, and an int representing a value.
@@ -440,7 +413,6 @@ void set_label_node_type(LabelNode_t node, char *new_type) {
 
 /* LinkedLabelsList methods */
 
-
 /*  Creates an empty linked labels list object.
     Allocates the required memory,
     Sets the list head and tail to NULL
@@ -453,7 +425,6 @@ LabelsLinkedList_t create_linked_labels_list() {
     list->list_length = 0;
     return list;
 }
-
 
 /*  Gets a linked labels list object, and a label node object.
     If the list is empty, the given label node is set as the list's head.
@@ -501,20 +472,6 @@ LabelNode_t search_labels_list(LabelsLinkedList_t list, char* label) {
         curr = get_next_label_node(curr);
     }
     return NULL;
-}
-
-/* TODO: DELETE THIS */
-void print_labels_list(LabelsLinkedList_t list) {
-    LabelNode_t node;
-    node = list->head;
-    printf("Labels list has %d items: \n", list->list_length);
-    printf("Name\tType\tValue\n");
-    printf("------------------------\n");
-    while(node != NULL) {
-        printf("%s\t%s\t%d\n", node->name, node->type, node->value);
-        printf("------------------------\n");
-        node = node->next;
-    }
 }
 
 /* CommandNode methods */
@@ -579,20 +536,6 @@ CommandNode_t get_next_command_node(CommandNode_t node) {
     return node->next;
 }
 
-/* TODO: delete this */
-void print_commands_node(CommandNode_t node) {
-    if (node == NULL) {
-        printf("NULL\n");
-        return;
-    }
-
-    printf("command: %s\n", get_command_node_command(node));
-    printf("code: %s\n", get_command_node_code(node));
-    printf("operands: %d\n", get_command_node_operands(node));
-    printf("source_operand_types: %s\n", get_command_node_source_operand_types(node));
-    printf("destination_operand_types: %s\n", get_command_node_destination_operand_types(node));
-}
-
 /* LinkedCommandList methods */
 
 /*  Creates an empty linked commands list object.
@@ -654,22 +597,4 @@ CommandNode_t search_command_list(LinkedCommandList_t list, char* command) {
         curr = get_next_command_node(curr);
     }
     return NULL;
-}
-
-/* TODO: delete this */
-void print_commands_list(LinkedCommandList_t list) {
-    CommandNode_t node;
-    node = get_commands_list_head(list);
-    printf("Commands list has %d items: \n", get_commands_list_length(list));
-    printf("Command\tcode\toperands\tsource_operand_types\tdestination_operand_types\n");
-    printf("------------------------\n");
-
-    while(node != NULL) {
-        printf("%s\t%s\t%d\t%s\t%s\n", get_command_node_command(node), get_command_node_code(node),
-               get_command_node_operands(node), get_command_node_source_operand_types(node),
-               get_command_node_destination_operand_types((node)));
-        printf("------------------------\n");
-        node = get_next_command_node(node);
-    }
-
 }

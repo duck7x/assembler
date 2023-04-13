@@ -3,7 +3,6 @@
 
 #include "assembler_phase_functions.h"
 
-
 /*  Gets an array of files that already passed the pre-assembler phase and their count.
     Runs phase 1 and phase 2 of the assembler on each of those files.
     Once this phase is done, all files in the given array should have been compiled according to the
