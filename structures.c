@@ -2,7 +2,9 @@
 
 /* Structures struct definitions */
 
-/* TODO: Add documentation */
+/*  Used for global allocator
+    Simplifies managing allocation throughout the program to ensure there are no memory leaks.
+*/
 struct Allocator {
     int number_of_allocated_elements;
     void* ptr_list[LAST_ALLOCATION_INDEX+1];
@@ -100,7 +102,11 @@ struct LinkedCommandList {
 /* Structure methods */
 
 /* Allocator methods */
-/* TODO: Add documentation */
+
+/*  Creates an empty allocator object, used to generate the global allocator.
+    Sets the number of allocated elements to 0 and resets the array of pointers this allocator contains.
+    Returns the created Allocator_t struct.
+*/
 Allocator_t create_allocator() {
     Allocator_t allocator = (Allocator_t)malloc(sizeof(Allocator));
     memset(allocator->ptr_list, 0, sizeof(void*) * (LAST_ALLOCATION_INDEX + 1));
@@ -109,19 +115,27 @@ Allocator_t create_allocator() {
     return allocator;
 }
 
-/* TODO: Add documentation */
+/*  Gets an int representing a size of a pointer that needs to be allocated.
+    Allocates the pointer using malloc
+    Adds the newly allocated pointer to the global allocator's pointer list
+    And adjusts the number of allocated elements in the global allocator accordingly.
+    Finally, returns the newly allocated pointer.
+*/
 void* allocate(int size_of) {
     void* new_ptr = malloc(size_of);
     int current_free_allocation_index = global_allocator->number_of_allocated_elements++;
     if (current_free_allocation_index >= LAST_ALLOCATION_INDEX) {
-        printf("ERROR: No free allocation space! (All %d are allocated)\n", current_free_allocation_index);
-        exit(1);  /* TODO: Handle more gracefully */
+        printf("CRITICAL: No free allocation space! (All %d are allocated)\n", current_free_allocation_index);
+        exit(1);
     }
     global_allocator->ptr_list[current_free_allocation_index] = new_ptr;
     return new_ptr;
 }
 
-/* TODO: Add documentation */
+/*  Using global allocator, frees all items allocated within the global allocator with the free function,
+    Not including the global allocator himself.
+    Also sets all items in the pointers list to NULL, and the number of allocated elements in the global allocator to 0.
+*/
 void free_all() {
     int i;
     for (i=0; i < global_allocator->number_of_allocated_elements; i++) {
@@ -132,14 +146,17 @@ void free_all() {
     global_allocator->number_of_allocated_elements = 0;
 }
 
-/* TODO: Add documentation */
+/*  Using global allocator, frees all items allocated within the global allocator including the global allocator.
+    Uses the free_all function to free everything but the global allocator.
+    Saves the global allocator pointer to a temp variable, sets its cell in the pointers list to NULL,
+    Then frees the global allocator pointer using the free function.
+*/
 void free_all_and_allocator() {
     void* temp;
     temp = global_allocator->ptr_list[LAST_ALLOCATION_INDEX];
     free_all();
     global_allocator->ptr_list[LAST_ALLOCATION_INDEX] = NULL;
     free(temp);
-    /* TODO: Maybe add free functions to reduce code repetition */
 }
 
 /* Pair methods */

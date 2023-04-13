@@ -4,13 +4,13 @@
 #include "stdio.h"
 #include "utils.h"
 
-#define LAST_ALLOCATION_INDEX 6999 /* TODO: Add documentation */
-#define CURRENT_MAX_TABLE_SIZE 1000 /* TODO: Add documentation */
+#define LAST_ALLOCATION_INDEX 9999 /* Default allocator size */
+#define CURRENT_MAX_TABLE_SIZE 1000 /* Default table size */
 
 #define GetHeadValue(LIST) get_node_value(get_head(LIST))  /* Returns the value of the first node in the list */
 #define GetTailValue(LIST) get_node_value(get_tail(LIST))  /* Returns the value of the last node in the list */
 
-typedef struct Allocator *Allocator_t; /* TODO: Add documentation */
+typedef struct Allocator *Allocator_t; /* Structure containing an allocator for easy allocation */
 typedef struct Pair *Pair_t; /* Structure containing key-value pairs */
 typedef struct Table *Table_t; /* Dictionary-like object, holds key-value pairs */
 typedef struct Node *Node_t; /* Represents a node in a strings linked list. */
@@ -23,10 +23,34 @@ typedef struct LinkedCommandList *LinkedCommandList_t; /* A commands linked list
 extern Allocator_t global_allocator; /* Global variable used to allocate memory throughout the program */
 
 /* Allocator methods */
-Allocator_t create_allocator(); /* TODO: Add documentation */
-void* allocate(int size_of); /* TODO: Add documentation */
-void free_all(); /* TODO: Add documentation */
-void free_all_and_allocator(); /* TODO: Add documentation */
+
+/*  Creates an allocator object, used to generate the global allocator.
+    The object contains a pointer list in the default size with all values set to 0.
+    INPUT:  This function doesn't have an input.
+    OUTPUT: An empty allocator object ready to use.
+*/
+Allocator_t create_allocator();
+
+/*  Gets an int representing a size of a pointer that needs to be allocated.
+    Allocates the pointer via global allocator and returns the allocated pointer.
+    INPUT:  size_of - an int representing the size of the pointer to allocate.
+    OUTPUT: A pointer to the allocation created.
+*/
+void* allocate(int size_of);
+
+/*  Using global allocator, frees all items allocated within the global allocator,
+    Not including the global allocator himself.
+    INPUT:  This function doesn't have an input.
+    OUTPUT: This function doesn't return anything.
+*/
+void free_all();
+
+/*  Using global allocator, frees all items allocated within the global allocator,
+    Including the global allocator himself.
+    INPUT:  This function doesn't have an input.
+    OUTPUT: This function doesn't return anything.
+*/
+void free_all_and_allocator();
 
 /* Pair methods */
 

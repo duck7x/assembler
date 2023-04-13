@@ -12,21 +12,27 @@
 int assembler_phase(char** files_list, int files_count) {
     int i;
     char *memory_array[MEMORY_SIZE], *current_file;  /* Represents the code image of the assembler */
-    LinkedCommandList_t actions_names_list = create_action_names_list();  /* Contains the allowed assembly commands */
-    LabelsLinkedList_t symbol_table = create_linked_labels_list();  /* Will contain all the labels in the code */
-    LinkedList_t data_memory_list = create_linked_list();  /* Represents the data image of the assembler  */
-    Table_t extern_memory_table = create_table();  /* Will contain all the external labels usage in the code */
+    LinkedCommandList_t actions_names_list;  /* Contains the allowed assembly commands */
+    LabelsLinkedList_t symbol_table;  /* Will contain all the labels in the code */
+    LinkedList_t data_memory_list;  /* Represents the data image of the assembler  */
+    Table_t extern_memory_table;  /* Will contain all the external labels usage in the code */
 
     has_errors = FALSE;
-
-    if (actions_names_list == NULL) {
-        printf("CRITICAL: Failed to generate actions names list during assembler phase, stopping assembler!\n");
-        return ERROR;
-    }
 
     for (i = 1; i < files_count; i++) {
 
         has_errors = FALSE;  /* Ensures that errors in previous files will not affect the following ones */
+
+        /* Reset base variables for assembler phase */
+        actions_names_list = create_action_names_list();
+        symbol_table = create_linked_labels_list();
+        data_memory_list = create_linked_list();
+        extern_memory_table = create_table();
+
+        if (actions_names_list == NULL || symbol_table == NULL || data_memory_list == NULL || extern_memory_table == NULL) {
+            printf("CRITICAL: Failed to reset base variables assembler phase, stopping assembler!\n");
+            return ERROR;
+        }
 
         current_file = files_list[i];
         printf("INFO: Running assembler phase on %s%s!\n",current_file, POST_PRE_ASSEMBLER_SUFFIX); /* TODO: delete this */
@@ -40,6 +46,7 @@ int assembler_phase(char** files_list, int files_count) {
             delete_created_files(current_file);
             return ERROR;
         }
+
         free_all(); /* Frees redundant memory that was allocated during this for loop iteration */
     }
 
@@ -110,8 +117,6 @@ void run_assembler_phase_1(char* file_name, LinkedCommandList_t action_names_lis
         if (starts_with_label(split_by_label)) {
             label_definition_flag = TRUE;
         }
-
-        /* TODO: Maybe ensure here there isn't a comma on the second item of the list */
 
         if (is_data_storage(relevant_line_bit)) {
             if (is(label_definition_flag)) {
